@@ -25,7 +25,7 @@ SERVICIO:
 - +8,000 series completas y actualizadas
 - Deportes: LaLiga, Champions, Premier, Liga Nacional, UFC, NBA, NFL, F1
 - Compatible con Smart TV, TV Box, Firestick, celular, PC, iPhone
-- Hasta 3 dispositivos simultáneos
+- Hasta 3 dispositivos simultáneos en todos los planes
 - App: https://hostinghn.com/v7.apk
 
 INSTALACIÓN TV Box/Firestick:
@@ -34,12 +34,11 @@ INSTALACIÓN TV Box/Firestick:
 3. Instalar y abrir la app
 4. Ingresar usuario y contraseña
 
-PRECIOS:
-- 1 mes: ₡6,000 / $10
-- 3 meses + 15 días: $30
-- 5 meses + 1 MES GRATIS: $50
-- 10 meses + 2 MESES GRATIS: $100
-También hay planes de 2, 3 y 5 conexiones.
+PRECIOS (todos incluyen 3 pantallas simultáneas):
+- 1 mes: ₡7,000
+- 3 meses: ₡19,000
+- 6 meses: ₡35,000
+- 1 año: ₡60,000
 
 PAGO: SINPE Móvil o transferencia bancaria.
 
@@ -47,6 +46,7 @@ REGLAS:
 - Sé conciso y natural
 - Siempre ofrece la demo ANTES de hablar de precios
 - Demo dura 6 horas, es gratis
+- Destaca el ahorro de los planes largos (ej: 1 año = ₡5,000/mes en vez de ₡7,000)
 - Cuando pidan demo escribe al final: [DEMO_SOLICITADA]
 - Cuando quieran pagar escribe al final: [NOTIFICAR_DUENO]`;
 
@@ -100,39 +100,22 @@ async function notificarDuenio(clientePhone, mensaje) {
 function extraerMensaje(body) {
   const event = body?.event;
   const data = body?.data;
-  
-  // Ignorar eventos de mensajes enviados por nosotros
-  if (['message.sent', 'messages.update', 'chats.update'].includes(event)) return null;
-  
+  if (['message.sent', 'messages.update', 'chats.update', 'messages.upsert', 'contacts.update'].includes(event)) return null;
   let phone, texto, fromMe;
-  
-  // Formato messages.received / messages-personal.received
   if (data?.messages) {
     const msg = data.messages;
     fromMe = msg?.key?.fromMe;
     if (fromMe) return null;
-    phone = msg?.key?.cleanedSenderPn 
-      || msg?.key?.cleanedParticipantPn
+    phone = msg?.key?.cleanedSenderPn || msg?.key?.cleanedParticipantPn
       || msg?.key?.remoteJid?.replace('@s.whatsapp.net','').replace('@c.us','');
     texto = msg?.messageBody || msg?.message?.conversation || msg?.message?.extendedTextMessage?.text;
-  }
-  // Formato messages.upsert
-  else if (data?.key) {
+  } else if (data?.key) {
     fromMe = data?.key?.fromMe;
     if (fromMe) return null;
     phone = data?.key?.cleanedSenderPn
       || data?.key?.remoteJid?.replace('@s.whatsapp.net','').replace('@c.us','');
     texto = data?.messageBody || data?.message?.conversation || data?.message?.extendedTextMessage?.text;
   }
-  // Formato alternativo con array
-  else if (Array.isArray(data)) {
-    const msg = data[0];
-    fromMe = msg?.key?.fromMe;
-    if (fromMe) return null;
-    phone = msg?.key?.cleanedSenderPn || msg?.key?.remoteJid?.replace('@s.whatsapp.net','').replace('@c.us','');
-    texto = msg?.messageBody || msg?.message?.conversation;
-  }
-  
   if (!phone || !texto || typeof texto !== 'string' || texto.trim() === '') return null;
   return { phone, texto };
 }
@@ -141,16 +124,12 @@ app.post("/webhook", async (req, res) => {
   res.sendStatus(200);
   try {
     const body = req.body;
-    console.log("Evento:", body?.event, "| raw:", JSON.stringify(body).substring(0, 300));
-    
+    console.log("Evento:", body?.event, "| raw:", JSON.stringify(body).substring(0, 200));
     const result = extraerMensaje(body);
     if (!result) return;
-    
     const { phone, texto } = result;
     console.log("✅ Procesando de", phone, ":", texto);
-    
     const respuesta = await procesarMensaje(phone, texto);
-    
     if (respuesta.includes("[DEMO_SOLICITADA]")) {
       const limpia = respuesta.replace("[DEMO_SOLICITADA]", "").trim();
       await sendMessage(phone, limpia);
