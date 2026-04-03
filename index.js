@@ -53,7 +53,7 @@ FLUJO OBLIGATORIO PARA DEMO:
 REGLAS:
 - Sé conciso y natural
 - Siempre ofrece la demo ANTES de hablar de precios
-- Demo dura 24 horas, es gratis y se crea automáticamente
+- Demo dura 6 horas, es gratis y se crea automáticamente
 - Destaca el ahorro de los planes largos
 - NUNCA escribas [DEMO_SOLICITADA] sin tener el nombre completo del cliente
 - Cuando quieran pagar escribe al final: [NOTIFICAR_DUENO]`;
@@ -282,7 +282,7 @@ app.post("/webhook", async (req, res) => {
           `📱 Descargá la app: https://hostinghn.com/v7.apk\n` +
           `👤 Usuario: ${demo.usuario}\n` +
           `🔑 Contraseña: ${demo.password}\n` +
-          `⏰ Válida por 24 horas\n\n` +
+          `⏰ Válida por 6 horas\n\n` +
           `Cualquier consulta me avisás 😊`;
         await sendMessage(phone, msg);
         await notificarDuenio(phone, `🎯 DEMO CREADA\nCliente: ${nombreCliente}\nUsuario: ${demo.usuario}`);
