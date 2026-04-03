@@ -45,15 +45,36 @@ PRECIOS (todos incluyen 3 pantallas simultáneas):
 
 PAGO: SINPE Móvil o transferencia bancaria.
 
+FLUJO OBLIGATORIO PARA DEMO:
+1. Primero preguntá el nombre completo del cliente (nombre y apellido)
+2. Una vez que te digan el nombre, confirmá que vas a crear la demo
+3. Entonces y solo entonces escribe: [DEMO_SOLICITADA:NombreCompleto]
+
 REGLAS:
 - Sé conciso y natural
 - Siempre ofrece la demo ANTES de hablar de precios
 - Demo dura 24 horas, es gratis y se crea automáticamente
 - Destaca el ahorro de los planes largos
-- Cuando el cliente acepte la demo escribe al final: [DEMO_SOLICITADA]
+- NUNCA escribas [DEMO_SOLICITADA] sin tener el nombre completo del cliente
 - Cuando quieran pagar escribe al final: [NOTIFICAR_DUENO]`;
 
 const conversations = new Map();
+
+// Generar usuario: primera letra nombre + apellido en minúsculas
+// Ej: "Emmanuel Barboza" → "ebarboza"
+function generarUsuario(nombreCompleto) {
+  const partes = nombreCompleto.trim().toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // quitar tildes
+    .replace(/[^a-z\s]/g, '')
+    .split(/\s+/)
+    .filter(p => p.length > 0);
+  
+  if (partes.length === 0) return 'demo' + Date.now().toString().slice(-4);
+  if (partes.length === 1) return partes[0];
+  
+  // Primera letra del primer nombre + apellido completo
+  return partes[0][0] + partes[partes.length - 1];
+}
 
 function getHistory(phone) {
   if (!conversations.has(phone)) conversations.set(phone, []);
@@ -81,25 +102,23 @@ async function sendMessage(to, text) {
   }
 }
 
-// Crear demo en liontv.vip
-async function crearDemo() {
+// Crear demo en liontv.vip con usuario basado en nombre del cliente
+async function crearDemo(nombreCompleto) {
+  const usuario = generarUsuario(nombreCompleto);
+  console.log("Creando demo para:", nombreCompleto, "→ usuario:", usuario);
+  
   try {
-    console.log("Creando demo en liontv.vip...");
-    
-    // Paso 1: Login para obtener cookies y token
+    // Paso 1: Obtener token CSRF del login
     const loginPage = await axios.get(`${CONFIG.LIONTV_URL}/login`, {
       maxRedirects: 5,
-      withCredentials: true,
     });
-    
-    // Extraer token CSRF del HTML
     const tokenMatch = loginPage.data.match(/name="_token"[^>]+value="([^"]+)"/);
-    if (!tokenMatch) throw new Error("No se encontró el token CSRF en el login");
+    if (!tokenMatch) throw new Error("No se encontró CSRF token en login");
     const csrfToken = tokenMatch[1];
-    const cookies = loginPage.headers['set-cookie']?.join('; ') || '';
-    
-    // Paso 2: Autenticarse
-    const loginResp = await axios.post(`${CONFIG.LIONTV_URL}/login`, 
+    const cookies = loginPage.headers['set-cookie']?.map(c => c.split(';')[0]).join('; ') || '';
+
+    // Paso 2: Hacer login
+    const loginResp = await axios.post(`${CONFIG.LIONTV_URL}/login`,
       new URLSearchParams({
         _token: csrfToken,
         username: CONFIG.LIONTV_USER,
@@ -109,77 +128,84 @@ async function crearDemo() {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
           'Cookie': cookies,
-          'Referer': `${CONFIG.LIONTV_URL}/login`,
         },
-        maxRedirects: 5,
-        withCredentials: true,
+        maxRedirects: 10,
+        validateStatus: () => true,
       }
     );
     
-    // Extraer cookies de sesión del login
-    const sessionCookies = loginResp.headers['set-cookie']?.join('; ') || cookies;
-    console.log("Login OK, obteniendo formulario trial...");
+    // Recopilar todas las cookies de sesión
+    const allCookies = [
+      ...loginPage.headers['set-cookie'] || [],
+      ...loginResp.headers['set-cookie'] || [],
+    ].map(c => c.split(';')[0]).join('; ');
     
-    // Paso 3: Obtener el formulario de trial para el token actualizado
+    console.log("Login OK, obteniendo formulario trial...");
+
+    // Paso 3: Obtener token CSRF del formulario trial
     const trialPage = await axios.get(`${CONFIG.LIONTV_URL}/lines/create/1/line`, {
-      headers: { 'Cookie': sessionCookies },
+      headers: { 'Cookie': allCookies },
       maxRedirects: 5,
     });
-    
     const trialTokenMatch = trialPage.data.match(/name="_token"[^>]+value="([^"]+)"/);
-    if (!trialTokenMatch) throw new Error("No se encontró el token CSRF en trial");
+    if (!trialTokenMatch) throw new Error("No se encontró CSRF token en trial form");
     const trialToken = trialTokenMatch[1];
-    
-    // Paso 4: Crear el trial
-    const trialResp = await axios.post(`${CONFIG.LIONTV_URL}/lines/create/1`,
+
+    // Paso 4: Crear trial con usuario personalizado
+    const createResp = await axios.post(`${CONFIG.LIONTV_URL}/lines/create/1`,
       new URLSearchParams({
         _token: trialToken,
         line_type: 'line',
-        username: '',
-        password: '',
+        username: usuario,
+        password: '',  // panel genera la contraseña automáticamente
         package: '102', // 1 MES (3 PANTALLAS)
         connections: '3',
         expire_date: '',
-        description: 'Demo creada por bot WhatsApp',
+        description: `Demo WhatsApp - ${nombreCompleto}`,
       }).toString(),
       {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
-          'Cookie': sessionCookies,
+          'Cookie': allCookies,
           'Referer': `${CONFIG.LIONTV_URL}/lines/create/1/line`,
         },
-        maxRedirects: 5,
+        maxRedirects: 10,
+        validateStatus: () => true,
       }
     );
+
+    // Paso 5: Extraer contraseña generada por el panel
+    const html = createResp.data;
     
-    // Extraer usuario y contraseña de la respuesta
-    const userMatch = trialResp.data.match(/Username[^>]*>[^<]*<[^>]+>([^<]{3,30})<//) 
-      || trialResp.data.match(/name="username"[^>]+value="([^"]+)"/)
-      || trialResp.data.match(/"username":"([^"]+)"/);
-    const passMatch = trialResp.data.match(/Password[^>]*>[^<]*<[^>]+>([^<]{3,30})<//)
-      || trialResp.data.match(/name="password"[^>]+value="([^"]+)"/)
-      || trialResp.data.match(/"password":"([^"]+)"/);
+    // Buscar la contraseña en la respuesta o página de edición
+    let password = null;
+    const passInHtml = html.match(/name="password"[^>]+value="([^"]+)"/);
+    if (passInHtml) password = passInHtml[1];
     
-    if (userMatch && passMatch) {
-      console.log("Demo creada:", userMatch[1], "/", passMatch[1]);
-      return { usuario: userMatch[1], password: passMatch[1] };
-    }
-    
-    // Si no podemos extraer, intentar buscar en la URL de redirección
-    const finalUrl = trialResp.request?.res?.responseUrl || trialResp.config?.url || '';
-    const idMatch = finalUrl.match(/\/lines\/(\d+)\/edit/);
-    
-    if (idMatch) {
-      // Obtener los datos de la línea recién creada
-      const lineData = await axios.get(`${CONFIG.LIONTV_URL}/lines/${idMatch[1]}/edit`, {
-        headers: { 'Cookie': sessionCookies },
+    // Si redireccionó a la página de edición, buscar ahí
+    const finalUrl = createResp.request?.res?.responseUrl || '';
+    if (!password && finalUrl.includes('/edit')) {
+      const editPage = await axios.get(finalUrl, {
+        headers: { 'Cookie': allCookies },
       });
-      const u = lineData.data.match(/name="username"[^>]+value="([^"]+)"/);
-      const p = lineData.data.match(/name="password"[^>]+value="([^"]+)"/);
-      if (u && p) return { usuario: u[1], password: p[1] };
+      const p = editPage.data.match(/name="password"[^>]+value="([^"]+)"/);
+      if (p) password = p[1];
     }
     
-    throw new Error("No se pudo extraer usuario/contraseña");
+    // Buscar en líneas recientes si no encontramos contraseña
+    if (!password) {
+      const linesPage = await axios.get(`${CONFIG.LIONTV_URL}/lines`, {
+        headers: { 'Cookie': allCookies },
+      });
+      // Buscar la fila con nuestro usuario
+      const userRow = linesPage.data.match(new RegExp(usuario + '[^]*?<td[^>]*>([^<]{4,20})</td>'));
+      if (userRow) password = userRow[1].trim();
+    }
+
+    if (!password) throw new Error("No se pudo obtener la contraseña generada");
+    
+    console.log("✅ Demo creada - usuario:", usuario, "pass:", password);
+    return { usuario, password };
     
   } catch (err) {
     console.error("Error creando demo:", err.message);
@@ -238,29 +264,34 @@ app.post("/webhook", async (req, res) => {
     if (!result) return;
     const { phone, texto } = result;
     console.log("✅ Procesando de", phone, ":", texto);
+
     const respuesta = await procesarMensaje(phone, texto);
 
-    if (respuesta.includes("[DEMO_SOLICITADA]")) {
-      const limpia = respuesta.replace("[DEMO_SOLICITADA]", "").trim();
+    // Detectar si tiene el tag de demo con nombre
+    const demoMatch = respuesta.match(/\[DEMO_SOLICITADA:([^\]]+)\]/);
+
+    if (demoMatch) {
+      const nombreCliente = demoMatch[1].trim();
+      const limpia = respuesta.replace(/\[DEMO_SOLICITADA:[^\]]+\]/, '').trim();
       await sendMessage(phone, limpia);
       await sendMessage(phone, "⏳ Creando tu demo ahora mismo, dame un momento... 🦁");
-      
+
       try {
-        const demo = await crearDemo();
-        const msg = `✅ ¡Tu demo está lista!\n\n` +
-          `📱 App: https://hostinghn.com/v7.apk\n` +
+        const demo = await crearDemo(nombreCliente);
+        const msg = `✅ ¡Tu demo está lista, ${nombreCliente.split(' ')[0]}!\n\n` +
+          `📱 Descargá la app: https://hostinghn.com/v7.apk\n` +
           `👤 Usuario: ${demo.usuario}\n` +
           `🔑 Contraseña: ${demo.password}\n` +
           `⏰ Válida por 24 horas\n\n` +
           `Cualquier consulta me avisás 😊`;
         await sendMessage(phone, msg);
-        await notificarDuenio(phone, `🎯 DEMO CREADA AUTOMÁTICAMENTE\nUsuario: ${demo.usuario}`);
-      } catch (demoErr) {
-        console.error("Fallo creando demo automática:", demoErr.message);
+        await notificarDuenio(phone, `🎯 DEMO CREADA\nCliente: ${nombreCliente}\nUsuario: ${demo.usuario}`);
+      } catch (err) {
+        console.error("Fallo demo automática:", err.message);
         await sendMessage(phone, "⏳ En un momento te mando las credenciales de tu demo 🙌");
-        await notificarDuenio(phone, `🎯 DEMO SOLICITADA (crear manual)\nError automático: ${demoErr.message}`);
+        await notificarDuenio(phone, `🎯 DEMO SOLICITADA (crear manual)\nCliente: ${nombreCliente}\nError: ${err.message}`);
       }
-      
+
     } else if (respuesta.includes("[NOTIFICAR_DUENO]")) {
       const limpia = respuesta.replace("[NOTIFICAR_DUENO]", "").trim();
       await sendMessage(phone, limpia);
