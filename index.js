@@ -2,9 +2,6 @@
  * 🤖 BOT WHATSAPP IPTV - Lion TV
  * Servidor webhook que conecta WaSenderAPI con Claude AI
  * para automatizar ventas de IPTV con notificaciones al dueño.
- *
- * Stack: Node.js + Express + Anthropic SDK + Axios
- * Deploy: Railway.app
  */
 
 const express = require("express");
@@ -14,248 +11,149 @@ const Anthropic = require("@anthropic-ai/sdk");
 const app = express();
 app.use(express.json());
 
-// ============================================================
-// ⚙️ CONFIGURACIÓN — Rellena estas variables en Railway
-// ============================================================
 const CONFIG = {
-  // WaSenderAPI
-  WASENDER_API_KEY: process.env.WASENDER_API_KEY,   // Tu API Key de WaSenderAPI
-  WASENDER_SESSION: process.env.WASENDER_SESSION,   // Tu Session ID (ej: 75080)
-
-  // Claude AI
+  WASENDER_API_KEY: process.env.WASENDER_API_KEY,
+  WASENDER_SESSION: process.env.WASENDER_SESSION,
   ANTHROPIC_KEY: process.env.ANTHROPIC_API_KEY,
-
-  // Tu número de WhatsApp para recibir notificaciones
-  OWNER_PHONE: process.env.OWNER_PHONE,   // Ej: 50688887777 (sin +)
+  OWNER_PHONE: process.env.OWNER_PHONE,
 };
 
-// ============================================================
-// 🧠 SYSTEM PROMPT — Personalidad y conocimiento del bot
-// ============================================================
-const SYSTEM_PROMPT = `Eres un asesor de ventas experto en IPTV para Lion TV. Tu trabajo es atender clientes por WhatsApp, explicarles el servicio, ofrecerles demos gratuitas y cerrar ventas. Eres amable, entusiasta y conocedor. Hablas de forma natural y cercana, como un costarricense/hondureño.
+const SYSTEM_PROMPT = `Eres un asesor de ventas experto en IPTV para Lion TV. Tu trabajo es atender clientes por WhatsApp, explicarles el servicio, ofrecerles demos gratuitas y cerrar ventas. Eres amable, entusiasta y conocedor. Hablas de forma natural y cercana.
 
 ## TU SERVICIO — Lion TV IPTV Premium
+- 📺 +5,000 canales HD y Full HD — TV nacional e internacional
+- 🎬 +50,000 películas en FHD y 4K — Netflix, HBO Max, Star+, Paramount, Disney+
+- 📡 +8,000 series completas — estrenos actualizados
+- ⚽ Deportes: Champions, LaLiga, Premier, Ligue 1, Liga Nacional, Tigo Sports, UFC, NBA, NFL, MLB, F1
+- 📱 Compatible con: Windows, Mac, Android, iOS, Smart TV, TV Box, Firestick
+- ✅ Hasta 3 dispositivos simultáneos
+- 📲 App: https://hostinghn.com/v7.apk
 
-### ¿Qué ofrecemos?
-- 📺 +5,000 canales HD y Full HD — TV nacional e internacional de todos los países
-- 🎬 +50,000 películas en FHD y 4K — incluye contenido de Netflix, HBO Max, Star+, Paramount, Disney+ y más
-- 📡 +8,000 series completas — estrenos muy actualizados, ¡y tomamos pedidos de películas y series!
-- ⚽ Todos los deportes en vivo: Champions, LaLiga, Premier, Ligue 1, Liga Nacional, Tigo Sports, FUTV, Star+ exclusivos, UFC, NBA, NFL, MLB, Fórmula 1
-- 🎯 Calidad HD, Full HD y 4K
-- 📱 Compatible con: Windows, Mac, Web, Android, iOS, Smart TV, TV Box, Firestick, Consolas
-- ✅ Hasta 3 dispositivos simultáneos incluidos en todos los planes
-- 📲 App propia: se instala fácil con el link https://hostinghn.com/v7.apk
+## INSTALACIÓN (TV Box, Android TV, FireStick)
+1. Buscar Downloader en la tienda de apps
+2. Abrir Downloader e ingresar: https://hostinghn.com/v7.apk
+3. Instalar y abrir la app
+4. Ingresar usuario y contraseña
 
-### INSTALACIÓN (TV Box, Android TV, FireStick)
-1. Abrir la tienda de apps y buscar *Downloader*
-2. Descargar e instalar Downloader
-3. Abrir Downloader e ingresar: https://hostinghn.com/v7.apk
-4. Descargar e instalar la app
-5. Abrir la app e ingresar usuario y contraseña
-
-### PLANES Y PRECIOS
-El precio base es ₡6,000 al mes (también hay planes trimestrales, semestrales y anuales con descuento).
+## PRECIOS
+₡6,000 al mes. También planes trimestrales, semestrales y anuales con descuento.
 Todos los planes incluyen hasta 3 dispositivos simultáneos.
 
-Si el cliente pregunta por precios en dólares, usa los siguientes planes:
+Planes en dólares:
+- 1 conexión: $10/mes | $30 (3m+15d) | $50 (5m+1 gratis) | $100 (10m+2 gratis)
+- 2 conexiones: $11/mes | $33 | $55 | $110
+- 3 conexiones: $12/mes | $36 | $60 | $120
+- 5 conexiones: $16/mes | $48 | $80 | $160
 
-**🖥️ Plan 1 Conexión**
-- 1 mes → $10
-- 3 meses + 15 días gratis → $30
-- 5 meses + 1 MES GRATIS → $50 ⭐
-- 10 meses + 2 MESES GRATIS → $100
+## MÉTODOS DE PAGO
+SINPE Móvil y transferencia bancaria.
 
-**🖥️🖥️ Plan 2 Conexiones**
-- 1 mes → $11 | 3 meses → $33 | 5+1 → $55 | 10+2 → $110
+## REGLAS
+- Sé conciso y natural, usa emojis con moderación
+- Siempre ofrece la demo ANTES de insistir con precios
+- Las demos duran 6 horas y son gratuitas
+- Cuando pidan demo escribe al final: [DEMO_SOLICITADA]
+- Cuando quieran pagar escribe al final: [NOTIFICAR_DUEÑO]`;
 
-**🖥️🖥️🖥️ Plan 3 Conexiones**
-- 1 mes → $12 | 3 meses → $36 | 5+1 → $60 | 10+2 → $120
-
-**🖥️🖥️🖥️🖥️🖥️ Plan 5 Conexiones**
-- 1 mes → $16 | 3 meses → $48 | 5+1 → $80 | 10+2 → $160
-
-### MÉTODOS DE PAGO
-- SINPE Móvil (Costa Rica)
-- Transferencia bancaria
-- (El dueño les dará el número/cuenta al confirmar el pedido)
-
-## FLUJO DE CONVERSACIÓN
-
-Cuando alguien escribe por primera vez:
-1. Salúdalos calurosamente
-2. Pregunta qué dispositivo tienen y cuántas pantallas necesitan
-3. Ofréceles la demo GRATIS de 24 horas
-4. Cuando quieran la demo, diles que la estás activando (el sistema la crea automáticamente)
-5. Cuando quieran comprar, di que vas a conectarlos con el equipo para el pago y escribe: [NOTIFICAR_DUEÑO]
-
-### MÉTODOS DE PAGO
-- SINPE Móvil (Costa Rica)
-- Transferencia bancaria
-- El dueño les dará los detalles al confirmar
-
-## REGLAS IMPORTANTES
-- Sé conciso, usa emojis con moderación pero de forma natural
-- Siempre destaca el valor de las promociones (meses gratis)
-- Cuando alguien dude, ofrece la demo ANTES de insistir con precios
-- Si preguntan por canales específicos, confirma que sí los tenemos
-- No inventes información técnica que no sabes
-- Las demos duran 6 horas, son gratuitas, y las activa el dueño manualmente
-- Cuando el cliente pida la demo, escribe exactamente al final: [DEMO_SOLICITADA]
-- Cuando el cliente esté listo para pagar, escribe exactamente al final: [NOTIFICAR_DUEÑO]
-
-## EJEMPLOS DE RESPUESTAS
-
-Cliente: "hola me interesa"
-Tú: "¡Hola! 👋 Bienvenido a Lion TV — servicio de TV premium por internet. Tenemos +5,000 canales, +50,000 películas y +8,000 series, todo en HD y 4K 🔥
-
-¿En qué dispositivo lo querés ver? (Smart TV, TV Box, Firestick, celular...) y ¿cuántas pantallas necesitás?"
-
-Cliente: "quiero ver el partido del Real Madrid"
-Tú: "¡Claro! ⚽ Tenemos LaLiga, Champions League, Premier y todos los partidos en vivo. También Star+ exclusivos, ESPN, Tigo Sports y mucho más.
-
-¿Querés probar con una demo GRATIS de 6 horas para ver la calidad tú mismo? 🎁"
-
-Cliente: "cuánto cuesta?"
-Tú: "Solo ₡6,000 al mes, con planes trimestrales, semestrales y anuales con meses de regalo 🎁 Incluye hasta 3 dispositivos simultáneos.
-
-¿Querés que te active una demo gratis de 6 horas primero para que lo pruebes sin compromiso?"`;
-
-// ============================================================
-// 💬 Memoria de conversaciones (en RAM — simple y funcional)
-// ============================================================
-const conversations = new Map(); // phone -> [{role, content}]
+const conversations = new Map();
 
 function getHistory(phone) {
-  if (!conversations.has(phone)) {
-    conversations.set(phone, []);
-  }
+  if (!conversations.has(phone)) conversations.set(phone, []);
   return conversations.get(phone);
 }
 
 function addMessage(phone, role, content) {
   const history = getHistory(phone);
   history.push({ role, content });
-  // Mantener solo los últimos 20 mensajes para no exceder el contexto
-  if (history.length > 20) {
-    conversations.set(phone, history.slice(-20));
-  }
+  if (history.length > 20) conversations.set(phone, history.slice(-20));
 }
 
-// ============================================================
-// 📨 Enviar mensaje por WhatsApp (WaSenderAPI)
-// ============================================================
 async function sendMessage(to, text) {
   try {
     await axios.post(
-      `https://wasenderapi.com/api/send-message`,
-      {
-        session_id: CONFIG.WASENDER_SESSION,
-        to: `${to}@c.us`,
-        text,
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${CONFIG.WASENDER_API_KEY}`,
-          "Content-Type": "application/json",
-        },
-      }
+      "https://wasenderapi.com/api/send-text-message",
+      { sessionId: CONFIG.WASENDER_SESSION, to: to.includes("@") ? to.split("@")[0] : to, text },
+      { headers: { Authorization: `Bearer ${CONFIG.WASENDER_API_KEY}`, "Content-Type": "application/json" } }
     );
   } catch (err) {
     console.error("Error enviando mensaje:", err.response?.data || err.message);
   }
 }
 
-// ============================================================
-// 🤖 Procesar mensaje con Claude AI
-// ============================================================
 async function procesarMensaje(phone, mensaje) {
   const client = new Anthropic({ apiKey: CONFIG.ANTHROPIC_KEY });
-
   addMessage(phone, "user", mensaje);
-  const history = getHistory(phone);
-
   const response = await client.messages.create({
     model: "claude-sonnet-4-20250514",
     max_tokens: 1000,
     system: SYSTEM_PROMPT,
-    messages: history,
+    messages: getHistory(phone),
   });
-
   const respuesta = response.content[0].text;
   addMessage(phone, "assistant", respuesta);
-
   return respuesta;
 }
 
-// ============================================================
-// 🔔 Notificar al dueño cuando alguien quiere comprar
-// ============================================================
 async function notificarDuenio(clientePhone, mensaje) {
   if (!CONFIG.OWNER_PHONE) return;
-  await sendMessage(
-    CONFIG.OWNER_PHONE,
-    `🔔 ${mensaje}\n\n📱 Número cliente: +${clientePhone}`
-  );
+  await sendMessage(CONFIG.OWNER_PHONE, `🔔 ${mensaje}\n\n📱 Cliente: +${clientePhone}`);
 }
 
-// ============================================================
-// 🌐 WEBHOOK — Recibir mensajes de WaSenderAPI
-// ============================================================
-
-// WaSenderAPI envía los mensajes entrantes vía POST al webhook
+// Webhook — recibe mensajes de WaSenderAPI
 app.post("/webhook", async (req, res) => {
-  res.sendStatus(200); // Responder rápido
-
+  res.sendStatus(200);
   try {
     const body = req.body;
+    console.log("Webhook recibido:", JSON.stringify(body).substring(0, 200));
 
-    // WaSenderAPI formato: { event: "message", data: { from, body, type } }
-    if (body?.event !== "message") return;
-    if (body?.data?.type !== "chat") return; // Solo texto
+    // Soportar ambos formatos de evento
+    const event = body?.event;
+    if (!event) return;
+    if (!["messages.received", "messages.upsert", "message"].includes(event)) return;
 
-    // Ignorar mensajes propios (los que envía el bot)
-    if (body?.data?.fromMe) return;
+    // Extraer datos según el formato
+    let phone, texto, fromMe;
 
-    const phone = body.data.from.replace("@c.us", "");
-    const texto = body.data.body;
+    if (body?.data?.messages) {
+      // Formato nuevo WaSenderAPI
+      const msg = body.data.messages;
+      fromMe = msg?.key?.fromMe;
+      if (fromMe) return;
+      phone = msg?.key?.cleanedSenderPn || msg?.key?.remoteJid?.replace("@s.whatsapp.net", "").replace("@c.us", "");
+      texto = msg?.messageBody || msg?.message?.conversation || msg?.message?.extendedTextMessage?.text;
+    } else if (body?.data?.from) {
+      // Formato alternativo
+      fromMe = body?.data?.fromMe;
+      if (fromMe) return;
+      phone = body.data.from.replace("@c.us", "").replace("@s.whatsapp.net", "");
+      texto = body.data.body || body.data.text;
+    }
 
+    if (!phone || !texto) return;
     console.log(`📩 Mensaje de +${phone}: ${texto}`);
 
-    // Obtener respuesta de Claude
     const respuesta = await procesarMensaje(phone, texto);
 
-    // Detectar comandos especiales en la respuesta
     if (respuesta.includes("[DEMO_SOLICITADA]")) {
-      const respuestaLimpia = respuesta.replace("[DEMO_SOLICITADA]", "").trim();
-      await sendMessage(phone, respuestaLimpia);
-      await sendMessage(
-        phone,
-        `⏳ Estoy activando tu demo ahora mismo. En unos minutos te mando tus credenciales para que pruebes. ¡Esperate tantito! 🙌`
-      );
-      // Notificar al dueño para activar la demo manualmente
-      await notificarDuenio(phone, "🎯 *DEMO SOLICITADA*\n\nEste cliente quiere probar el servicio. Activale la demo de 6 horas y mandales las credenciales.");
+      const limpia = respuesta.replace("[DEMO_SOLICITADA]", "").trim();
+      await sendMessage(phone, limpia);
+      await sendMessage(phone, "⏳ Activando tu demo ahora mismo. En unos minutos te mando tus credenciales. ¡Esperame tantito! 🙌");
+      await notificarDuenio(phone, "🎯 *DEMO SOLICITADA*\nEste cliente quiere probar. Activale la demo de 6 horas.");
     } else if (respuesta.includes("[NOTIFICAR_DUEÑO]")) {
-      const respuestaLimpia = respuesta.replace("[NOTIFICAR_DUEÑO]", "").trim();
-      await sendMessage(phone, respuestaLimpia);
-      await notificarDuenio(phone, "💰 *CLIENTE LISTO PARA COMPRAR*\n\nEscríbele para cerrar la venta y cobrar.");
+      const limpia = respuesta.replace("[NOTIFICAR_DUEÑO]", "").trim();
+      await sendMessage(phone, limpia);
+      await notificarDuenio(phone, "💰 *CLIENTE LISTO PARA COMPRAR*\nEscríbele para cerrar la venta.");
     } else {
       await sendMessage(phone, respuesta);
     }
   } catch (err) {
-    console.error("❌ Error procesando mensaje:", err);
+    console.error("❌ Error:", err.message);
   }
 });
 
-// Health check
 app.get("/", (req, res) => {
   res.json({ status: "🦁 Lion TV Bot activo", timestamp: new Date().toISOString() });
 });
 
-// ============================================================
-// 🚀 INICIAR SERVIDOR
-// ============================================================
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`🦁 Lion TV Bot corriendo en puerto ${PORT}`);
-  console.log(`📡 Webhook URL: https://TU-DOMINIO.railway.app/webhook`);
-});
+app.listen(PORT, () => console.log(`🦁 Lion TV Bot corriendo en puerto ${PORT}`));
