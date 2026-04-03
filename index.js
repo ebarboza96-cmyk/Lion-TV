@@ -1,7 +1,6 @@
 /**
  * 🤖 BOT WHATSAPP IPTV - Lion TV
  * Servidor webhook que conecta WaSenderAPI con Claude AI
- * para automatizar ventas de IPTV con notificaciones al dueño.
  */
 
 const express = require("express");
@@ -18,42 +17,38 @@ const CONFIG = {
   OWNER_PHONE: process.env.OWNER_PHONE,
 };
 
-const SYSTEM_PROMPT = `Eres un asesor de ventas experto en IPTV para Lion TV. Tu trabajo es atender clientes por WhatsApp, explicarles el servicio, ofrecerles demos gratuitas y cerrar ventas. Eres amable, entusiasta y conocedor. Hablas de forma natural y cercana.
+const SYSTEM_PROMPT = `Eres un asesor de ventas experto en IPTV para Lion TV. Atiendes clientes por WhatsApp, les explicas el servicio, ofreces demos y cierras ventas. Eres amable y natural, como un costarricense.
 
-## TU SERVICIO — Lion TV IPTV Premium
-- 📺 +5,000 canales HD y Full HD — TV nacional e internacional
-- 🎬 +50,000 películas en FHD y 4K — Netflix, HBO Max, Star+, Paramount, Disney+
-- 📡 +8,000 series completas — estrenos actualizados
-- ⚽ Deportes: Champions, LaLiga, Premier, Ligue 1, Liga Nacional, Tigo Sports, UFC, NBA, NFL, MLB, F1
-- 📱 Compatible con: Windows, Mac, Android, iOS, Smart TV, TV Box, Firestick
-- ✅ Hasta 3 dispositivos simultáneos
-- 📲 App: https://hostinghn.com/v7.apk
+SERVICIO:
+- +5,000 canales HD/FHD de todos los países
+- +50,000 películas (Netflix, HBO, Disney+, Star+, Prime)
+- +8,000 series completas y actualizadas
+- Deportes: LaLiga, Champions, Premier, Liga Nacional, UFC, NBA, NFL, F1
+- Compatible con Smart TV, TV Box, Firestick, celular, PC, iPhone
+- Hasta 3 dispositivos simultáneos
+- App: https://hostinghn.com/v7.apk
 
-## INSTALACIÓN (TV Box, Android TV, FireStick)
-1. Buscar Downloader en la tienda de apps
-2. Abrir Downloader e ingresar: https://hostinghn.com/v7.apk
+INSTALACIÓN TV Box/Firestick:
+1. Descargar Downloader
+2. Ingresar https://hostinghn.com/v7.apk
 3. Instalar y abrir la app
 4. Ingresar usuario y contraseña
 
-## PRECIOS
-₡6,000 al mes. También planes trimestrales, semestrales y anuales con descuento.
-Todos los planes incluyen hasta 3 dispositivos simultáneos.
+PRECIOS (todos incluyen 3 dispositivos):
+- 1 mes: ₡6,000 / $10
+- 3 meses + 15 días: $30
+- 5 meses + 1 MES GRATIS: $50
+- 10 meses + 2 MESES GRATIS: $100
+También hay planes de 2, 3 y 5 conexiones.
 
-Planes en dólares:
-- 1 conexión: $10/mes | $30 (3m+15d) | $50 (5m+1 gratis) | $100 (10m+2 gratis)
-- 2 conexiones: $11/mes | $33 | $55 | $110
-- 3 conexiones: $12/mes | $36 | $60 | $120
-- 5 conexiones: $16/mes | $48 | $80 | $160
+PAGO: SINPE Móvil o transferencia bancaria.
 
-## MÉTODOS DE PAGO
-SINPE Móvil y transferencia bancaria.
-
-## REGLAS
-- Sé conciso y natural, usa emojis con moderación
-- Siempre ofrece la demo ANTES de insistir con precios
-- Las demos duran 6 horas y son gratuitas
+REGLAS:
+- Sé conciso y natural
+- Siempre ofrece la demo ANTES de hablar de precios
+- Demo dura 6 horas, es gratis
 - Cuando pidan demo escribe al final: [DEMO_SOLICITADA]
-- Cuando quieran pagar escribe al final: [NOTIFICAR_DUEÑO]`;
+- Cuando quieran pagar escribe al final: [NOTIFICAR_DUENO]`;
 
 const conversations = new Map();
 
@@ -70,13 +65,16 @@ function addMessage(phone, role, content) {
 
 async function sendMessage(to, text) {
   try {
-    await axios.post(
-      "https://wasenderapi.com/api/send-text-message",
-      { sessionId: CONFIG.WASENDER_SESSION, to: to.includes("@") ? to.split("@")[0] : to, text },
+    const phone = to.replace("@s.whatsapp.net", "").replace("@c.us", "").replace("+", "");
+    console.log("Enviando mensaje a:", phone);
+    const response = await axios.post(
+      "https://wasenderapi.com/api/send-message",
+      { to: phone, text: { body: text } },
       { headers: { Authorization: `Bearer ${CONFIG.WASENDER_API_KEY}`, "Content-Type": "application/json" } }
     );
+    console.log("Mensaje enviado:", response.status);
   } catch (err) {
-    console.error("Error enviando mensaje:", err.response?.data || err.message);
+    console.error("Error enviando:", err.response?.data || err.message);
   }
 }
 
@@ -99,55 +97,51 @@ async function notificarDuenio(clientePhone, mensaje) {
   await sendMessage(CONFIG.OWNER_PHONE, `🔔 ${mensaje}\n\n📱 Cliente: +${clientePhone}`);
 }
 
-// Webhook — recibe mensajes de WaSenderAPI
 app.post("/webhook", async (req, res) => {
   res.sendStatus(200);
   try {
     const body = req.body;
-    console.log("Webhook recibido:", JSON.stringify(body).substring(0, 200));
+    console.log("Webhook recibido evento:", body?.event, "| datos:", JSON.stringify(body?.data || {}).substring(0, 150));
 
-    // Soportar ambos formatos de evento
     const event = body?.event;
     if (!event) return;
-    if (!["messages.received", "messages.upsert", "message"].includes(event)) return;
 
-    // Extraer datos según el formato
-    let phone, texto, fromMe;
+    let phone, texto;
 
     if (body?.data?.messages) {
-      // Formato nuevo WaSenderAPI
       const msg = body.data.messages;
-      fromMe = msg?.key?.fromMe;
-      if (fromMe) return;
-      phone = msg?.key?.cleanedSenderPn || msg?.key?.remoteJid?.replace("@s.whatsapp.net", "").replace("@c.us", "");
-      texto = msg?.messageBody || msg?.message?.conversation || msg?.message?.extendedTextMessage?.text;
-    } else if (body?.data?.from) {
-      // Formato alternativo
-      fromMe = body?.data?.fromMe;
-      if (fromMe) return;
-      phone = body.data.from.replace("@c.us", "").replace("@s.whatsapp.net", "");
-      texto = body.data.body || body.data.text;
+      if (msg?.key?.fromMe) return;
+      phone = msg?.key?.cleanedSenderPn || msg?.key?.remoteJid?.replace("@s.whatsapp.net","").replace("@c.us","");
+      texto = msg?.messageBody;
+    } else if (body?.data?.key) {
+      if (body?.data?.key?.fromMe) return;
+      phone = body?.data?.key?.cleanedSenderPn || body?.data?.key?.remoteJid?.replace("@s.whatsapp.net","").replace("@c.us","");
+      texto = body?.data?.messageBody || body?.data?.message?.conversation;
     }
 
-    if (!phone || !texto) return;
-    console.log(`📩 Mensaje de +${phone}: ${texto}`);
+    if (!phone || !texto || typeof texto !== 'string' || texto.trim() === '') {
+      console.log("Mensaje ignorado - phone:", phone, "texto:", texto);
+      return;
+    }
 
+    console.log("Procesando mensaje de", phone, ":", texto);
     const respuesta = await procesarMensaje(phone, texto);
+    console.log("Respuesta generada:", respuesta.substring(0, 100));
 
     if (respuesta.includes("[DEMO_SOLICITADA]")) {
       const limpia = respuesta.replace("[DEMO_SOLICITADA]", "").trim();
       await sendMessage(phone, limpia);
-      await sendMessage(phone, "⏳ Activando tu demo ahora mismo. En unos minutos te mando tus credenciales. ¡Esperame tantito! 🙌");
-      await notificarDuenio(phone, "🎯 *DEMO SOLICITADA*\nEste cliente quiere probar. Activale la demo de 6 horas.");
-    } else if (respuesta.includes("[NOTIFICAR_DUEÑO]")) {
-      const limpia = respuesta.replace("[NOTIFICAR_DUEÑO]", "").trim();
+      await sendMessage(phone, "⏳ Activando tu demo ahora. En unos minutos te mando las credenciales 🙌");
+      await notificarDuenio(phone, "🎯 DEMO SOLICITADA - Activale demo de 6h");
+    } else if (respuesta.includes("[NOTIFICAR_DUENO]")) {
+      const limpia = respuesta.replace("[NOTIFICAR_DUENO]", "").trim();
       await sendMessage(phone, limpia);
-      await notificarDuenio(phone, "💰 *CLIENTE LISTO PARA COMPRAR*\nEscríbele para cerrar la venta.");
+      await notificarDuenio(phone, "💰 CLIENTE LISTO PARA COMPRAR");
     } else {
       await sendMessage(phone, respuesta);
     }
   } catch (err) {
-    console.error("❌ Error:", err.message);
+    console.error("Error general:", err.message);
   }
 });
 
