@@ -1,6 +1,6 @@
 /**
  * 🤖 BOT WHATSAPP IPTV - Lion TV
- * Servidor webhook que conecta WaSenderAPI con Claude AI
+ * Conecta WaSenderAPI con Claude AI para ventas de IPTV
  */
 
 const express = require("express");
@@ -17,7 +17,7 @@ const CONFIG = {
   OWNER_PHONE: process.env.OWNER_PHONE,
 };
 
-const SYSTEM_PROMPT = `Eres un asesor de ventas experto en IPTV para Lion TV. Atiendes clientes por WhatsApp, les explicas el servicio, ofreces demos y cierras ventas. Eres amable y natural, como un costarricense.
+const SYSTEM_PROMPT = `Eres un asesor de ventas experto en IPTV para Lion TV. Atiendes clientes por WhatsApp. Eres amable y natural, como un costarricense.
 
 SERVICIO:
 - +5,000 canales HD/FHD de todos los países
@@ -34,7 +34,7 @@ INSTALACIÓN TV Box/Firestick:
 3. Instalar y abrir la app
 4. Ingresar usuario y contraseña
 
-PRECIOS (todos incluyen 3 dispositivos):
+PRECIOS:
 - 1 mes: ₡6,000 / $10
 - 3 meses + 15 días: $30
 - 5 meses + 1 MES GRATIS: $50
@@ -65,14 +65,14 @@ function addMessage(phone, role, content) {
 
 async function sendMessage(to, text) {
   try {
-    const phone = to.replace("@s.whatsapp.net", "").replace("@c.us", "").replace("+", "");
-    console.log("Enviando mensaje a:", phone);
+    const phone = to.replace(/[@+]/g, '').replace('s.whatsapp.net','').replace('c.us','').trim();
+    console.log("Enviando a:", phone, "| texto:", text.substring(0,50));
     const response = await axios.post(
       "https://wasenderapi.com/api/send-message",
-      { to: phone, text: { body: text } },
+      { to: phone, text },
       { headers: { Authorization: `Bearer ${CONFIG.WASENDER_API_KEY}`, "Content-Type": "application/json" } }
     );
-    console.log("Mensaje enviado:", response.status);
+    console.log("Enviado OK:", response.status);
   } catch (err) {
     console.error("Error enviando:", err.response?.data || err.message);
   }
@@ -97,46 +97,69 @@ async function notificarDuenio(clientePhone, mensaje) {
   await sendMessage(CONFIG.OWNER_PHONE, `🔔 ${mensaje}\n\n📱 Cliente: +${clientePhone}`);
 }
 
+function extraerMensaje(body) {
+  const event = body?.event;
+  const data = body?.data;
+  
+  // Ignorar eventos de mensajes enviados por nosotros
+  if (['message.sent', 'messages.update', 'chats.update'].includes(event)) return null;
+  
+  let phone, texto, fromMe;
+  
+  // Formato messages.received / messages-personal.received
+  if (data?.messages) {
+    const msg = data.messages;
+    fromMe = msg?.key?.fromMe;
+    if (fromMe) return null;
+    phone = msg?.key?.cleanedSenderPn 
+      || msg?.key?.cleanedParticipantPn
+      || msg?.key?.remoteJid?.replace('@s.whatsapp.net','').replace('@c.us','');
+    texto = msg?.messageBody || msg?.message?.conversation || msg?.message?.extendedTextMessage?.text;
+  }
+  // Formato messages.upsert
+  else if (data?.key) {
+    fromMe = data?.key?.fromMe;
+    if (fromMe) return null;
+    phone = data?.key?.cleanedSenderPn
+      || data?.key?.remoteJid?.replace('@s.whatsapp.net','').replace('@c.us','');
+    texto = data?.messageBody || data?.message?.conversation || data?.message?.extendedTextMessage?.text;
+  }
+  // Formato alternativo con array
+  else if (Array.isArray(data)) {
+    const msg = data[0];
+    fromMe = msg?.key?.fromMe;
+    if (fromMe) return null;
+    phone = msg?.key?.cleanedSenderPn || msg?.key?.remoteJid?.replace('@s.whatsapp.net','').replace('@c.us','');
+    texto = msg?.messageBody || msg?.message?.conversation;
+  }
+  
+  if (!phone || !texto || typeof texto !== 'string' || texto.trim() === '') return null;
+  return { phone, texto };
+}
+
 app.post("/webhook", async (req, res) => {
   res.sendStatus(200);
   try {
     const body = req.body;
-    console.log("Webhook recibido evento:", body?.event, "| datos:", JSON.stringify(body?.data || {}).substring(0, 150));
-
-    const event = body?.event;
-    if (!event) return;
-
-    let phone, texto;
-
-    if (body?.data?.messages) {
-      const msg = body.data.messages;
-      if (msg?.key?.fromMe) return;
-      phone = msg?.key?.cleanedSenderPn || msg?.key?.remoteJid?.replace("@s.whatsapp.net","").replace("@c.us","");
-      texto = msg?.messageBody;
-    } else if (body?.data?.key) {
-      if (body?.data?.key?.fromMe) return;
-      phone = body?.data?.key?.cleanedSenderPn || body?.data?.key?.remoteJid?.replace("@s.whatsapp.net","").replace("@c.us","");
-      texto = body?.data?.messageBody || body?.data?.message?.conversation;
-    }
-
-    if (!phone || !texto || typeof texto !== 'string' || texto.trim() === '') {
-      console.log("Mensaje ignorado - phone:", phone, "texto:", texto);
-      return;
-    }
-
-    console.log("Procesando mensaje de", phone, ":", texto);
+    console.log("Evento:", body?.event, "| raw:", JSON.stringify(body).substring(0, 300));
+    
+    const result = extraerMensaje(body);
+    if (!result) return;
+    
+    const { phone, texto } = result;
+    console.log("✅ Procesando de", phone, ":", texto);
+    
     const respuesta = await procesarMensaje(phone, texto);
-    console.log("Respuesta generada:", respuesta.substring(0, 100));
-
+    
     if (respuesta.includes("[DEMO_SOLICITADA]")) {
       const limpia = respuesta.replace("[DEMO_SOLICITADA]", "").trim();
       await sendMessage(phone, limpia);
       await sendMessage(phone, "⏳ Activando tu demo ahora. En unos minutos te mando las credenciales 🙌");
-      await notificarDuenio(phone, "🎯 DEMO SOLICITADA - Activale demo de 6h");
+      await notificarDuenio(phone, "🎯 DEMO SOLICITADA\nActivale demo de 6h a este cliente.");
     } else if (respuesta.includes("[NOTIFICAR_DUENO]")) {
       const limpia = respuesta.replace("[NOTIFICAR_DUENO]", "").trim();
       await sendMessage(phone, limpia);
-      await notificarDuenio(phone, "💰 CLIENTE LISTO PARA COMPRAR");
+      await notificarDuenio(phone, "💰 CLIENTE LISTO PARA COMPRAR\nEscríbele para cerrar la venta.");
     } else {
       await sendMessage(phone, respuesta);
     }
@@ -150,4 +173,4 @@ app.get("/", (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🦁 Lion TV Bot corriendo en puerto ${PORT}`));
+app.listen(PORT, () => console.log(`🦁 Lion TV Bot en puerto ${PORT}`));
