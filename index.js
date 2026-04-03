@@ -37,7 +37,10 @@ PRECIOS (todos incluyen 3 pantallas simultáneas):
 - 6 meses: ₡35,000
 - 1 año: ₡60,000
 
-PAGO: SINPE Móvil o transferencia bancaria.
+PAGO:
+- SINPE Móvil al 6006-6642 (Emmanuel Barboza)
+- Pedíle al cliente que ponga su nombre en la descripción del SINPE
+- Cuando el cliente confirme el pago, avisale: [NOTIFICAR_DUENO]
 
 ═══════════════════════════════
 📲 GUÍAS DE INSTALACIÓN POR DISPOSITIVO
