@@ -34,5 +34,35 @@
   "file": "lava_A106_acabados.svg",
   "title": "Acabados y puertas",
   "order": 106
+ },
+ {
+  "id": "A201",
+  "file": "lava_A201_cielos.svg",
+  "title": "Cielos reflejados e iluminación",
+  "order": 201
+ },
+ {
+  "id": "A301",
+  "file": "lava_A301_cortes.svg",
+  "title": "Cortes y elevaciones",
+  "order": 301
+ },
+ {
+  "id": "M101",
+  "file": "lava_M101_hidrosanitario.svg",
+  "title": "Hidrosanitario (esquema)",
+  "order": 401
+ },
+ {
+  "id": "M102",
+  "file": "lava_M102_gas_extraccion.svg",
+  "title": "Gas, extracción, aire de reposición y supresión (esquema)",
+  "order": 402
+ },
+ {
+  "id": "E101",
+  "file": "lava_E101_electrico.svg",
+  "title": "Eléctrico (esquema) y cuadro de cargas preliminar",
+  "order": 501
  }
 ]

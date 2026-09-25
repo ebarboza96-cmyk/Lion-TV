@@ -2,7 +2,7 @@
 
 Everything is derived from data/existing.json + data/layout.json:
   * accessible route  D-ENT -> caja C4 -> accessible tables (tables[].accessible) -> salida;
-  * clear widths measured with shapely on the free floor (premises - walls - columns - equipment - furniture);
+  * clear widths measured geometrically (shapely) on the free floor (premises - walls - columns - equipment - furniture);
   * Ø1.50 turning circles drawn ONLY where a free disk fits (erosion of the free floor by 0.75 m);
   * 0.80 x 1.20 approach spaces (the chair on the aisle side is removed; a neighbour chair is slid if needed);
   * walking distance (grid Dijkstra) from the farthest seat / farthest work point to D-ENT -> budget left for the
@@ -256,16 +256,36 @@ def analyse(ex, lay):
     nw = next((w for w in lay.get('new_walls', []) if w.get('role') == 'kitchen_dining_partition'), None)
     bar = [R(e['rect']) for e in lay['equipment'] if e.get('cat') == 'bar' and not e.get('stack_with') and not e.get('overhead')]
     A['w_bar'] = None
+    A['bar_niche'] = None
     if nw and bar:
         bu = unary_union(bar)
         nx1 = max(nw['rect'][0], nw['rect'][2])
         xm = (nx1 + bu.bounds[0]) / 2
+        # fixtures standing in the passage at its dead end (e.g. the bar hand-wash C5 against the partition): the
+        # through-passage is measured beside them; the niche in front of them is reported apart (single-user spot)
+        strip = box(nx1, bu.bounds[1], bu.bounds[0], bu.bounds[3])
+        niche = [e for e in lay['equipment'] if e.get('cat') != 'bar' and not e.get('overhead') and not e.get('stack_with')
+                 and R(e['rect']).intersection(strip).area > 1e-4
+                 and min(R(e['rect']).bounds[1] - bu.bounds[1], bu.bounds[3] - R(e['rect']).bounds[3]) < 0.05]
+        y_lo, y_hi = bu.bounds[1] + 0.05, bu.bounds[3] - 0.05
+        for e in niche:
+            gy0, gy1 = R(e['rect']).bounds[1], R(e['rect']).bounds[3]
+            if gy0 - bu.bounds[1] < 0.05:
+                y_lo = max(y_lo, gy1 + 0.02)
+            else:
+                y_hi = min(y_hi, gy0 - 0.02)
         samp = []
-        for yy in np.arange(bu.bounds[1] + 0.05, bu.bounds[3] - 0.05 + 1e-9, 0.01):
+        for yy in np.arange(y_lo, y_hi + 1e-9, 0.01):
             w, seg = _xsec(free, (xm, float(yy)), 'x')
             if seg is not None:
                 samp.append((w, float(yy), seg))
         A['w_bar'], A['w_bar_y'], A['w_bar_seg'] = _median_min(samp)
+        if niche:
+            e = niche[0]
+            gy = (R(e['rect']).bounds[1] + R(e['rect']).bounds[3]) / 2
+            w, seg = _xsec(free, (xm, gy), 'x')
+            if seg is not None:
+                A['bar_niche'] = {'id': e['id'], 'label': e.get('plan_label') or e.get('label', ''), 'w': w, 'seg': seg, 'y': gy}
 
     # ---- accessible tables: choose the approach chairs that keep the aisle widest
     acc = [t for t in lay.get('tables', []) if t.get('accessible')]
@@ -386,6 +406,15 @@ def analyse(ex, lay):
     k = int(np.argmax(np.where(fin, dist, -1)))
     A['d_far'] = (float(dist[k]), (float(px[k]), float(py[k])))
     return A
+
+
+def _staff_door(lay, o):
+    """True when the door opening lies wholly inside the staff zones (kitchen / washing / cold prep)."""
+    from shapely.geometry import Polygon
+    stf = unary_union([Polygon(z['poly']) for z in lay.get('zones', []) if z['id'] in ('A', 'B', 'E', 'W')])
+    pub = unary_union([Polygon(z['poly']) for z in lay.get('zones', []) if z['id'] in ('C', 'D')])
+    g = R(o['rect']).buffer(0.3)
+    return g.intersection(stf).area > 0 and g.intersection(pub).area < 1e-6
 
 
 # ----------------------------------------------------------------------------------------------- drawing helpers
@@ -624,6 +653,12 @@ def sheets(ex, lay, val):
         x0_, _, x1_, _ = A['w_bar_seg'].bounds
         s.dim((x0_, A['w_bar_y']), (x1_, A['w_bar_y']), 0.0, f"{A['w_bar']:.2f}", color=OKC if A['w_bar'] >= REQ_INT else BAD, size=1.8)
         g.append(mtext(sx((x0_ + x1_) / 2), sy(A['w_bar_y']) + 3.4, ['paso de', 'personal', f'≥ {REQ_INT:.2f}'], 1.45, weight='700', fill='#444'))
+    nch = A.get('bar_niche')
+    if nch:
+        x0_, _, x1_, _ = nch['seg'].bounds
+        s.dim((x0_, nch['y']), (x1_, nch['y']), 0.0, f"{nch['w']:.2f}", color=WARN, size=1.6)
+        g.append(mtext(sx((x0_ + x1_) / 2) + 16.5, sy(nch['y']) + 0.2, [f"nicho {nch['id']} ({nch['label'].lower()})", 'fondo sin paso · 1 persona'],
+                       1.35, weight='700', fill=WARN, anchor='start', weights=['800', '600']))
 
     # --- door tags
     dent = A['dent']
@@ -644,11 +679,12 @@ def sheets(ex, lay, val):
         x0, y0, x1, y1 = o['rect']
         cond = o.get('conditional')
         ok = clear >= REQ_DOOR
-        colr = '#777' if cond else (OKC if ok else BAD)
+        staff_d = _staff_door(lay, o)
+        colr = '#777' if cond else (OKC if ok else (WARN if staff_d else BAD))
         lines = [f"{o.get('label', o['id'])} · {o.get('width', 0.9):.2f} nominal" + (' (condicional)' if cond else ''),
                  f"libre ≈{clear:.2f}* {'≥' if ok else '<'} {REQ_DOOR:.2f}"]
         if not ok and not cond:
-            lines.append('AJUSTAR: vano ≈1.00')
+            lines.append('VERIFICAR (personal): vano ≈1.00' if staff_d else 'AJUSTAR: vano ≈1.00')
         if o.get('type') == 'double_acting_door':
             tx, ty = sx(x1) + 27.0, sy((y0 + y1) / 2) + 1.0
         else:
@@ -712,7 +748,14 @@ def sheets(ex, lay, val):
     circ_ok = [c['name'] for c in A['circles'] if not c['closed_only']]
     circ_cl = [c['name'] for c in A['circles'] if c['closed_only']]
     acc_ids = ' y '.join(o['table']['id'] for o in A['acc'])
-    p1 = next(((o, c) for o, c in A['doors'] if o.get('type') == 'double_acting_door'), None)
+    dr = [(o, c) for o, c in A['doors'] if not o.get('conditional')]
+    d_pub_bad = [o.get('label', o['id']) for o, c in dr if c < REQ_DOOR and not _staff_door(lay, o)]
+    d_stf_bad = [o.get('label', o['id']) for o, c in dr if c < REQ_DOOR and _staff_door(lay, o)]
+    d_txt = '; '.join(f"{o.get('label', o['id'])} ≈{c:.2f}" + (' (personal)' if _staff_door(lay, o) else '') for o, c in dr)
+    st140 = ('AJUSTAR ' + ', '.join(d_pub_bad), BAD, '800') if d_pub_bad else (
+        ('VERIFICAR · ' + ', '.join(d_stf_bad) + ' < 0.90', WARN, '800') if d_stf_bad else ('VERIFICAR', WARN, '800'))
+    nch = A.get('bar_niche')
+    ok141 = A['w_main'] >= REQ_GEN and (A['w_bar'] is None or A['w_bar'] >= REQ_INT)
     rows = [
         [('Ley 7600 · DE 26831-MP arts. 103–104 (verificar)', '#222', '700'),
          'Local privado abierto al público: la revisión de planos (APC) fiscaliza la accesibilidad.',
@@ -720,12 +763,13 @@ def sheets(ex, lay, val):
          ('VERIFICAR', WARN, '800')],
         [('Art. 140 Puertas (verificar)', '#222', '700'),
          'Ancho libre ≥ 0.90; espacio libre ≥ 0.45 junto al lado opuesto a las bisagras.',
-         f"D-ENT ≈{A['dent_clear']:.2f}/hoja (est.)" + (f"; P-1 ≈{p1[1]:.2f} (est.)" if p1 else '') + '. * = hoja − 0.06 (espesor + tope).',
-         ('D-ENT VERIFICAR · P-1 AJUSTAR' if p1 and p1[1] < REQ_DOOR else 'VERIFICAR', BAD if p1 and p1[1] < REQ_DOOR else WARN, '800')],
+         f"D-ENT ≈{A['dent_clear']:.2f}/hoja" + (f"; {d_txt}" if d_txt else '') + f'. * Libre estimado = hoja − {LEAF_LOSS:.2f} (espesor + tope).',
+         st140],
         [('Art. 141 Pasillos (verificar)', '#222', '700'),
          f'Pasillo general ≥ {REQ_GEN:.2f}; pasillo interior ≥ {REQ_INT:.2f}.',
-         f"Salón {A['w_main']:.2f}; frente a caja {A['w_caja']:.2f}; paso barra/NW-1 {A['w_bar']:.2f} (personal).",
-         ('CUMPLE EN PLANTA*', OKC, '800')],
+         f"Salón {A['w_main']:.2f}; frente a caja {A['w_caja']:.2f}; paso barra/NW-1 {A['w_bar']:.2f} (personal)"
+         + (f"; nicho {nch['id']} {nch['w']:.2f} al fondo sin paso (uso puntual)." if nch else '.'),
+         ('PREVISTO EN PLANTA*', OKC, '800') if ok141 else ('AJUSTAR', BAD, '800')],
         [('Art. 142 Umbrales (verificar)', '#222', '700'),
          'Eliminar umbrales; si son indispensables: ≤ 0.02, biselados.',
          'D-ENT: niveles interior / exterior VERIFY ON SITE (detalle 4). Transición de pisos en P-1 a nivel (A-106).',
@@ -737,14 +781,14 @@ def sheets(ex, lay, val):
         [('Art. 148 Mostradores (verificar)', '#222', '700'),
          'Mostradores y mesas (comedor) h 0.80; ventanillas h 0.90.',
          f"Caja C4 h {A['caja_h']:.2f} × {A['caja_len']:.2f} de frente (detalle 1); barra y pase h 1.05 = servicio.",
-         ('CUMPLE EN PLANTA*', OKC, '800')],
+         ('PREVISTO EN PLANTA*', OKC, '800') if A['caja_h'] <= 0.80 + 1e-6 else ('AJUSTAR', BAD, '800')],
         [('Referencia (artículo CR no confirmado)', '#666', '700'),
          f'Mesa accesible h 0.76–0.80; libre inferior ≥ 0.70; aproximación {APP_W:.2f} × {APP_L:.2f}.',
          f'{acc_ids}: se retira la silla del pasillo (ver detalles 2 y 3).',
          ('PROPUESTO', ACC, '800')],
         [('Referencia (artículo CR no confirmado)', '#666', '700'),
          'Giro Ø1.50 libre en cambios de dirección y frente a puertas.',
-         'Cabe (shapely): ' + (', '.join(circ_ok) if circ_ok else '—') + '.'
+         'Cabe (medido en planta): ' + (', '.join(circ_ok) if circ_ok else '—') + '.'
          + (f" {', '.join(circ_cl)}: sólo con hojas cerradas." if circ_cl else '') + ' En el pasillo entre mesas no cabe.',
          ('PARCIAL', WARN, '800')],
     ]
@@ -754,7 +798,7 @@ def sheets(ex, lay, val):
                      f'Paso libre con usuarios en silla de ruedas en {acc_ids} a la vez.',
                      f"{res[('ALL', KNEE)]:.2f} m con {KNEE:.2f} bajo la mesa · {res[('ALL', 0.0)]:.2f} m con el rectángulo fuera de la mesa."
                      + (f" Alternativa: designar {' o '.join(alt[1])} en lugar de {alt[0]}." if alt and alt[1] else ''),
-                     ('AJUSTAR' if res[('ALL', KNEE)] < REQ_INT else 'CUMPLE*', BAD if res[('ALL', KNEE)] < REQ_INT else OKC, '800')])
+                     ('AJUSTAR' if res[('ALL', KNEE)] < REQ_INT else 'PREVISTO*', BAD if res[('ALL', KNEE)] < REQ_INT else OKC, '800')])
     tx0, ty0 = 240.0, 179.0
     svg, yend = _table(tx0, ty0, [('Norma / artículo', 33), ('Requisito', 53), ('Medido / propuesto en planta', 72), ('Estado', 28)],
                        rows, size=1.7, lh=2.1, pad=0.85, head=1.7,
@@ -767,15 +811,28 @@ def sheets(ex, lay, val):
     # restroom box
     ry = yend + 4.2
     d_seat, seat_id = A['d_seat']
+    d_far, p_far = A['d_far']
+    src_txt = 'recorrido a pie medido en planta'
+    try:   # same measured egress lengths as A-104 / documento 03 (one computation per build, memoised in s104)
+        import importlib
+        r104 = importlib.import_module('sheets.s104_seguridad').compute_cached(ex, lay, val)
+        pp = {p_['id']: p_ for p_ in r104['paths']}
+        if 'E5' in pp:
+            d_seat, seat_id = pp['E5']['length'], pp['E5']['name'].split('(')[-1].rstrip(')')
+        far_ = max((p_ for p_ in r104['paths'] if p_['id'] != 'E5'), key=lambda q: q['length'], default=None)
+        if far_:
+            d_far, p_far = far_['length'], far_.get('from_pt') or far_['pts'][0]
+        src_txt = 'recorridos E5 / E1 de A-104'
+    except Exception as err:   # noqa: BLE001 — fall back to this sheet's own grid measurement
+        print('A-105: A-104 egress figures unavailable, using own measurement:', err)
     if '#' in str(seat_id):
         bq, n_ = str(seat_id).split('#', 1)
         seat_id = f'{bq}, puesto {n_}'
-    d_far, p_far = A['d_far']
     rlines = [
         ('!', 'SERVICIOS SANITARIOS = COMUNES DEL CENTRO COMERCIAL (H / M + ACCESIBLE) · VERIFY ON SITE'),
-        ('', f'Recorrido máximo hasta el servicio sanitario {MAX_WC:.0f} m (Reglamento de Construcciones INVU — verificar artículo).'),
+        ('', f'Recorrido máximo hasta el servicio sanitario {MAX_WC:.0f} m (Reglamento de Construcciones INVU — verificar artículo); {src_txt}.'),
         ('', f'Clientes: asiento más lejano ({seat_id}) → D-ENT ≈ {d_seat:.1f} m  ⇒  baño común a ≤ {MAX_WC - d_seat:.1f} m de D-ENT por el pasillo.'),
-        ('', f'Personal: punto más lejano (X {p_far[0]:.1f} · Y {p_far[1]:.1f}) → D-ENT ≈ {d_far:.1f} m  ⇒  baño común a ≤ {MAX_WC - d_far:.1f} m de D-ENT.'),
+        ('', f'Personal: punto más lejano (X {p_far[0]:.1f} · Y {p_far[1]:.1f}) → D-ENT ≈ {d_far:.2f} m  ⇒  baño común a ≤ {MAX_WC - d_far:.1f} m de D-ENT.'),
         ('', 'Requisitos a acreditar: autorización escrita de la administración (uso por clientes y personal en todo el horario),'),
         ('', 'capacidad según CIHSE Tabla 5.3 sumando el aforo de LAVA (49), cubículo accesible art. 143 y ruta accesible hasta él.'),
     ]
@@ -794,7 +851,7 @@ def sheets(ex, lay, val):
         (lambda x, y: f'<rect x="{x}" y="{y}" width="10" height="3.4" fill="url(#acc-app)" stroke="{ACC}" stroke-width="0.35" stroke-dasharray="1 0.5"/>',
          f'Espacio de aproximación {APP_W:.2f} × {APP_L:.2f}'),
         (lambda x, y: f'<circle cx="{x+5}" cy="{y+1.7}" r="2.2" fill="{ACC}" fill-opacity="0.08" stroke="{ACC}" stroke-width="0.4"/>',
-         'Giro Ø1.50 libre (verificado con shapely)'),
+         'Giro Ø1.50 libre (verificado en planta)'),
         (lambda x, y: f'<circle cx="{x+5}" cy="{y+1.7}" r="2.2" fill="{WARN}" fill-opacity="0.08" stroke="{WARN}" stroke-width="0.4" stroke-dasharray="1 0.6"/>',
          'Giro Ø1.50 sólo con hojas de D-ENT cerradas'),
         (lambda x, y: f'<rect x="{x}" y="{y}" width="10" height="3.4" fill="{ACC}" fill-opacity="0.07" stroke="none"/>',
@@ -814,13 +871,15 @@ def sheets(ex, lay, val):
              ('Ruta entrada → caja (cuello medido)', f"{A['bn_route']:.2f}"),
              ('Frente a caja C4 (libre)', f"{A['w_caja']:.2f}"),
              ('Paso barra / NW-1, personal (≥ 0.90)', f"{A['w_bar']:.2f}")]
+    if A.get('bar_niche'):
+        wrows.append((f"Nicho {A['bar_niche']['id']} al fondo de la barra (sin paso)", f"{A['bar_niche']['w']:.2f}"))
     for o in A['acc']:
         tid = o['table']['id']
         wrows.append((f'Con silla de ruedas en {tid} (0.45 bajo mesa)', f"{res[(tid, KNEE)]:.2f}"))
     for r in m.get('routes', []):
         if r.get('kind') in ('clean', 'dirty'):
             lab = r.get('label', r['id']).replace('puerta ', '').replace('pasillo limpio → ', '')
-            lab = lab if len(lab) <= 30 else lab[:29] + '…'
+            lab = lab if len(lab) <= 46 else lab[:45] + '…'
             wrows.append((f"Personal · {lab}", f"{r['min_width']:.2f}"))
     drows = [(f"D-ENT {A['dent_width']:.2f} · hoja {A['dent_leaf']:.2f} (libre est.)", f"≈{A['dent_clear']:.2f}"),
              ('D-ENT ambas hojas abiertas (est.)', f"≈{A['dent_clear_both']:.2f}")]
@@ -831,7 +890,7 @@ def sheets(ex, lay, val):
         'Citas (fragmentos, no texto primario — verificar en SCIJ): Ley 7600;',
         'DE 26831-MP arts. 103–104, 140 puertas, 141 pasillos, 142 umbrales,',
         '143 sanitarios, 148 mostradores; INVU 2018 art. 13 accesibilidad.',
-        'Anchos: medidos con shapely sobre el piso libre (muros, columnas,',
+        'Anchos: medidos en planta sobre el piso libre (muros, columnas,',
         'equipos, mesas y sillas en su posición). Giros Ø1.50: sólo donde el',
         'disco libre cabe (erosión 0.75 m del piso libre).',
         f'Mesas accesibles {acc_ids}: h 0.76–0.80, libre inferior ≥ 0.70, sin',
@@ -840,11 +899,14 @@ def sheets(ex, lay, val):
         '!D-ENT abre hacia adentro (aforo 49 < 50, NFPA 101): recomendado',
         '!invertir el giro hacia afuera sin invadir el pasillo común — VERIFY',
         '!con la administración. Umbral ≤ 0.02 biselado: VERIFY ON SITE.',
-        '!P-1 (vaivén 0.90 nominal) da < 0.90 libres: ampliar vano a ≈1.00.',
         'Pisos del salón antideslizantes y sin cambios de nivel (A-106).',
         'Rotular mesas accesibles y caja con el símbolo internacional.',
         'Señalización táctil / contraste en vidrios de fachada: recomendado.',
     ]
+    for o, c in A['doors']:
+        if c < REQ_DOOR and not o.get('conditional'):
+            notes.append(f"!{o.get('label', o['id'])} ({o.get('width', 0.9):.2f} nominal) da ≈{c:.2f} libres < {REQ_DOOR:.2f}: ampliar vano a ≈1.00"
+                         + (' o justificar (área de personal).' if _staff_door(lay, o) else '.'))
     if len(A['acc']) >= 2 and res[('ALL', KNEE)] < REQ_INT:
         alt = A.get('alt')
         notes += [f"!{acc_ids} quedan enfrentadas: con ambas ocupadas por silla de",

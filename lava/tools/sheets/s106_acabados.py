@@ -6,17 +6,18 @@ Finishes plan derived from data/existing.json + data/layout.json:
   * wall finish (MU-xx) computed per wall face: each room boundary (zone ∩ premises − walls) is sampled every 5 cm, the
     point just outside the face is tested against the solid walls; the face gets MU-02 near fire equipment, MU-03 where
     the slat-wall decor is, MU-04 on the north face of the dining room, MU-05 on the kitchen/dining partition, etc.;
-  * skirting (ZO-xx) and ceiling (CI-xx) per zone, proposed floor drains (SP-x) derived from the wet equipment;
+  * skirting (ZO-xx) and ceiling (CI-xx) per zone, proposed floor drains (FD-x, same as M-101);
   * door / window schedule (D-ENT, P-1, PS-1, existing opening, NW-1 glazing, NW-2 panel, storefront and south window).
 Codes: PI floors, MU walls, ZO skirting / media caña, CI ceilings ("P-1" is a DOOR, never a finish code).
 """
 import math
+import re
 
 from shapely.geometry import Point, Polygon, box
 from shapely.geometry.polygon import orient
 from shapely.ops import unary_union
 
-from lavageo import R, item_lists, new_openings_geom, premises, standing_existing_walls
+from lavageo import R, door_swing_poly, item_lists, new_openings_geom, premises, standing_existing_walls
 from plan_svg import COL, LEGEND_WALLS, MONO, S, VIEW, Sheet, f, poly_el, sx, sy, text, tw
 
 KITCHEN = ('A', 'B', 'E', 'W')
@@ -59,15 +60,15 @@ def _specs(ex):
         ('MU-04', 'MURO', 'Aspecto concreto visto con textura de encofrado de tabla (micro-cemento o panel cementicio texturizado), '
                           'sellador mate: muro norte de salón y barra.'),
         ('MU-05', 'MURO', 'Base de NW-1 cara salón (h 1.00): placa cementicia incombustible con micro-cemento gris oscuro; rótulo LAVA '
-                          'y nicho de leña según decoración.'),
+                          'y relieve decorativo de leños incombustible (sin hueco) según decoración.'),
         ('MU-06', 'MURO', 'Pintura acrílica lavable mate gris cálido claro: resto de paramentos de salón y barra (columnas, muro de '
                           'escalera, remates).'),
         ('CI-01', 'CIELO', 'Cielo liso lavable sin juntas abiertas: gypsum RH con pintura epóxica blanca o panel sanitario; sin cielo '
                            'modular poroso; incombustible junto a campanas y ductos (holguras NFPA 96 — verificar). Altura VERIFY ON SITE.'),
         ('CI-02', 'CIELO', f'Cielo expuesto: losa, vigas, ductos, bandejas y tuberías pintados negro mate (near-black); luminarias '
                            f'colgantes. Altura libre supuesta {h:.2f} — VERIFY ON SITE.'),
-        ('SP', 'SIFÓN', 'Sifón de piso con rejilla inox y trampa (propuesto): ubicación, diámetro y pendientes por ingeniería sanitaria '
-                        '(CIHSE) — VERIFY. Existentes WP: reutilizar si el levantamiento lo confirma.'),
+        ('FD', 'SIFÓN', 'Coladera / sifón de piso FD-n con rejilla inox y trampa (propuesto, mismo trazado que M-101): ubicación, diámetro '
+                        'y pendientes por ingeniería sanitaria (CIHSE) — VERIFY. Existentes WP: reutilizar si el levantamiento lo confirma.'),
         ('TR', 'TRANSICIÓN', 'Cambio PI-01 / PI-03 en P-1 a nivel: perfil inox biselado ≤ 0.02 (art. 142 DE 26831-MP — verificar).'),
     ]
 
@@ -247,7 +248,21 @@ def _wall_runs(ex, lay, rooms, solid, nwg):
 
 
 def _drains(ex, lay):
-    """Proposed floor drains derived from the wet / hot equipment (positions to be engineered)."""
+    """Proposed floor drains: the same FD-n as the plumbing scheme M-101 (sheets.s401_mecanica.plumbing_model) so both
+    sheets agree; if that module is unavailable, fall back to drains derived here from the wet / hot equipment."""
+    try:
+        import importlib
+        pm = importlib.import_module('sheets.s401_mecanica').plumbing_model(ex, lay)
+        out = [{'p': tuple(pt), 'why': zone, 'id': fid, 'to': to} for fid, pt, zone, to, _g in pm.get('FD', [])]
+        if out:
+            return out
+    except Exception as err:   # noqa: BLE001
+        print('A-106: M-101 floor drains unavailable, deriving locally:', err)
+    return _drains_local(ex, lay)
+
+
+def _drains_local(ex, lay):
+    """Fallback: floor drains derived from the wet / hot equipment (positions to be engineered)."""
     eq = lay.get('equipment', [])
     free_obs = unary_union([R(e['rect']) for e in eq if not e.get('overhead')])
     out = []
@@ -286,12 +301,13 @@ def _drains(ex, lay):
             if e.get('key') == key:
                 add(front_pt(e['rect'], e.get('front'), 0.45), why)
     for i, d in enumerate(out, 1):
-        d['id'] = f'SP-{i}'
+        d['id'] = f'FD-{i}'
     return out
 
 
-def _place_box(poly_pref, cx, cy, w, h, busy, step=0.1, rad=2.5):
-    """Best centre for a w×h (m) box near (cx, cy): inside poly_pref, least overlap with busy."""
+def _place_box(poly_pref, cx, cy, w, h, busy, step=0.1, rad=2.5, hard=None):
+    """Best centre for a w×h (m) box near (cx, cy): inside poly_pref, least overlap with busy (and much less with `hard`:
+    drains, door swings, tags already placed)."""
     best = None
     k = int(rad / step)
     for i in range(-k, k + 1):
@@ -300,6 +316,8 @@ def _place_box(poly_pref, cx, cy, w, h, busy, step=0.1, rad=2.5):
             b = box(x - w / 2, y - h / 2, x + w / 2, y + h / 2)
             out_ = b.difference(poly_pref).area
             sc = b.intersection(busy).area * 3 + out_ * 6 + 0.02 * math.hypot(i * step, j * step)
+            if hard is not None:
+                sc += b.intersection(hard).area * 40
             if best is None or sc < best[0]:
                 best = (sc, x, y)
     return best[1], best[2]
@@ -373,7 +391,14 @@ def sheets(ex, lay, val):
 
     # busy geometry for label placement (model coordinates)
     items = unary_union([gg for _, _, gg in item_lists(lay)])
-    busy = unary_union([items, solid] + [Point(dr['p']).buffer(0.25) for dr in drains])
+    swings = [door_swing_poly(o) for o in lay.get('new_openings', [])]
+    for o in lay.get('new_openings', []):      # double-acting door: both quarter swings
+        if o.get('type') == 'double_acting_door' and o.get('rect'):
+            x0, y0, x1, y1 = o['rect']
+            if (x1 - x0) < (y1 - y0):
+                swings += [box((x0 + x1) / 2 - (y1 - y0), y0, (x0 + x1) / 2 + (y1 - y0), y1)]
+    hard = unary_union([Point(dr['p']).buffer(0.25) for dr in drains] + [sw_ for sw_ in swings if sw_ is not None])
+    busy = unary_union([items, solid, hard])
 
     # ---- wall code labels: longest run per (zone, code)
     g = ['<g id="wall-labels">']
@@ -496,7 +521,7 @@ def sheets(ex, lay, val):
             continue
         zp = Polygon(z['poly']).intersection(prem)
         at = z.get('label_at') or [zp.representative_point().x, zp.representative_point().y]
-        cx, cy = _place_box(zp.buffer(-0.05), at[0], at[1], TW / S, TH / S, busy)
+        cx, cy = _place_box(zp.buffer(-0.05), at[0], at[1], TW / S, TH / S, busy, hard=unary_union([hard] + tag_boxes))
         busy = busy.union(box(cx - TW / S / 2, cy - TH / S / 2, cx + TW / S / 2, cy + TH / S / 2))
         X0, Y0 = sx(cx) - TW / 2, sy(cy) - TH / 2
         colr = z.get('color', '#333')
@@ -549,7 +574,7 @@ def sheets(ex, lay, val):
         leg.append((_shift(_wall_swatch(c)), f"{c} · {names[c]}"))
     leg.append((lambda x, y: (f'<circle cx="{x+5}" cy="{y+1.6}" r="1.6" fill="#fff" stroke="#17737a" stroke-width="0.35"/>'
                               f'<path d="M{x+4},{y+1.6} H{x+6} M{x+5},{y+0.6} V{y+2.6}" stroke="#17737a" stroke-width="0.2"/>'),
-                'SP · sifón de piso propuesto'))
+                'FD · coladera / sifón de piso (esquema M-101)'))
     leg.append((lambda x, y: f'<rect x="{x+3.8}" y="{y+0.4}" width="2.4" height="2.4" fill="#fff" stroke="#8a8a85" stroke-width="0.25" stroke-dasharray="0.6 0.4"/>',
                 'WP · punto húmedo / desagüe existente'))
     leg.append((lambda x, y: f'<rect x="{x+1}" y="{y}" width="8" height="3.4" rx="1.7" fill="#141210"/>', 'Puerta (ver cuadro)'))
@@ -624,6 +649,9 @@ def _kept_openings(ex, lay, solid):
         if dd.get('kind') != 'opening' or 'opening' not in dd:
             continue
         xa, ya, xb, yb = dd['opening']
+        seg = box(min(xa, xb) - 0.01, min(ya, yb) - 0.01, max(xa, xb) + 0.01, max(ya, yb) + 0.01)
+        if any(o.get('rect') and R(o['rect']).buffer(0.02).intersection(seg).area > 0.5 * seg.area for o in lay.get('new_openings', [])):
+            continue          # a new door now hangs in this existing opening (e.g. P-2 in D-P1-old): scheduled as that door
         if solid.buffer(0.03).contains(Point(xa, ya)) and solid.buffer(0.03).contains(Point(xb, yb)):
             n += 1
             out.append((dd, f'VA-{n}'))
@@ -654,20 +682,50 @@ def _opening_rows(ex, lay, nwg, kept):
         wd = float(o.get('width', 0.9))
         if o.get('type') == 'double_acting_door':
             host = next((w['id'] for w, gg in nwg if o.get('rect') and R(w['rect']).buffer(0.01).contains(R(o['rect']))), 'muro nuevo')
+            cl = wd - LEAF_LOSS
+            ok = cl >= 0.90 - 1e-6
             rows.append([(o.get('label', o['id']), '#141210', '800'), f"{host} · cocina ↔ salón, NUEVA; vaivén (doble acción) 1 hoja, retorno a centro",
-                         f'{wd:.2f} nominal × 2.10', (f'≈{wd - LEAF_LOSS:.2f}*', BAD, '700'),
+                         f'{wd:.2f} nominal × 2.10', (f'≈{cl:.2f}*', '#222' if ok else BAD, '700'),
                          f'Hoja incombustible (acero inox / núcleo mineral) — a ≈{_dist_key(lay, o, "parrilla"):.2f} de la parrilla; visor de vidrio templado '
                          'o laminado a la altura de la vista; placa de protección inox h 0.30 en ambas caras.',
-                         ('Bisagra de piso de doble acción, sin umbral (TR a nivel). < 0.90 libres (art. 140 — verificar): recomendado '
-                          'vano ≈1.00. Separación platos / loza por horario u operación.', BAD, '600')])
+                         ('Bisagra de piso de doble acción, sin umbral (TR a nivel). '
+                          + ('≥ 0.90 libres estimados (art. 140 — verificar con la hoja real). ' if ok else
+                             '< 0.90 libres (art. 140 — verificar): recomendado vano ≈1.00. ')
+                          + 'Separación platos / loza por horario u operación; siempre libre (ruta de evacuación del personal).',
+                          '#222' if ok else BAD, '600')])
         elif o.get('type') in ('service_door', 'door'):
             cond = o.get('conditional')
-            rows.append([(o.get('label', o['id']), BAD if cond else '#141210', '800'),
-                         ('Muro sur del ala · servicio; abatible 1 hoja hacia afuera' + (' — CONDICIONAL' if cond else ''), BAD if cond else '#222', '600'),
-                         f'{wd:.2f} × 2.10', f'≈{wd - LEAF_LOSS:.2f}*',
-                         'Metálica (acero) con marco, burlete y barredor inferior (control de plagas); acabado esmalte.',
-                         'Apertura sin llave desde el interior + cierrapuertas. Sustituye parte de la ventana GL-W1: aprobación de la '
-                         'administración y revisión estructural — VERIFY ON SITE. No cuenta como salida.'])
+            cl = wd - LEAF_LOSS
+            if cond:
+                gl_hit = [gl['id'] for gl in ex.get('glazing', []) if o.get('rect') and R(gl['rect']).intersects(R(o['rect']))]
+                rows.append([(o.get('label', o['id']), BAD, '800'),
+                             ('Muro sur del ala · servicio; abatible 1 hoja hacia afuera — CONDICIONAL', BAD, '600'),
+                             f'{wd:.2f} × 2.10', f'≈{cl:.2f}*',
+                             'Metálica (acero) con marco, burlete y barredor inferior (control de plagas); acabado esmalte.',
+                             'Apertura sin llave desde el interior + cierrapuertas.'
+                             + (f" Sustituye parte de la ventana {', '.join(gl_hit)}:" if gl_hit else '')
+                             + ' aprobación de la administración y revisión estructural — VERIFY ON SITE. No cuenta como salida.'])
+            else:
+                host_op = next((dd for dd in ex.get('doors', []) if dd.get('opening') and o.get('rect') and
+                                R(o['rect']).buffer(0.05).contains(Point(dd['opening'][0], dd['opening'][1]))), None)
+                where = (f"Vano existente {host_op['id']} ({host_op.get('note', '').rstrip('.').lower()})" if host_op
+                         else 'Muro interior del ala')
+                okd = cl >= 0.90 - 1e-6
+                swing = ''
+                if o.get('hinge') and o.get('swing_to') and o.get('closed_to'):
+                    hx, hy = o['hinge']
+                    bx, by = o['swing_to']
+                    cx_, cy_ = o['closed_to']
+                    mid = Point(hx + 0.5 * (bx - hx) + 0.5 * (cx_ - hx), hy + 0.5 * (by - hy) + 0.5 * (cy_ - hy))
+                    zs = [z for z in lay.get('zones', []) if Polygon(z['poly']).contains(mid)]
+                    swing = f"; abre hacia {(zs[0].get('name') or zs[0].get('short') or zs[0]['id']).split(' (')[0].split(':')[0].lower()}" if zs else ''
+                rows.append([(o.get('label', o['id']), '#141210', '800'),
+                             f"{where}: NUEVA abatible 1 hoja con cierre automático{swing}",
+                             f'{wd:.2f} × 2.10', (f'≈{cl:.2f}*', '#222' if okd else WARN, '700'),
+                             'Hoja lavable (acero inox o laminado HPL sobre núcleo sólido), marco metálico, barredor inferior; visor recomendado.',
+                             ('Manija de palanca, sin llave en el sentido de egreso, cierrapuertas (separa limpio / sucio). '
+                              + ('' if okd else '< 0.90 libres (art. 140 — verificar; área de personal): ampliar vano a ≈1.00 o justificar. ')
+                              + 'Ruta de evacuación del ala: siempre libre.', '#222' if okd else WARN, '600')])
     for dd, code in kept:
         rows.append([(code, '#141210', '800'), f"Vano existente sin hoja ({dd['id']}): {dd.get('note', '')}", f"{float(dd.get('width', 0.9)):.2f} · sin hoja",
                      f"{float(dd.get('width', 0.9)):.2f}", 'Jambas con esquinero sanitario inox; mismo acabado MU-01.', 'Sin umbral; piso continuo.'])
@@ -685,7 +743,7 @@ def _opening_rows(ex, lay, nwg, kept):
             rows.append([(w['id'], '#141210', '800'), f"Panel lateral entre parrilla y P-1 ({w.get('short', '')})",
                          f"{L:.2f} × h {float(w.get('h', 2.0)):.2f}", '—', 'Incombustible: acero inox sobre placa cementicia (MU-02).',
                          'Cierre lateral de la campana 2 — TO BE ENGINEERED con la campana.'])
-    ps = next((o for o in lay.get('new_openings', []) if o.get('type') in ('service_door', 'door') and o.get('rect')), None)
+    ps = next((o for o in lay.get('new_openings', []) if o.get('conditional') and o.get('type') in ('service_door', 'door') and o.get('rect')), None)
     fronts = [gl for gl in ex.get('glazing', []) if gl.get('kind') == 'storefront']
     if fronts:
         ws = ' / '.join(f"{max(abs(gl['rect'][2]-gl['rect'][0]), abs(gl['rect'][3]-gl['rect'][1])):.2f}" for gl in fronts)
@@ -718,7 +776,8 @@ def _band(s, lay, zones, zarea, zone_mu, drains, rooms, specs, ex):
         fin = ZONE_FIN.get(zid)
         if not fin:
             continue
-        sps = [d['id'] for d in drains if zp.get(zid) is not None and zp[zid].buffer(0.05).contains(Point(d['p']))]
+        sps = [d['id'] for d in drains if (zp.get(zid) is not None and zp[zid].buffer(0.05).contains(Point(d['p'])))
+               or zid in re.findall(r'\b([A-Z])\b', (d.get('why') or '').split('zona')[-1] if 'zona' in (d.get('why') or '') else '')]
         kitchen = zid in KITCHEN
         mus = sorted(zone_mu.get(zid, []))
         rows.append([(zid, z.get('color', '#333'), '800'), z.get('name', z.get('short', '')),
@@ -730,7 +789,7 @@ def _band(s, lay, zones, zarea, zone_mu, drains, rooms, specs, ex):
                        rows, size=1.65, lh=2.05, pad=0.75, head=1.6, title='CUADRO DE ACABADOS POR LOCAL')
     g.append(svg)
     notes = ['Muros calculados por paramento (bandas de color en planta); MU-02 = equipo de fuego + 0.45 a cada lado.',
-             'Media caña continua también en bases de equipos fijos y al pie de NW-1 / NW-2. Sifones SP: propuestos.']
+             'Media caña continua también en bases de equipos fijos y al pie de NW-1 / NW-2. Coladeras FD: propuestas (ver M-101).']
     for i, ln in enumerate(notes):
         g.append(text(12, yend + 3.0 + i * 2.25, ln, 1.5, anchor='start', fill='#333'))
     # ---- three small details under the room schedule
@@ -751,7 +810,7 @@ def _band(s, lay, zones, zarea, zone_mu, drains, rooms, specs, ex):
                 sw = _floor_swatch(code, 3.4, 2.6)(xx, yy + 0.2)
             elif code in WALLC:
                 sw = _wall_swatch(code, 3.4, 2.6)(xx, yy + 0.2)
-            elif code == 'SP':
+            elif code == 'FD':
                 sw = (f'<circle cx="{f(xx + 1.7)}" cy="{f(yy + 1.5)}" r="1.3" fill="#fff" stroke="#17737a" stroke-width="0.3"/>')
             elif code == 'TR':
                 sw = f'<line x1="{f(xx + 1.7)}" y1="{f(yy + 0.2)}" x2="{f(xx + 1.7)}" y2="{f(yy + 2.8)}" stroke="#b39b00" stroke-width="0.9"/>'
@@ -791,7 +850,7 @@ def _details(y, ex, lay):
     g.append(f'<path d="M{f(ox)},{f(fy - t - r)} H{f(ox + t)} A{f(r)},{f(r)} 0 0 0 {f(ox + t + r)},{f(fy - t)} V{f(fy)} H{f(ox)} z" fill="#d7e3ee" stroke="#1b1b1b" stroke-width="0.25"/>')
     g.append(text(ox + 10, y + 9.5, 'MU-01 revestimiento liso', 1.4, anchor='start', fill='#333'))
     g.append(text(ox + 10, fy - 5.4, f'ZO-01 radio ≥ {0.03:.2f} (verificar)', 1.4, anchor='start', fill='#333', weight='700'))
-    g.append(text(ox + 10, fy - 2.6, 'PI-01 + pendiente a SP', 1.4, anchor='start', fill='#333'))
+    g.append(text(ox + 10, fy - 2.6, 'PI-01 + pendiente a FD', 1.4, anchor='start', fill='#333'))
     g.append(f'<line x1="{f(ox + 9.5)}" y1="{f(fy - 5.9)}" x2="{f(ox + t + r * 0.4)}" y2="{f(fy - t - r * 0.4)}" stroke="#777" stroke-width="0.15"/>')
     # 2 · floor transition TR at P-1, 1:5
     x = 70.0

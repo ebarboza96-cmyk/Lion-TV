@@ -1,0 +1,2327 @@
+{
+ "sheet": "E-101",
+ "status": "ANTEPROYECTO / PRELIMINAR — a validar por ingeniero electricista (Código Eléctrico CR / NEC 2020)",
+ "layout_version": "3.0",
+ "date": "2026-09-25",
+ "flags": [
+  "PRELIMINAR — a validar por ingeniero electricista (Código Eléctrico CR / NEC 2020)",
+  "EXTRACTION / MAKE-UP AIR / FIRE SUPPRESSION TO BE ENGINEERED",
+  "SOLID-FUEL SMOKER - LOCATION / FLUE / FIRE CODE TO BE VALIDATED",
+  "DIMENSION TO VERIFY",
+  "VERIFY ON SITE"
+ ],
+ "system_assumed": "120/208 V 3F 4H + T (VERIFY) · alternativa 120/240 V 1F",
+ "panel": {
+  "id": "TE-1",
+  "rect": [
+   6.25,
+   0.116,
+   6.85,
+   0.26
+  ],
+  "note": "Tablero eléctrico del local (ubicación propuesta, frente libre 0.90 m) — acometida existente: VERIFY ON SITE.",
+  "control_panel_CC1_rect": [
+   6.87,
+   0.116,
+   7.27,
+   0.26
+  ],
+  "working_space": {
+   "rect": [
+    6.25,
+    0.26,
+    7.27,
+    1.16
+   ],
+   "depth_m": 0.9,
+   "width_m": 1.02,
+   "height_m": 2.0,
+   "obstruction_m2": 0.0,
+   "inside_premises": true,
+   "clear": true,
+   "basis": "NEC 2020 110.26(A): fondo 0.90 m (0–150 V a tierra, condición 1) · ancho ≥0.762 m o el del equipo · alto 2.0 m; 110.26(E) espacio dedicado"
+  }
+ },
+ "circuits": [
+  {
+   "key": "FRY",
+   "circuit": "1",
+   "slots": [
+    1
+   ],
+   "phases": [
+    "A"
+   ],
+   "ref": "H4 + H5",
+   "desc": "Freidoras H4 + H5 · encendido / control",
+   "zone": "B",
+   "V": 120,
+   "poles": 1,
+   "qty": 2,
+   "VA_unit": 120,
+   "VA": 240,
+   "I_A": 2.0,
+   "group": "K",
+   "group_name": "Equipos de cocina",
+   "nec": "NEC 220.56",
+   "breaker_A": 20,
+   "conductor": "#12",
+   "gfci": true,
+   "connection": "Toma por freidora (vía KS-1)",
+   "continuous": false,
+   "in_demand": true,
+   "tbv": true,
+   "basis": "≈1 A c/u si encendido electrónico",
+   "note": "KS-1 abre con SUP-1 (NFPA 96 · corte de energía de equipos protegidos)",
+   "motor": null,
+   "points": [
+    {
+     "at": [
+      4.325,
+      0.716
+     ],
+     "sym": "gfci",
+     "ref": "H4"
+    },
+    {
+     "at": [
+      4.325,
+      0.316
+     ],
+     "sym": "gfci",
+     "ref": "H5"
+    }
+   ]
+  },
+  {
+   "key": "K2",
+   "circuit": "3-5",
+   "slots": [
+    3,
+    5
+   ],
+   "phases": [
+    "B",
+    "C"
+   ],
+   "ref": "K2",
+   "desc": "Horno convección de mesa + recirc. UL 710B",
+   "zone": "B",
+   "V": 208,
+   "poles": 2,
+   "qty": 1,
+   "VA_unit": 6000,
+   "VA": 6000,
+   "I_A": 28.8,
+   "group": "K",
+   "group_name": "Equipos de cocina",
+   "nec": "NEC 220.56",
+   "breaker_A": 40,
+   "conductor": "#8",
+   "gfci": true,
+   "connection": "Toma 6-50R o conexión fija GFCI",
+   "continuous": false,
+   "in_demand": true,
+   "tbv": true,
+   "basis": "≈6 kW (ficha)",
+   "note": "Enclavamiento propio del equipo UL 710B (filtros / supresión integrada)",
+   "motor": null,
+   "points": [
+    {
+     "at": [
+      1.9,
+      0.116
+     ],
+     "sym": "spec",
+     "ref": "K2"
+    }
+   ]
+  },
+  {
+   "key": "S1",
+   "circuit": "2",
+   "slots": [
+    2
+   ],
+   "phases": [
+    "A"
+   ],
+   "ref": "S1",
+   "desc": "Smoker · controles / ventilador de tiro (si aplica)",
+   "zone": "E",
+   "V": 120,
+   "poles": 1,
+   "qty": 1,
+   "VA_unit": 720,
+   "VA": 720,
+   "I_A": 6.0,
+   "group": "K",
+   "group_name": "Equipos de cocina",
+   "nec": "NEC 220.56",
+   "breaker_A": 20,
+   "conductor": "#12",
+   "gfci": true,
+   "connection": "Toma dedicada 20 A GFCI",
+   "continuous": false,
+   "in_demand": true,
+   "tbv": true,
+   "basis": "según ficha · 6 A",
+   "note": "Solo si el smoker lo requiere · posición según fabricante (lejos del hogar)",
+   "motor": null,
+   "points": [
+    {
+     "at": [
+      -0.085,
+      1.7
+     ],
+     "sym": "gfci",
+     "ref": "S1"
+    }
+   ]
+  },
+  {
+   "key": "S2",
+   "circuit": "7",
+   "slots": [
+    7
+   ],
+   "phases": [
+    "A"
+   ],
+   "ref": "S2",
+   "desc": "Holding caliente",
+   "zone": "E",
+   "V": 120,
+   "poles": 1,
+   "qty": 1,
+   "VA_unit": 1500,
+   "VA": 1500,
+   "I_A": 12.5,
+   "group": "K",
+   "group_name": "Equipos de cocina",
+   "nec": "NEC 220.56",
+   "breaker_A": 20,
+   "conductor": "#12",
+   "gfci": true,
+   "connection": "Toma dedicada 20 A GFCI",
+   "continuous": false,
+   "in_demand": true,
+   "tbv": true,
+   "basis": "gabinete ½ altura ≈1.5 kW",
+   "note": "",
+   "motor": null,
+   "points": [
+    {
+     "at": [
+      -0.085,
+      2.85
+     ],
+     "sym": "gfci",
+     "ref": "S2"
+    }
+   ]
+  },
+  {
+   "key": "A1",
+   "circuit": "8",
+   "slots": [
+    8
+   ],
+   "phases": [
+    "A"
+   ],
+   "ref": "A1",
+   "desc": "Refrigerador 2 puertas",
+   "zone": "A",
+   "V": 120,
+   "poles": 1,
+   "qty": 1,
+   "VA_unit": 840,
+   "VA": 840,
+   "I_A": 7.0,
+   "group": "K",
+   "group_name": "Equipos de cocina",
+   "nec": "NEC 220.56",
+   "breaker_A": 20,
+   "conductor": "#12",
+   "gfci": true,
+   "connection": "Toma dedicada 20 A GFCI",
+   "continuous": false,
+   "in_demand": true,
+   "tbv": true,
+   "basis": "reach-in 2P ≈1/2 HP · 7 A",
+   "note": "",
+   "motor": null,
+   "points": [
+    {
+     "at": [
+      4.51,
+      10.011
+     ],
+     "sym": "gfci",
+     "ref": "A1"
+    }
+   ]
+  },
+  {
+   "key": "A2",
+   "circuit": "4",
+   "slots": [
+    4
+   ],
+   "phases": [
+    "B"
+   ],
+   "ref": "A2",
+   "desc": "Congelador vertical",
+   "zone": "A",
+   "V": 120,
+   "poles": 1,
+   "qty": 1,
+   "VA_unit": 720,
+   "VA": 720,
+   "I_A": 6.0,
+   "group": "K",
+   "group_name": "Equipos de cocina",
+   "nec": "NEC 220.56",
+   "breaker_A": 20,
+   "conductor": "#12",
+   "gfci": true,
+   "connection": "Toma dedicada 20 A GFCI",
+   "continuous": false,
+   "in_demand": true,
+   "tbv": true,
+   "basis": "1 puerta ≈1/2 HP · 6 A",
+   "note": "",
+   "motor": null,
+   "points": [
+    {
+     "at": [
+      4.51,
+      11.111
+     ],
+     "sym": "gfci",
+     "ref": "A2"
+    }
+   ]
+  },
+  {
+   "key": "A3",
+   "circuit": "6",
+   "slots": [
+    6
+   ],
+   "phases": [
+    "C"
+   ],
+   "ref": "A3",
+   "desc": "Mesa fría refrigerada",
+   "zone": "A",
+   "V": 120,
+   "poles": 1,
+   "qty": 1,
+   "VA_unit": 480,
+   "VA": 480,
+   "I_A": 4.0,
+   "group": "K",
+   "group_name": "Equipos de cocina",
+   "nec": "NEC 220.56",
+   "breaker_A": 20,
+   "conductor": "#12",
+   "gfci": true,
+   "connection": "Toma dedicada 20 A GFCI",
+   "continuous": false,
+   "in_demand": true,
+   "tbv": true,
+   "basis": "180 cm ≈1/5 HP · 4 A",
+   "note": "",
+   "motor": null,
+   "points": [
+    {
+     "at": [
+      1.24,
+      11.486
+     ],
+     "sym": "gfci",
+     "ref": "A3"
+    }
+   ]
+  },
+  {
+   "key": "C1",
+   "circuit": "11",
+   "slots": [
+    11
+   ],
+   "phases": [
+    "C"
+   ],
+   "ref": "C1",
+   "desc": "Enfriador bajo barra (cerveza / bebidas)",
+   "zone": "C",
+   "V": 120,
+   "poles": 1,
+   "qty": 1,
+   "VA_unit": 600,
+   "VA": 600,
+   "I_A": 5.0,
+   "group": "K",
+   "group_name": "Equipos de cocina",
+   "nec": "NEC 220.56",
+   "breaker_A": 20,
+   "conductor": "#12",
+   "gfci": true,
+   "connection": "Toma dedicada 20 A GFCI",
+   "continuous": false,
+   "in_demand": true,
+   "tbv": true,
+   "basis": "≈5 A",
+   "note": "Venta de alcohol (licencia clase C): chopera / enfriador — ficha TBV",
+   "motor": null,
+   "points": [
+    {
+     "at": [
+      5.43,
+      0.424
+     ],
+     "sym": "gfci",
+     "ref": "C1"
+    }
+   ]
+  },
+  {
+   "key": "C2",
+   "circuit": "13",
+   "slots": [
+    13
+   ],
+   "phases": [
+    "A"
+   ],
+   "ref": "C2",
+   "desc": "Pase C2 · lámparas de calor (L-7)",
+   "zone": "C",
+   "V": 120,
+   "poles": 1,
+   "qty": 1,
+   "VA_unit": 500,
+   "VA": 500,
+   "I_A": 4.2,
+   "group": "K",
+   "group_name": "Equipos de cocina",
+   "nec": "NEC 220.56",
+   "breaker_A": 20,
+   "conductor": "#12",
+   "gfci": false,
+   "connection": "Conexión fija sobre la repisa",
+   "continuous": false,
+   "in_demand": true,
+   "tbv": true,
+   "basis": "tira ≈60 cm · 500 W",
+   "note": "",
+   "motor": null,
+   "points": [
+    {
+     "at": [
+      5.755,
+      2.025
+     ],
+     "sym": "j",
+     "ref": "C2"
+    }
+   ]
+  },
+  {
+   "key": "C3",
+   "circuit": "40",
+   "slots": [
+    40
+   ],
+   "phases": [
+    "B"
+   ],
+   "ref": "C3",
+   "desc": "POS + impresora de comandas",
+   "zone": "C",
+   "V": 120,
+   "poles": 1,
+   "qty": 1,
+   "VA_unit": 500,
+   "VA": 500,
+   "I_A": 4.2,
+   "group": "IT",
+   "group_name": "POS / TI",
+   "nec": "100 % · continuo",
+   "breaker_A": 20,
+   "conductor": "#12",
+   "gfci": true,
+   "connection": "Toma dedicada · tierra aislada GFCI",
+   "continuous": false,
+   "in_demand": true,
+   "tbv": true,
+   "basis": "con UPS",
+   "note": "UPS ≥15 min · red de datos hasta RK-1",
+   "motor": null,
+   "points": [
+    {
+     "at": [
+      5.43,
+      1.225
+     ],
+     "sym": "gfci",
+     "ref": "C3"
+    }
+   ]
+  },
+  {
+   "key": "BAR-TC",
+   "circuit": "9",
+   "slots": [
+    9
+   ],
+   "phases": [
+    "B"
+   ],
+   "ref": "C1",
+   "desc": "Tomas de mostrador de barra (licuadora / batidora)",
+   "zone": "C",
+   "V": 120,
+   "poles": 1,
+   "qty": 1,
+   "VA_unit": 1500,
+   "VA": 1500,
+   "I_A": 12.5,
+   "group": "K",
+   "group_name": "Equipos de cocina",
+   "nec": "NEC 220.56",
+   "breaker_A": 20,
+   "conductor": "#12",
+   "gfci": true,
+   "connection": "2 tomas dobles GFCI sobre mesada",
+   "continuous": false,
+   "in_demand": true,
+   "tbv": true,
+   "basis": "licuadora comercial ≈1.5 kVA",
+   "note": "Cócteles / bebidas (venta de alcohol)",
+   "motor": null,
+   "points": [
+    {
+     "at": [
+      5.43,
+      0.697
+     ],
+     "sym": "gfci",
+     "ref": "C1"
+    }
+   ]
+  },
+  {
+   "key": "CA-1",
+   "circuit": "12-14",
+   "slots": [
+    12,
+    14
+   ],
+   "phases": [
+    "C",
+    "A"
+   ],
+   "ref": "CA-1",
+   "desc": "Termotanque CA-1 150 L (M-101)",
+   "zone": "W",
+   "V": 208,
+   "poles": 2,
+   "qty": 1,
+   "VA_unit": 6000,
+   "VA": 6000,
+   "I_A": 28.8,
+   "group": "K",
+   "group_name": "Equipos de cocina",
+   "nec": "NEC 220.56",
+   "breaker_A": 40,
+   "conductor": "#8",
+   "gfci": false,
+   "connection": "Conexión fija + seccionador",
+   "continuous": true,
+   "in_demand": true,
+   "tbv": true,
+   "basis": "6.0 kW a 208 V",
+   "note": "NEC 422.13: carga continua (125 %). Resistencias para 208 V (a 240 V nominal rinde 75 %)",
+   "motor": null,
+   "points": [
+    {
+     "at": [
+      4.23,
+      8.186
+     ],
+     "sym": "j",
+     "ref": "CA-1"
+    }
+   ]
+  },
+  {
+   "key": "CA-2",
+   "circuit": "10",
+   "slots": [
+    10
+   ],
+   "phases": [
+    "B"
+   ],
+   "ref": "CA-2",
+   "desc": "Calentador bajo barra CA-2 15 L",
+   "zone": "C",
+   "V": 120,
+   "poles": 1,
+   "qty": 1,
+   "VA_unit": 1500,
+   "VA": 1500,
+   "I_A": 12.5,
+   "group": "K",
+   "group_name": "Equipos de cocina",
+   "nec": "NEC 220.56",
+   "breaker_A": 20,
+   "conductor": "#12",
+   "gfci": false,
+   "connection": "Conexión fija bajo barra",
+   "continuous": true,
+   "in_demand": true,
+   "tbv": true,
+   "basis": "1.5 kW",
+   "note": "NEC 422.13: carga continua",
+   "motor": null,
+   "points": [
+    {
+     "at": [
+      5.91,
+      0.64
+     ],
+     "sym": "j",
+     "ref": "CA-2"
+    }
+   ]
+  },
+  {
+   "key": "EXT-1",
+   "circuit": "15-17-19",
+   "slots": [
+    15,
+    17,
+    19
+   ],
+   "phases": [
+    "B",
+    "C",
+    "A"
+   ],
+   "ref": "EXT-1",
+   "desc": "Ventilador EXT-1 · HD-1 · grasa (gas) · en cubierta",
+   "zone": "cubierta",
+   "V": 208,
+   "poles": 3,
+   "qty": 1,
+   "VA_unit": 2378,
+   "VA": 2378,
+   "I_A": 6.6,
+   "group": "M",
+   "group_name": "Motores / ventilación",
+   "nec": "220.50 · 430.24",
+   "breaker_A": 15,
+   "conductor": "#12",
+   "gfci": false,
+   "connection": "Arrancador CC-1 + seccionador local",
+   "continuous": false,
+   "in_demand": true,
+   "tbv": true,
+   "basis": "1068 L/s · 1.5 HP · FLC 6.6 A",
+   "note": "Sigue operando con SUP-1 salvo que el listado indique otra cosa; prueba de flujo → permiso de VS",
+   "motor": {
+    "hp": 1.5,
+    "flc": 6.6,
+    "flc1": 10.0,
+    "q": 1068.4,
+    "kw_req": 1.0684,
+    "dp": 500.0
+   },
+   "points": [
+    {
+     "at": [
+      3.95,
+      0.67
+     ],
+     "sym": "motor",
+     "ref": "EXT-1"
+    }
+   ]
+  },
+  {
+   "key": "EXT-2",
+   "circuit": "16-18-20",
+   "slots": [
+    16,
+    18,
+    20
+   ],
+   "phases": [
+    "B",
+    "C",
+    "A"
+   ],
+   "ref": "EXT-2",
+   "desc": "Ventilador EXT-2 · HD-2 · combustible sólido · en cubierta",
+   "zone": "cubierta",
+   "V": 208,
+   "poles": 3,
+   "qty": 1,
+   "VA_unit": 2702,
+   "VA": 2702,
+   "I_A": 7.5,
+   "group": "M",
+   "group_name": "Motores / ventilación",
+   "nec": "220.50 · 430.24",
+   "breaker_A": 15,
+   "conductor": "#12",
+   "gfci": false,
+   "connection": "Arrancador CC-1 + seccionador local",
+   "continuous": false,
+   "in_demand": true,
+   "tbv": true,
+   "basis": "1320 L/s · 2 HP · FLC 7.5 A",
+   "note": "No se apaga con brasas en H1: selector con llave + rótulo; sigue con SUP-2",
+   "motor": {
+    "hp": 2.0,
+    "flc": 7.5,
+    "flc1": 12.0,
+    "q": 1320.0,
+    "kw_req": 1.32,
+    "dp": 500.0
+   },
+   "points": [
+    {
+     "at": [
+      3.8,
+      3.2
+     ],
+     "sym": "motor",
+     "ref": "EXT-2"
+    }
+   ]
+  },
+  {
+   "key": "AR-1",
+   "circuit": "21-23-25",
+   "slots": [
+    21,
+    23,
+    25
+   ],
+   "phases": [
+    "B",
+    "C",
+    "A"
+   ],
+   "ref": "AR-1",
+   "desc": "Ventilador de reposición AR-1 · en cubierta (sin templar)",
+   "zone": "cubierta",
+   "V": 208,
+   "poles": 3,
+   "qty": 1,
+   "VA_unit": 3819,
+   "VA": 3819,
+   "I_A": 10.6,
+   "group": "M",
+   "group_name": "Motores / ventilación",
+   "nec": "220.50 · 430.24",
+   "breaker_A": 20,
+   "conductor": "#12",
+   "gfci": false,
+   "connection": "Arrancador CC-1 + seccionador local",
+   "continuous": false,
+   "in_demand": true,
+   "tbv": true,
+   "basis": "2030 L/s · 3 HP · FLC 10.6 A",
+   "note": "Arranca con EXT-1 / EXT-2 (IMC 508.1.1); con SUP-1/2 según listado — TO BE ENGINEERED",
+   "motor": {
+    "hp": 3.0,
+    "flc": 10.6,
+    "flc1": 17.0,
+    "q": 2030.1,
+    "kw_req": 1.522575,
+    "dp": 375.0
+   },
+   "points": [
+    {
+     "at": [
+      2.4,
+      1.116
+     ],
+     "sym": "motor",
+     "ref": "AR-1"
+    }
+   ]
+  },
+  {
+   "key": "AC-R",
+   "circuit": "22-24-26",
+   "slots": [
+    22,
+    24,
+    26
+   ],
+   "phases": [
+    "B",
+    "C",
+    "A"
+   ],
+   "ref": "A/C",
+   "desc": "A/C salón + barra (reserva ≈4.5 TR)",
+   "zone": "D · C",
+   "V": 208,
+   "poles": 3,
+   "qty": 1,
+   "VA_unit": 5310,
+   "VA": 5310,
+   "I_A": 14.7,
+   "group": "H",
+   "group_name": "A/C (reserva)",
+   "nec": "220.50 · 100 %",
+   "breaker_A": 20,
+   "conductor": "#12",
+   "gfci": false,
+   "connection": "Según placa (MCA / MOP)",
+   "continuous": false,
+   "in_demand": true,
+   "tbv": true,
+   "basis": "57 m² × 250 W/m² · COP 3",
+   "note": "Tipo y capacidad: ingeniero mecánico — la cocina no se climatiza (reposición AR-1)",
+   "motor": null,
+   "points": []
+  },
+  {
+   "key": "LUM-1",
+   "circuit": "27",
+   "slots": [
+    27
+   ],
+   "phases": [
+    "B"
+   ],
+   "ref": "LUM-1",
+   "desc": "Alumbrado salón (L-1 rieles · L-2 · L-4 apliques) + EM/RS",
+   "zone": "D",
+   "V": 120,
+   "poles": 1,
+   "qty": 34,
+   "VA_unit": 9,
+   "VA": 308,
+   "I_A": 2.6,
+   "group": "L",
+   "group_name": "Alumbrado",
+   "nec": "220.12 · 220.42",
+   "breaker_A": 20,
+   "conductor": "#12",
+   "gfci": false,
+   "connection": "Atenuador en barra",
+   "continuous": true,
+   "in_demand": true,
+   "tbv": true,
+   "basis": "A-201 · W de referencia",
+   "note": "EM / RS en el mismo circuito, antes del interruptor (NEC 700.12, equipos unitarios — verificar inciso)",
+   "motor": null,
+   "points": []
+  },
+  {
+   "key": "LUM-2",
+   "circuit": "31",
+   "slots": [
+    31
+   ],
+   "phases": [
+    "A"
+   ],
+   "ref": "LUM-2",
+   "desc": "Alumbrado barra + decor (L-2 · L-3 · L-5 · rótulo L-6) + EM",
+   "zone": "C · D",
+   "V": 120,
+   "poles": 1,
+   "qty": 8,
+   "VA_unit": 25,
+   "VA": 203,
+   "I_A": 1.7,
+   "group": "L",
+   "group_name": "Alumbrado",
+   "nec": "220.12 · 220.42",
+   "breaker_A": 20,
+   "conductor": "#12",
+   "gfci": false,
+   "connection": "Atenuador / reloj en barra",
+   "continuous": true,
+   "in_demand": true,
+   "tbv": true,
+   "basis": "A-201 · W de referencia",
+   "note": "EM / RS en el mismo circuito, antes del interruptor (NEC 700.12, equipos unitarios — verificar inciso)",
+   "motor": null,
+   "points": []
+  },
+  {
+   "key": "LUM-3",
+   "circuit": "28",
+   "slots": [
+    28
+   ],
+   "phases": [
+    "B"
+   ],
+   "ref": "LUM-3",
+   "desc": "Alumbrado cocina caliente + BBQ (L-8 IP65 · L-9 campanas) + EM",
+   "zone": "B · E",
+   "V": 120,
+   "poles": 1,
+   "qty": 14,
+   "VA_unit": 25,
+   "VA": 345,
+   "I_A": 2.9,
+   "group": "L",
+   "group_name": "Alumbrado",
+   "nec": "220.12 · 220.42",
+   "breaker_A": 20,
+   "conductor": "#12",
+   "gfci": false,
+   "connection": "Interruptor en cocina",
+   "continuous": true,
+   "in_demand": true,
+   "tbv": true,
+   "basis": "A-201 · W de referencia",
+   "note": "EM / RS en el mismo circuito, antes del interruptor (NEC 700.12, equipos unitarios — verificar inciso)",
+   "motor": null,
+   "points": []
+  },
+  {
+   "key": "LUM-4",
+   "circuit": "32",
+   "slots": [
+    32
+   ],
+   "phases": [
+    "A"
+   ],
+   "ref": "LUM-4",
+   "desc": "Alumbrado lavado + cold prep (L-8 IP65) + EM/RS",
+   "zone": "W · A",
+   "V": 120,
+   "poles": 1,
+   "qty": 16,
+   "VA_unit": 24,
+   "VA": 384,
+   "I_A": 3.2,
+   "group": "L",
+   "group_name": "Alumbrado",
+   "nec": "220.12 · 220.42",
+   "breaker_A": 20,
+   "conductor": "#12",
+   "gfci": false,
+   "connection": "Interruptor en el ala",
+   "continuous": true,
+   "in_demand": true,
+   "tbv": true,
+   "basis": "A-201 · W de referencia",
+   "note": "EM / RS en el mismo circuito, antes del interruptor (NEC 700.12, equipos unitarios — verificar inciso)",
+   "motor": null,
+   "points": []
+  },
+  {
+   "key": "ROT-EXT",
+   "circuit": "29",
+   "slots": [
+    29
+   ],
+   "phases": [
+    "C"
+   ],
+   "ref": "RÓT.",
+   "desc": "Rótulo exterior de fachada (reglamento del condominio)",
+   "zone": "fachada",
+   "V": 120,
+   "poles": 1,
+   "qty": 1,
+   "VA_unit": 1200,
+   "VA": 1200,
+   "I_A": 10.0,
+   "group": "S",
+   "group_name": "Rótulo exterior",
+   "nec": "220.14(F) · 600.5",
+   "breaker_A": 20,
+   "conductor": "#12",
+   "gfci": false,
+   "connection": "Salida de rótulo + reloj / fotocelda",
+   "continuous": true,
+   "in_demand": true,
+   "tbv": true,
+   "basis": "NEC 220.14(F): 1200 VA mín.",
+   "note": "NEC 600.5(A): circuito de 20 A exclusivo · diseño y permiso según reglamento del C.C. (VERIFY)",
+   "motor": null,
+   "points": [
+    {
+     "at": [
+      16.6,
+      1.243
+     ],
+     "sym": "j",
+     "ref": "RÓT"
+    }
+   ]
+  },
+  {
+   "key": "TG-1",
+   "circuit": "33",
+   "slots": [
+    33
+   ],
+   "phases": [
+    "B"
+   ],
+   "ref": "K1 · W4",
+   "desc": "Tomas generales cocina (mesada K1) + lavado (W4)",
+   "zone": "B · W",
+   "V": 120,
+   "poles": 1,
+   "qty": 2,
+   "VA_unit": 180,
+   "VA": 360,
+   "I_A": 3.0,
+   "group": "R",
+   "group_name": "Tomas generales",
+   "nec": "220.14(I) · 220.44",
+   "breaker_A": 20,
+   "conductor": "#12",
+   "gfci": true,
+   "connection": "Tomas dobles GFCI h 1.10 sobre mesada",
+   "continuous": false,
+   "in_demand": true,
+   "tbv": false,
+   "basis": "180 VA c/u",
+   "note": "A ≥0.30 m de piletas; tapa a prueba de salpicaduras",
+   "motor": null,
+   "points": [
+    {
+     "at": [
+      0.865,
+      0.466
+     ],
+     "sym": "gfci",
+     "ref": "K1"
+    },
+    {
+     "at": [
+      1.56,
+      6.055
+     ],
+     "sym": "gfci",
+     "ref": "W4"
+    }
+   ]
+  },
+  {
+   "key": "TG-2",
+   "circuit": "34",
+   "slots": [
+    34
+   ],
+   "phases": [
+    "B"
+   ],
+   "ref": "A4",
+   "desc": "Tomas generales cold prep (mesada A4: procesador / selladora)",
+   "zone": "A",
+   "V": 120,
+   "poles": 1,
+   "qty": 1,
+   "VA_unit": 180,
+   "VA": 180,
+   "I_A": 1.5,
+   "group": "R",
+   "group_name": "Tomas generales",
+   "nec": "220.14(I) · 220.44",
+   "breaker_A": 20,
+   "conductor": "#12",
+   "gfci": true,
+   "connection": "Tomas dobles GFCI h 1.10 sobre mesada",
+   "continuous": false,
+   "in_demand": true,
+   "tbv": false,
+   "basis": "180 VA c/u",
+   "note": "",
+   "motor": null,
+   "points": [
+    {
+     "at": [
+      0.0,
+      10.186
+     ],
+     "sym": "gfci",
+     "ref": "A4"
+    }
+   ]
+  },
+  {
+   "key": "TG-3",
+   "circuit": "37",
+   "slots": [
+    37
+   ],
+   "phases": [
+    "A"
+   ],
+   "ref": "D · D2",
+   "desc": "Tomas generales salón (limpieza) + recepción / delivery D2",
+   "zone": "D",
+   "V": 120,
+   "poles": 1,
+   "qty": 3,
+   "VA_unit": 180,
+   "VA": 540,
+   "I_A": 4.5,
+   "group": "R",
+   "group_name": "Tomas generales",
+   "nec": "220.14(I) · 220.44",
+   "breaker_A": 20,
+   "conductor": "#12",
+   "gfci": false,
+   "connection": "Tomas dobles h 0.40 · D2 sobre mueble",
+   "continuous": false,
+   "in_demand": true,
+   "tbv": false,
+   "basis": "180 VA c/u",
+   "note": "",
+   "motor": null,
+   "points": [
+    {
+     "at": [
+      7.71,
+      0.296
+     ],
+     "sym": "rec",
+     "ref": "D"
+    },
+    {
+     "at": [
+      15.848,
+      4.986
+     ],
+     "sym": "rec",
+     "ref": "D"
+    },
+    {
+     "at": [
+      15.825,
+      0.12
+     ],
+     "sym": "rec",
+     "ref": "D2"
+    }
+   ]
+  },
+  {
+   "key": "CT-SEG",
+   "circuit": "38",
+   "slots": [
+    38
+   ],
+   "phases": [
+    "A"
+   ],
+   "ref": "SUP·DG·CO",
+   "desc": "SUP-1/SUP-2 (liberación / alarma) + DG-1 gas + DCO-1 CO",
+   "zone": "B · E",
+   "V": 120,
+   "poles": 1,
+   "qty": 1,
+   "VA_unit": 150,
+   "VA": 150,
+   "I_A": 1.2,
+   "group": "C",
+   "group_name": "Control / seguridad",
+   "nec": "100 % · continuo",
+   "breaker_A": 15,
+   "conductor": "#12",
+   "gfci": false,
+   "connection": "Exclusivo · interruptor con traba (rojo)",
+   "continuous": true,
+   "in_demand": true,
+   "tbv": true,
+   "basis": "≈150 VA",
+   "note": "NFPA 72 / listado del sistema; con respaldo de batería",
+   "motor": null,
+   "points": [
+    {
+     "at": [
+      1.038,
+      0.216
+     ],
+     "sym": "sup",
+     "ref": "SUP-1"
+    },
+    {
+     "at": [
+      1.362,
+      0.216
+     ],
+     "sym": "sup",
+     "ref": "SUP-2"
+    },
+    {
+     "at": [
+      2.587,
+      0.216
+     ],
+     "sym": "dev",
+     "ref": "DG-1"
+    },
+    {
+     "at": [
+      -0.085,
+      3.275
+     ],
+     "sym": "dev",
+     "ref": "DCO-1"
+    }
+   ]
+  },
+  {
+   "key": "CT-CC1",
+   "circuit": "39",
+   "slots": [
+    39
+   ],
+   "phases": [
+    "B"
+   ],
+   "ref": "CC-1 · VS",
+   "desc": "CC-1 control de campanas + VS solenoide N.C. (rearme manual) + KS-1",
+   "zone": "B",
+   "V": 120,
+   "poles": 1,
+   "qty": 1,
+   "VA_unit": 200,
+   "VA": 200,
+   "I_A": 1.7,
+   "group": "C",
+   "group_name": "Control / seguridad",
+   "nec": "100 % · continuo",
+   "breaker_A": 15,
+   "conductor": "#12",
+   "gfci": false,
+   "connection": "Circuito exclusivo",
+   "continuous": true,
+   "in_demand": true,
+   "tbv": true,
+   "basis": "≈200 VA",
+   "note": "Lógica en la matriz causa–efecto",
+   "motor": null,
+   "points": [
+    {
+     "at": [
+      2.9,
+      0.2
+     ],
+     "sym": "dev",
+     "ref": "VS"
+    }
+   ]
+  },
+  {
+   "key": "IT-RK",
+   "circuit": "43",
+   "slots": [
+    43
+   ],
+   "phases": [
+    "A"
+   ],
+   "ref": "RK-1",
+   "desc": "RK-1 comunicaciones · Wi-Fi · audio · CCTV (mural junto a TE-1)",
+   "zone": "C",
+   "V": 120,
+   "poles": 1,
+   "qty": 1,
+   "VA_unit": 400,
+   "VA": 400,
+   "I_A": 3.3,
+   "group": "IT",
+   "group_name": "POS / TI",
+   "nec": "100 % · continuo",
+   "breaker_A": 20,
+   "conductor": "#12",
+   "gfci": false,
+   "connection": "Toma dedicada h ≥2.10 · tierra aislada",
+   "continuous": true,
+   "in_demand": true,
+   "tbv": true,
+   "basis": "≈400 VA",
+   "note": "",
+   "motor": null,
+   "points": []
+  },
+  {
+   "key": "R-EXT3",
+   "circuit": "42-44-46",
+   "slots": [
+    42,
+    44,
+    46
+   ],
+   "phases": [
+    "C",
+    "A",
+    "B"
+   ],
+   "ref": "EXT-3",
+   "desc": "Reserva: campana + ventilador del smoker (si Bomberos lo exige)",
+   "zone": "—",
+   "V": 208,
+   "poles": 3,
+   "qty": 1,
+   "VA_unit": 2378,
+   "VA": 2378,
+   "I_A": 6.6,
+   "group": "X",
+   "group_name": "Reserva (no sumada)",
+   "nec": "—",
+   "breaker_A": 15,
+   "conductor": "#12",
+   "gfci": false,
+   "connection": "Espacio de reserva",
+   "continuous": false,
+   "in_demand": false,
+   "tbv": true,
+   "basis": "≈1192 L/s · 1.5 HP",
+   "note": "SOLID-FUEL SMOKER - LOCATION / FLUE / FIRE CODE TO BE VALIDATED",
+   "motor": null,
+   "points": []
+  },
+  {
+   "key": "R-SMK",
+   "circuit": "45-47",
+   "slots": [
+    45,
+    47
+   ],
+   "phases": [
+    "B",
+    "C"
+   ],
+   "ref": "S1 alt.",
+   "desc": "Reserva: smoker eléctrico / pellet listado (alternativa EXT-3)",
+   "zone": "E",
+   "V": 208,
+   "poles": 2,
+   "qty": 1,
+   "VA_unit": 6000,
+   "VA": 6000,
+   "I_A": 28.8,
+   "group": "X",
+   "group_name": "Reserva (no sumada)",
+   "nec": "—",
+   "breaker_A": 40,
+   "conductor": "#8",
+   "gfci": false,
+   "connection": "Espacio de reserva",
+   "continuous": false,
+   "in_demand": false,
+   "tbv": true,
+   "basis": "≈6 kW TBV",
+   "note": "Si reemplaza al smoker de leña",
+   "motor": null,
+   "points": []
+  }
+ ],
+ "demand": {
+  "area_m2": 107.6,
+  "lighting": {
+   "connected_VA": 1240,
+   "nec_unit_VA_m2": 16.0,
+   "nec_min_VA": 1722,
+   "demand_VA": 1722,
+   "basis": "NEC 2020 Tabla 220.12 (restaurantes 16 VA/m²) vs. conectado A-201 → el mayor; 220.42 al 100 %"
+  },
+  "sign": {
+   "demand_VA": 1200,
+   "basis": "NEC 220.14(F) / 600.5(A): ≥1200 VA"
+  },
+  "receptacles": {
+   "count": 6,
+   "VA": 1080,
+   "demand_VA": 1080,
+   "basis": "NEC 220.14(I) 180 VA c/u · 220.44 (10 kVA al 100 %, resto 50 %)"
+  },
+  "kitchen": {
+   "units": 13,
+   "connected_VA": 20600,
+   "factor": 0.65,
+   "two_largest_VA": 12000,
+   "demand_VA": 13390,
+   "basis": "NEC 2020 220.56 / Tabla 220.56 (≥6 unidades 65 %; nunca menor que la suma de las 2 mayores)"
+  },
+  "motors": {
+   "connected_VA": 8899,
+   "largest_VA": 3819,
+   "demand_VA": 9853,
+   "basis": "NEC 220.50 / 430.24: 100 % + 25 % del motor mayor"
+  },
+  "hvac_reserve": {
+   "demand_VA": 5310,
+   "basis": "Reserva A/C 100 % (220.50 / 440) — a definir por ingeniero mecánico"
+  },
+  "control_it": {
+   "demand_VA": 1250,
+   "basis": "100 %"
+  },
+  "total_demand_VA": 33806,
+  "continuous_adder_VA": 2918,
+  "continuous_basis": "25 % adicional sobre cargas continuas (alumbrado, rótulo, control/TI, calentadores 422.13) — NEC 215.3 / 230.42",
+  "design_VA": 36724,
+  "connected_total_VA": 39579,
+  "I_3F_208": 101.9,
+  "I_1F_240": 153.0,
+  "growth_pct": 20.0,
+  "I_3F_208_growth": 122.3,
+  "I_1F_240_growth": 183.6,
+  "suggested": {
+   "system": "120/208 V · 3F · 4H + T (VERIFY con la administración / empresa distribuidora)",
+   "main_A": 125,
+   "bus_A": 150,
+   "spaces": 54,
+   "spaces_used": 43,
+   "alt_1F": "120/240 V · 1F · 3H + T: principal 200 A (menos recomendable: motores y equipos de 208 V)",
+   "alt_1F_main_A": 200
+  },
+  "phase_connected_VA": {
+   "A": 13213,
+   "B": 13349,
+   "C": 13016
+  },
+  "phase_imbalance_pct": 2.5
+ },
+ "lighting": {
+  "source": "A-201 (sheets.s201_cielos.ceiling_layout)",
+  "W_per_type": {
+   "L-1": 10,
+   "L-2": 12,
+   "L-3": 8,
+   "L-4": 6,
+   "L-5": 10,
+   "L-6": 60,
+   "L-8": 36,
+   "L-9": 20,
+   "EM": 5,
+   "RS": 3
+  },
+  "luminaires": [
+   {
+    "type": "L-5",
+    "at": [
+     10.95,
+     4.948
+    ],
+    "rect": [
+     6.55,
+     4.911,
+     15.35,
+     4.986
+    ],
+    "along": null,
+    "circuit": "LUM-2",
+    "W": 88.0
+   },
+   {
+    "type": "L-6",
+    "at": [
+     4.505,
+     2.5
+    ],
+    "rect": [
+     4.4750000000000005,
+     1.3,
+     4.535,
+     3.7
+    ],
+    "along": null,
+    "circuit": "LUM-2",
+    "W": 60.0
+   },
+   {
+    "type": "L-4",
+    "at": [
+     9.28,
+     0.266
+    ],
+    "rect": [
+     9.2,
+     0.116,
+     9.36,
+     0.416
+    ],
+    "along": null,
+    "circuit": "LUM-1",
+    "W": 6.0
+   },
+   {
+    "type": "L-4",
+    "at": [
+     10.63,
+     0.266
+    ],
+    "rect": [
+     10.55,
+     0.116,
+     10.71,
+     0.416
+    ],
+    "along": null,
+    "circuit": "LUM-1",
+    "W": 6.0
+   },
+   {
+    "type": "L-4",
+    "at": [
+     14.13,
+     0.266
+    ],
+    "rect": [
+     14.05,
+     0.116,
+     14.21,
+     0.416
+    ],
+    "along": null,
+    "circuit": "LUM-1",
+    "W": 6.0
+   },
+   {
+    "type": "L-3",
+    "at": [
+     5.72,
+     0.57
+    ],
+    "rect": null,
+    "along": null,
+    "circuit": "LUM-2",
+    "W": 8.0
+   },
+   {
+    "type": "L-3",
+    "at": [
+     5.72,
+     1.32
+    ],
+    "rect": null,
+    "along": null,
+    "circuit": "LUM-2",
+    "W": 8.0
+   },
+   {
+    "type": "L-3",
+    "at": [
+     5.72,
+     2.02
+    ],
+    "rect": null,
+    "along": null,
+    "circuit": "LUM-2",
+    "W": 8.0
+   },
+   {
+    "type": "L-5",
+    "at": [
+     4.4,
+     2.87
+    ],
+    "rect": [
+     4.325,
+     2.52,
+     4.4750000000000005,
+     3.22
+    ],
+    "along": null,
+    "circuit": "LUM-2",
+    "W": 7.0
+   },
+   {
+    "type": "L-1",
+    "at": [
+     8.55,
+     1.066
+    ],
+    "rect": null,
+    "along": null,
+    "circuit": "LUM-1",
+    "W": 10.0
+   },
+   {
+    "type": "L-1",
+    "at": [
+     9.56,
+     1.066
+    ],
+    "rect": null,
+    "along": null,
+    "circuit": "LUM-1",
+    "W": 10.0
+   },
+   {
+    "type": "L-1",
+    "at": [
+     10.56,
+     1.066
+    ],
+    "rect": null,
+    "along": null,
+    "circuit": "LUM-1",
+    "W": 10.0
+   },
+   {
+    "type": "L-1",
+    "at": [
+     11.16,
+     1.066
+    ],
+    "rect": null,
+    "along": null,
+    "circuit": "LUM-1",
+    "W": 10.0
+   },
+   {
+    "type": "L-1",
+    "at": [
+     12.16,
+     1.066
+    ],
+    "rect": null,
+    "along": null,
+    "circuit": "LUM-1",
+    "W": 10.0
+   },
+   {
+    "type": "L-1",
+    "at": [
+     13.17,
+     1.066
+    ],
+    "rect": null,
+    "along": null,
+    "circuit": "LUM-1",
+    "W": 10.0
+   },
+   {
+    "type": "L-1",
+    "at": [
+     14.17,
+     1.066
+    ],
+    "rect": null,
+    "along": null,
+    "circuit": "LUM-1",
+    "W": 10.0
+   },
+   {
+    "type": "L-1",
+    "at": [
+     14.77,
+     1.066
+    ],
+    "rect": null,
+    "along": null,
+    "circuit": "LUM-1",
+    "W": 10.0
+   },
+   {
+    "type": "L-1",
+    "at": [
+     6.9,
+     4.036
+    ],
+    "rect": null,
+    "along": null,
+    "circuit": "LUM-1",
+    "W": 10.0
+   },
+   {
+    "type": "L-1",
+    "at": [
+     7.91,
+     4.036
+    ],
+    "rect": null,
+    "along": null,
+    "circuit": "LUM-1",
+    "W": 10.0
+   },
+   {
+    "type": "L-1",
+    "at": [
+     8.88,
+     4.036
+    ],
+    "rect": null,
+    "along": null,
+    "circuit": "LUM-1",
+    "W": 10.0
+   },
+   {
+    "type": "L-1",
+    "at": [
+     9.48,
+     4.036
+    ],
+    "rect": null,
+    "along": null,
+    "circuit": "LUM-1",
+    "W": 10.0
+   },
+   {
+    "type": "L-1",
+    "at": [
+     10.45,
+     4.036
+    ],
+    "rect": null,
+    "along": null,
+    "circuit": "LUM-1",
+    "W": 10.0
+   },
+   {
+    "type": "L-1",
+    "at": [
+     11.46,
+     4.036
+    ],
+    "rect": null,
+    "along": null,
+    "circuit": "LUM-1",
+    "W": 10.0
+   },
+   {
+    "type": "L-1",
+    "at": [
+     12.43,
+     4.036
+    ],
+    "rect": null,
+    "along": null,
+    "circuit": "LUM-1",
+    "W": 10.0
+   },
+   {
+    "type": "L-1",
+    "at": [
+     13.03,
+     4.036
+    ],
+    "rect": null,
+    "along": null,
+    "circuit": "LUM-1",
+    "W": 10.0
+   },
+   {
+    "type": "L-1",
+    "at": [
+     14.0,
+     4.036
+    ],
+    "rect": null,
+    "along": null,
+    "circuit": "LUM-1",
+    "W": 10.0
+   },
+   {
+    "type": "L-1",
+    "at": [
+     15.01,
+     4.036
+    ],
+    "rect": null,
+    "along": null,
+    "circuit": "LUM-1",
+    "W": 10.0
+   },
+   {
+    "type": "L-2",
+    "at": [
+     9.867,
+     2.551
+    ],
+    "rect": null,
+    "along": null,
+    "circuit": "LUM-1",
+    "W": 12.0
+   },
+   {
+    "type": "L-2",
+    "at": [
+     11.133,
+     2.551
+    ],
+    "rect": null,
+    "along": null,
+    "circuit": "LUM-1",
+    "W": 12.0
+   },
+   {
+    "type": "L-2",
+    "at": [
+     13.467,
+     2.551
+    ],
+    "rect": null,
+    "along": null,
+    "circuit": "LUM-1",
+    "W": 12.0
+   },
+   {
+    "type": "L-2",
+    "at": [
+     14.533,
+     2.551
+    ],
+    "rect": null,
+    "along": null,
+    "circuit": "LUM-1",
+    "W": 12.0
+   },
+   {
+    "type": "L-2",
+    "at": [
+     4.953,
+     0.774
+    ],
+    "rect": null,
+    "along": null,
+    "circuit": "LUM-2",
+    "W": 12.0
+   },
+   {
+    "type": "L-2",
+    "at": [
+     4.953,
+     1.692
+    ],
+    "rect": null,
+    "along": null,
+    "circuit": "LUM-2",
+    "W": 12.0
+   },
+   {
+    "type": "L-2",
+    "at": [
+     5.463,
+     3.16
+    ],
+    "rect": null,
+    "along": null,
+    "circuit": "LUM-1",
+    "W": 12.0
+   },
+   {
+    "type": "L-2",
+    "at": [
+     5.463,
+     4.352
+    ],
+    "rect": null,
+    "along": null,
+    "circuit": "LUM-1",
+    "W": 12.0
+   },
+   {
+    "type": "L-2",
+    "at": [
+     15.825,
+     0.7
+    ],
+    "rect": null,
+    "along": null,
+    "circuit": "LUM-1",
+    "W": 12.0
+   },
+   {
+    "type": "L-8",
+    "at": [
+     2.855,
+     1.023
+    ],
+    "rect": null,
+    "along": "y",
+    "circuit": "LUM-3",
+    "W": 36.0
+   },
+   {
+    "type": "L-8",
+    "at": [
+     2.855,
+     2.756
+    ],
+    "rect": null,
+    "along": "y",
+    "circuit": "LUM-3",
+    "W": 36.0
+   },
+   {
+    "type": "L-8",
+    "at": [
+     2.855,
+     4.239
+    ],
+    "rect": null,
+    "along": "y",
+    "circuit": "LUM-3",
+    "W": 36.0
+   },
+   {
+    "type": "L-8",
+    "at": [
+     0.73,
+     1.949
+    ],
+    "rect": null,
+    "along": "y",
+    "circuit": "LUM-3",
+    "W": 36.0
+   },
+   {
+    "type": "L-8",
+    "at": [
+     0.73,
+     3.474
+    ],
+    "rect": null,
+    "along": "y",
+    "circuit": "LUM-3",
+    "W": 36.0
+   },
+   {
+    "type": "L-8",
+    "at": [
+     1.33,
+     1.949
+    ],
+    "rect": null,
+    "along": "y",
+    "circuit": "LUM-3",
+    "W": 36.0
+   },
+   {
+    "type": "L-8",
+    "at": [
+     1.33,
+     3.874
+    ],
+    "rect": null,
+    "along": "y",
+    "circuit": "LUM-3",
+    "W": 36.0
+   },
+   {
+    "type": "L-8",
+    "at": [
+     2.255,
+     5.981
+    ],
+    "rect": null,
+    "along": "y",
+    "circuit": "LUM-4",
+    "W": 36.0
+   },
+   {
+    "type": "L-8",
+    "at": [
+     2.255,
+     7.481
+    ],
+    "rect": null,
+    "along": "y",
+    "circuit": "LUM-4",
+    "W": 36.0
+   },
+   {
+    "type": "L-8",
+    "at": [
+     3.405,
+     5.981
+    ],
+    "rect": null,
+    "along": "y",
+    "circuit": "LUM-4",
+    "W": 36.0
+   },
+   {
+    "type": "L-8",
+    "at": [
+     3.405,
+     7.531
+    ],
+    "rect": null,
+    "along": "y",
+    "circuit": "LUM-4",
+    "W": 36.0
+   },
+   {
+    "type": "L-8",
+    "at": [
+     1.43,
+     9.331
+    ],
+    "rect": null,
+    "along": "x",
+    "circuit": "LUM-4",
+    "W": 36.0
+   },
+   {
+    "type": "L-8",
+    "at": [
+     3.18,
+     9.331
+    ],
+    "rect": null,
+    "along": "x",
+    "circuit": "LUM-4",
+    "W": 36.0
+   },
+   {
+    "type": "L-8",
+    "at": [
+     1.43,
+     10.681
+    ],
+    "rect": null,
+    "along": "x",
+    "circuit": "LUM-4",
+    "W": 36.0
+   },
+   {
+    "type": "L-8",
+    "at": [
+     3.18,
+     10.681
+    ],
+    "rect": null,
+    "along": "x",
+    "circuit": "LUM-4",
+    "W": 36.0
+   },
+   {
+    "type": "L-8",
+    "at": [
+     0.98,
+     6.093
+    ],
+    "rect": null,
+    "along": "y",
+    "circuit": "LUM-4",
+    "W": 36.0
+   },
+   {
+    "type": "L-8",
+    "at": [
+     0.98,
+     7.918
+    ],
+    "rect": null,
+    "along": "y",
+    "circuit": "LUM-4",
+    "W": 36.0
+   },
+   {
+    "type": "L-9",
+    "at": [
+     3.612,
+     0.691
+    ],
+    "rect": null,
+    "along": null,
+    "circuit": "LUM-3",
+    "W": 20.0
+   },
+   {
+    "type": "L-9",
+    "at": [
+     3.612,
+     1.841
+    ],
+    "rect": null,
+    "along": null,
+    "circuit": "LUM-3",
+    "W": 20.0
+   },
+   {
+    "type": "L-9",
+    "at": [
+     3.643,
+     2.804
+    ],
+    "rect": null,
+    "along": null,
+    "circuit": "LUM-3",
+    "W": 20.0
+   },
+   {
+    "type": "L-9",
+    "at": [
+     3.643,
+     3.579
+    ],
+    "rect": null,
+    "along": null,
+    "circuit": "LUM-3",
+    "W": 20.0
+   }
+  ],
+  "emergency_and_exit": [
+   {
+    "kind": "EM",
+    "at": [
+     2.4,
+     2.4
+    ],
+    "circuit": "LUM-3"
+   },
+   {
+    "kind": "EM",
+    "at": [
+     0.9,
+     4.4
+    ],
+    "circuit": "LUM-3"
+   },
+   {
+    "kind": "EM",
+    "at": [
+     0.9,
+     7.0
+    ],
+    "circuit": "LUM-4"
+   },
+   {
+    "kind": "EM",
+    "at": [
+     2.7,
+     6.6
+    ],
+    "circuit": "LUM-4"
+   },
+   {
+    "kind": "EM",
+    "at": [
+     2.2,
+     10.0
+    ],
+    "circuit": "LUM-4"
+   },
+   {
+    "kind": "EM",
+    "at": [
+     5.0,
+     3.6
+    ],
+    "circuit": "LUM-1"
+   },
+   {
+    "kind": "EM",
+    "at": [
+     8.6,
+     2.55
+    ],
+    "circuit": "LUM-1"
+   },
+   {
+    "kind": "EM",
+    "at": [
+     12.4,
+     2.55
+    ],
+    "circuit": "LUM-1"
+   },
+   {
+    "kind": "EM",
+    "at": [
+     15.6,
+     2.55
+    ],
+    "circuit": "LUM-1"
+   },
+   {
+    "kind": "RS",
+    "at": [
+     16.15,
+     2.643
+    ],
+    "circuit": "LUM-1",
+    "id": "RS-1"
+   },
+   {
+    "kind": "RS",
+    "at": [
+     6.9,
+     2.75
+    ],
+    "circuit": "LUM-1",
+    "id": "RS-2"
+   },
+   {
+    "kind": "RS",
+    "at": [
+     4.2,
+     4.48
+    ],
+    "circuit": "LUM-3",
+    "id": "RS-3"
+   },
+   {
+    "kind": "RS",
+    "at": [
+     0.9,
+     5.15
+    ],
+    "circuit": "LUM-4",
+    "id": "RS-4"
+   },
+   {
+    "kind": "RS",
+    "at": [
+     1.0,
+     8.95
+    ],
+    "circuit": "LUM-4",
+    "id": "RS-5"
+   },
+   {
+    "kind": "RS",
+    "at": [
+     2.7,
+     7.4
+    ],
+    "circuit": "LUM-4",
+    "id": "RS-6"
+   }
+  ]
+ },
+ "devices": {
+  "SUP": [
+   {
+    "id": "SUP-1",
+    "at": [
+     1.038,
+     0.216
+    ]
+   },
+   {
+    "id": "SUP-2",
+    "at": [
+     1.362,
+     0.216
+    ]
+   }
+  ],
+  "DG-1": [
+   2.587,
+   0.216
+  ],
+  "DCO-1": [
+   -0.085,
+   3.275
+  ],
+  "VS": [
+   2.9,
+   0.2
+  ],
+  "sign_exterior": [
+   16.6,
+   1.243
+  ]
+ },
+ "no_electrical_connection": [
+  "H1",
+  "H2",
+  "H3"
+ ],
+ "interlocks": [
+  {
+   "cause": "Disparo SUP-1 (HD-1)",
+   "effects": {
+    "VS": "cierra, rearme manual",
+    "KS-1": "abre (freidoras 120 V)",
+    "EXT-1": "sigue salvo listado",
+    "AR-1": "según listado",
+    "alarma": "C.C. + local"
+   }
+  },
+  {
+   "cause": "Disparo SUP-2 (HD-2)",
+   "effects": {
+    "VS": "cierra (recomendado)",
+    "KS-1": "abre (recomendado)",
+    "EXT-2": "sigue",
+    "AR-1": "según listado",
+    "alarma": "C.C. + local"
+   }
+  },
+  {
+   "cause": "DG-1 detecta gas",
+   "effects": {
+    "VS": "cierra, rearme manual",
+    "alarma": "local"
+   }
+  },
+  {
+   "cause": "DCO-1 detecta CO",
+   "effects": {
+    "EXT/AR": "siguen",
+    "alarma": "local"
+   }
+  },
+  {
+   "cause": "EXT-1 sin prueba de flujo",
+   "effects": {
+    "VS": "cierra",
+    "KS-1": "abre"
+   }
+  },
+  {
+   "cause": "EXT-1 o EXT-2 en marcha",
+   "effects": {
+    "AR-1": "arranca (IMC 508.1.1)",
+    "VS/KS-1": "permiso"
+   }
+  },
+  {
+   "cause": "Brasas en H1/S1",
+   "effects": {
+    "EXT-2": "no se apaga (selector con llave)",
+    "AR-1": "mantiene reposición"
+   }
+  },
+  {
+   "cause": "Falla de energía",
+   "effects": {
+    "VS": "cierra (N.C.), rearme manual",
+    "KS-1": "abre",
+    "EXT/AR": "paran"
+   }
+  }
+ ],
+ "sources": [
+  "NEC 2020 (NFPA 70): 110.26 espacio de trabajo; 210.8(B) GFCI; 220.12 / 220.14(F)(I) / 220.42 / 220.44 / 220.50 / 220.56; 215.3 / 230.42 cargas continuas; 422.13 calentadores; 430.24 / 430.52 / 430.102 motores; 600.5 rótulos; 700.12 equipos autónomos",
+  "Código Eléctrico de Costa Rica (DE 36979-MEIC y reformas; NEC 2020 oficializado el 10-07-2024 según prensa) — verificar",
+  "NFPA 96: corte de combustible y energía al disparar la supresión (rearme manual); ventilador sigue operando; cap. 14 combustible sólido",
+  "NFPA 17A / UL 300 (supresión química húmeda) · UL 710B (recirculación del horno K2) · IMC 508.1.1 (reposición enclavada)",
+  "NFPA 101 7.9 (iluminación de emergencia ≥1.5 h) · NFPA 72 (circuito exclusivo con traba)",
+  "Citas tomadas de resúmenes y conocimiento general, no de textos primarios: verificar edición y numeración"
+ ],
+ "verify_on_site": [
+  "Tensión / fases disponibles y medidor",
+  "Capacidad asignada al local por el C.C.",
+  "Ruta de acometida",
+  "Tablero existente de Marna's",
+  "Placas de equipos (TBV)",
+  "Alarma del C.C. para señales de supresión"
+ ]
+}

@@ -41,6 +41,8 @@ LIM_A = 22.9          # clase A: recorrido ≤ 22.9 m (75 ft) — NFPA 10 Tabla 
 LIM_B = 9.15          # 10-B a ≤ 9.15 m (30 ft) — NFPA 10 6.3.1
 MM_PER_P = 5.0        # capacidad de egreso a nivel / puertas: 5 mm por persona — NFPA 101 Tabla 7.3.3.1
 THRESHOLD = 50        # NFPA 101 6.1.2.1: reunión pública con 50 o más personas
+PM_ROUTE_TOL = 0.60   # pulsador en muro junto a la ruta: ≤ 0.60 m del eje del recorrido medido (alcance desde la ruta)
+DOOR_LOSS = 0.06      # ancho libre estimado de una hoja = vano/hoja − 0.06 (espesor + tope) — mismo criterio que A-105 / A-106
 HOT_KEYS = ('parrilla', 'cocina_4q', 'plancha', 'freidora_1', 'freidora_2')
 GAS_KEYS = ('cocina_4q', 'plancha', 'freidora_1', 'freidora_2')
 
@@ -308,6 +310,26 @@ class EgressGrid:
         return {'length': round(LineString(cut).length, 2), 'pts': [(round(x, 3), round(y, 3)) for x, y in cut],
                 'exit': eid, 'lead': round(lead, 2)}
 
+    def snap(self, p, rad=1.5):
+        """Nearest walkable cell (plain Euclidean distance) in direct sight of a wall-mounted device at p.
+
+        The device itself sits inside the wall / body buffer, so the obstacle it touches is ignored within 0.12 m; unlike
+        nearest() the choice is NOT biased toward the exit (that bias made device travel distances wrong)."""
+        px, py = p
+        m = self.free & ((self.XX - px) ** 2 + (self.YY - py) ** 2 <= rad * rad)
+        ks = self.idx[m]
+        if not len(ks):
+            return -1, 0.0
+        dd = np.hypot(self.XX[m] - px, self.YY[m] - py)
+        xs, ys = self.XX[m], self.YY[m]
+        block = self.obs.difference(Point(p).buffer(0.12))
+        shapely.prepare(block)
+        order = np.argsort(dd)
+        for o in order[:600]:
+            if not block.intersects(LineString([p, (xs[o], ys[o])])):
+                return int(ks[o]), float(dd[o])
+        return int(ks[order[0]]), float(dd[order[0]])
+
     def nearest(self, p, allow=None, rad=1.8):
         """Nearest reachable cell from an occupied position (seat): straight lead that only crosses `allow`."""
         px, py = p
@@ -369,7 +391,6 @@ def compute(ex, lay, val):
     grid = EgressGrid(ex, lay, exits)
     zones = {z['id']: Polygon(z['poly']) for z in lay.get('zones', [])}
     zname = {z['id']: z.get('short') or z.get('name') for z in lay.get('zones', [])}
-    eq = {e['id']: e for e in lay.get('equipment', [])}
     bykey = {}
     for e in lay.get('equipment', []):
         bykey.setdefault(e.get('key'), []).append(e)
@@ -474,13 +495,14 @@ def compute(ex, lay, val):
     exts = ls.get('extinguishers', [])
 
     def travel(a, b):
-        """Walking distance between two points (single-source Dijkstra from a)."""
+        """Walking distance between two points (single-source Dijkstra from a); wall-mounted ends snap to the nearest
+        walkable cell in sight (the straight lead is part of the measured length)."""
         ka = grid.cell(*a)
         if ka < 0:
-            ka, _ = grid.nearest(a, None)
+            ka, _ = grid.snap(a)
         kb = grid.cell(*b)
         if kb < 0:
-            kb, _ = grid.nearest(b, None)
+            kb, _ = grid.snap(b)
         if ka < 0 or kb < 0:
             return None, None
         D, pred = dijkstra(grid.G, directed=False, indices=ka, return_predecessors=True)
@@ -537,7 +559,7 @@ def compute(ex, lay, val):
     for xe in a_ext:
         k = grid.cell(*xe['at'])
         if k < 0:
-            k, _ = grid.nearest(tuple(xe['at']), None)
+            k, _ = grid.snap(tuple(xe['at']))
         if k >= 0:
             srcA.append(k)
     if srcA:
@@ -547,20 +569,28 @@ def compute(ex, lay, val):
         checks.append({'id': 'A-max', 'hazard': 'Local completo (riesgo ordinario)', 'device': ', '.join(e['id'] for e in a_ext),
                        'criterion': 'Clase A: recorrido ≤ 22.9 m al extintor 2-A más cercano (NFPA 10 Tabla 6.2.1.1)',
                        'length': round(mx, 2), 'limit': LIM_A, 'ok': mx <= LIM_A, 'kind': 'A'})
-    # pull station (manual release HD-1)
+    # pull station(s): manual release of the hood suppression systems (one point, ids PM-1 / PM-2 in the data)
     ps = ls.get('pull_station')
-    hood1 = eq.get('HD-1')
-    if ps and hood1:
+    hoods = [e for e in lay.get('equipment', []) if e.get('key') == 'hood']
+    if ps and hoods:
         at = tuple(ps['at'])
-        hd = R(hood1['rect'])
-        eu = hd.distance(Point(at))
-        ln_hood, pts_h = travel(_front_point(eq.get('H3', hood1) if 'H3' in eq else hood1, 0.3), at)
+        ids = ps.get('ids') or ['PM-1']
+        eu_by = {h['id']: round(R(h['rect']).distance(Point(at)), 2) for h in hoods}
+        eu = min(eu_by.values())
+        line_eq = [e for k in HOT_KEYS for e in bykey.get(k, [])]
+        mid = line_eq[len(line_eq) // 2] if line_eq else hoods[0]
+        ln_hood, pts_h = travel(_front_point(mid, 0.3), at)
         kitchen = unary_union([zones[z] for z in ('A', 'B', 'E', 'W') if z in zones])
         kp = [p for p in paths if kitchen.buffer(0.05).contains(Point(p['pts'][0]))]
         route_d = min(LineString(p['pts']).distance(Point(at)) for p in kp) if kp else None
-        checks.append({'id': 'PM-1', 'hazard': 'Disparo manual supresión HD-1', 'device': 'PM-1',
-                       'criterion': 'En ruta de egreso, h 1.07–1.22 m (NFPA 96 §10.5.1); 3–6 m de la campana = criterio IFC de referencia (verificar)',
-                       'length': round(eu, 2), 'limit': 6.0, 'ok': 3.0 <= eu <= 6.0 and (route_d is None or route_d <= 1.0),
+        on_route = route_d is not None and route_d <= PM_ROUTE_TOL
+        checks.append({'id': 'PM-1', 'ids': ids, 'hazard': 'Disparo manual supresión ' + ' / '.join(h['id'] for h in hoods),
+                       'device': ' / '.join(ids),
+                       'criterion': (f'En la ruta de egreso del personal (≤ {PM_ROUTE_TOL:.2f} m del recorrido medido), h 1.07–1.22 m, '
+                                     'identificado por campana (NFPA 96 §10.5.1 / NFPA 17A — verificar edición); 3–6 m de la campana = '
+                                     'criterio IFC, solo referencia (NFPA 96 no fija distancia): validar con el listado del sistema'),
+                       'length': round(eu, 2), 'dist_to_hoods': eu_by, 'limit': PM_ROUTE_TOL,
+                       'ok': bool(on_route and 3.0 <= eu <= 6.0), 'on_route': bool(on_route), 'ifc_ref_3_6m_ok': 3.0 <= eu <= 6.0,
                        'walk_from_line': ln_hood, 'dist_to_egress_path': round(route_d, 2) if route_d is not None else None,
                        'kind': 'PM', 'pts': pts_h})
 
@@ -580,6 +610,18 @@ def compute(ex, lay, val):
             'field': field_main}
 
 
+_CACHE = {}
+
+
+def compute_cached(ex, lay, val):
+    """compute() memoised on the data content (A-105 reuses the A-104 egress figures in the same build)."""
+    key = hash(json.dumps([ex, lay, (val or {}).get('metrics')], sort_keys=True, default=str))
+    if key not in _CACHE:
+        _CACHE.clear()
+        _CACHE[key] = compute(ex, lay, val)
+    return _CACHE[key]
+
+
 def calcs_json(res, lay):
     L = res['load']
     paths = [{'id': p['id'], 'from': p['name'], 'from_pt': p.get('from_pt') or p['pts'][0], 'exit': p['exit'],
@@ -597,10 +639,17 @@ def calcs_json(res, lay):
         if not p['ok']:
             issues.append(f"Recorrido {p['id']} ({p['from']}) {p['length']:.2f} m > límite {p['limit']:.0f} m.")
     for c in res['checks']:
-        if not c['ok']:
-            issues.append(f"{c['id']}: {c['hazard']} — {c['criterion']} (medido {c['length']:.2f} m"
-                          + (f"; {c['dist_to_egress_path']:.2f} m fuera de la ruta de egreso de cocina" if c.get('dist_to_egress_path') is not None else '')
-                          + ').')
+        if c['kind'] == 'PM':
+            if not c.get('on_route'):
+                issues.append(f"{' / '.join(c.get('ids', [c['id']]))}: a {c['dist_to_egress_path']:.2f} m del recorrido de egreso del personal "
+                              f"(tolerancia {c['limit']:.2f} m): llevar a la ruta de salida (NFPA 96 §10.5.1 — verificar edición).")
+            elif not c.get('ifc_ref_3_6m_ok', True):
+                dh = ', '.join(f'{k} {v:.2f} m' for k, v in (c.get('dist_to_hoods') or {}).items())
+                issues.append(f"{' / '.join(c.get('ids', [c['id']]))}: en la ruta de egreso ({c['dist_to_egress_path']:.2f} m), pero en planta a "
+                              f"{dh} de las campanas (criterio IFC de referencia 3–6 m; NFPA 96 no fija distancia): VERIFICAR con el "
+                              "listado del sistema de supresión y el profesional responsable.")
+        elif not c['ok']:
+            issues.append(f"{c['id']}: {c['hazard']} — {c['criterion']} (medido {c['length']:.2f} m).")
     longest = max(paths, key=lambda q: q['length']) if paths else None
     return {
         'summary': {'longest_path': {'id': longest['id'], 'from': longest['from'], 'length': longest['length'],
@@ -866,11 +915,15 @@ def build_sheet(ex, lay, val, res):
     # ---------------------------------------------------------------- extinguisher coverage (reference radii)
     exts = ls.get('extinguishers', [])
     kx = [e for e in exts if 'clase k' in e['type'].lower()]
+    exid = {e['id']: e for e in exts}
+    dev_k = sorted({c['device'] for c in checks if c['kind'] == 'K' and c['device'] in exid})
+    dev_sf = sorted({c['device'] for c in checks if c['kind'] == 'SF' and c['device'] in exid})
+    arcs = [(exid[d], LIM_K, '#7a1fa2', f'R {LIM_K:.2f} m · {d} clase K (freidoras)') for d in dev_k]
+    arcs += [(exid[d], LIM_SOLID, '#c2410c', f'R {LIM_SOLID:.1f} m · {d} comb. sólido') for d in dev_sf]
     g = ['<g id="coverage">']
     cov_labels = []
-    for xe in kx:
-        for r_, col, lab in ((LIM_K, '#7a1fa2', f'R {LIM_K:.2f} m · clase K (freidoras)'),
-                             (LIM_SOLID, '#c2410c', f'R {LIM_SOLID:.1f} m · comb. sólido')):
+    for xe, r_, col, lab in arcs:
+        if True:
             arc = Point(*xe['at']).buffer(r_, 128).exterior.intersection(prem.buffer(-0.02))
             parts = [p for p in (getattr(arc, 'geoms', None) or [arc]) if p.geom_type == 'LineString' and p.length > 0.3]
             for p in parts:
@@ -928,6 +981,20 @@ def build_sheet(ex, lay, val, res):
         g.append(f'<circle cx="{f(x)}" cy="{f(y)}" r="1.25" fill="#ffffff" stroke="{C_EGR if p["ok"] else C_EGR2}" stroke-width="0.5"/>'
                  f'<circle cx="{f(x)}" cy="{f(y)}" r="0.5" fill="{C_EGR if p["ok"] else C_EGR2}"/>')
         P.add(box(x - 1.5, y - 1.5, x + 1.5, y + 1.5), 3)
+    g.append('</g>')
+    s.add(''.join(g))
+
+    # door labels of the base layer (plan_svg.layer_new) re-stated above the egress lines, with a white halo
+    g = ['<g id="door-labels-halo">']
+    for o in lay.get('new_openings', []):
+        if not (o.get('label') and o.get('rect')):
+            continue
+        x0, y0, x1, y1 = o['rect']
+        lx, ly = sx((x0 + x1) / 2), sy((y0 + y1) / 2)
+        pos = (lx + 7.5, ly + 0.8) if o.get('type') == 'double_acting_door' else (lx, ly + 5.2)
+        g.append(text(pos[0], pos[1], f"{o['label']} · {o.get('width', 0.9):.2f}", 2.0, weight='800',
+                      fill=C_EGR2 if o.get('conditional') else '#111',
+                      extra='paint-order="stroke" stroke="#ffffff" stroke-width="0.8" stroke-linejoin="round"'))
     g.append('</g>')
     s.add(''.join(g))
 
@@ -1001,7 +1068,7 @@ def build_sheet(ex, lay, val, res):
     if pm:
         cx, cy = put(sx(pm['at'][0]), sy(pm['at'][1]) + 1.9, 1.9, 1.9)
         dev.append(sym_pull(cx, cy))
-        labels.append((cx, cy, ['PM-1', f"h {pm.get('h', '')}"], C_FIRE, 1.6, None, None))
+        labels.append((cx, cy, [' · '.join(pm.get('ids') or ['PM-1']), f"h {pm.get('h', '')}"], C_FIRE, 1.6, None, None))
     # capacity sign beside the main exit (storefront, south jamb of the door)
     main = next((e for e in ls.get('exits', []) if not e.get('conditional')), None)
     cap_xy = None
@@ -1075,7 +1142,7 @@ def build_sheet(ex, lay, val, res):
             X, Y = sx(pp.x), sy(pp.y)
             cands += [(X + w / 2 + 1, Y), (X - w / 2 - 1, Y), (X, Y - 2.4), (X, Y + 2.4)]
         cx, cy = P.place(cands, w, 2.8, weight=5)
-        g.append(f'<rect x="{f(cx - w/2)}" y="{f(cy - 1.4)}" width="{f(w)}" height="2.8" fill="#ffffff" fill-opacity="0.9"/>'
+        g.append(f'<rect x="{f(cx - w/2)}" y="{f(cy - 1.4)}" width="{f(w)}" height="2.8" fill="#ffffff"/>'
                  + text(cx, cy + 0.55, lab, 1.6, weight='700', fill=col))
     g.append('</g>')
     s.add(''.join(g))
@@ -1097,14 +1164,17 @@ def build_sheet(ex, lay, val, res):
                                   'G acometida · VM corte manual accesible', 'VS solenoide enclavada a la supresión',
                                   'HD-1, rearme manual · detector de fugas', 'según tipo de gas · mangueras ≤ 1.5 m.'],
                       (sx(gas['main_valve'][0]), sy(gas['main_valve'][1]) - 1.2) if gas.get('main_valve') else None))
+    pm_ids = (ls.get('pull_station') or {}).get('ids') or ['PM-1']
+    k_fry = ', '.join(sorted({c['device'] for c in checks if c['kind'] == 'K'})) or 'EX-K'
     if hd1:
         boxes.append(('#b35900', ['HD-1 · CAMPANA 1 · GAS (H2–H5)', 'Supresión química húmeda UL 300 /', 'NFPA 17A: campana, pleno, ducto y',
                                   'equipos. Disparo corta gas (VS) y', 'energía, rearme manual (NFPA 96 cap. 10).',
-                                  'Disparo manual PM-1 · extintor EX-K.'],
+                                  f'Disparo manual {pm_ids[0]} · extintor {k_fry}.'],
                       (sx((hd1['rect'][0] + hd1['rect'][2]) / 2), sy(hd1['rect'][1]) + 1.0)))
     if hd2:
         boxes.append(('#b35900', ['HD-2 · CAMPANA 2 · SOLO PARRILLA H1', 'Comb. sólido: NFPA 96 cap. 14 (cap. 15', 'en ed. 2021/2024): campana, ducto,',
-                                  'ventilador y descarga propios (EXT-2),', 'arrestachispas antes de filtros,', 'limpieza mensual.'],
+                                  'ventilador y descarga propios (EXT-2),', 'arrestachispas antes de filtros,',
+                                  'limpieza mensual' + (f' · disparo manual {pm_ids[1]}.' if len(pm_ids) > 1 else '.')],
                       (sx(hd2['rect'][2]) - 1.2, sy(hd2['rect'][1]) + 3.0)))
     for i, (col, lines_, tgt) in enumerate(boxes):
         bx = x0b + i * (wbox + 1.6)
@@ -1117,19 +1187,26 @@ def build_sheet(ex, lay, val, res):
     wc = (x1c - x0c - 1.6) / 2
     cboxes = []
     if pm:
-        lines_ = ['PM-1 · DISPARO MANUAL DE LA SUPRESIÓN HD-1', 'h 1.07–1.22 m, identificado, en la ruta de egreso',
-                  '(NFPA 96 §10.5.1). 3–6 m de la campana: criterio IFC,']
-        lines_.append('solo referencia (NFPA 96 no fija distancia).')
+        hood_ids = [h['id'] for h in lay.get('equipment', []) if h.get('key') == 'hood']
+        pairs = ' · '.join(f'{a} → {b}' for a, b in zip(pm_ids, hood_ids)) or ' · '.join(pm_ids)
+        lines_ = [f"{' / '.join(pm_ids)} · DISPARO MANUAL DE LA SUPRESIÓN", f'{pairs}: uno por campana, identificados,',
+                  f"h {pm.get('h', '1.07–1.22 m')}, en la ruta de egreso (NFPA 96",
+                  '§10.5.1 / NFPA 17A — verificar edición).']
         if pmc:
-            lines_.append(f"Medido: {pmc['length']:.2f} m a HD-1; {pmc['dist_to_egress_path']:.2f} m fuera de la ruta de")
-            lines_.append(f"egreso de cocina; {pmc['walk_from_line']:.1f} m a pie desde la línea.")
-            if not pmc['ok']:
-                lines_.append('!→ Reubicar sobre la ruta (p. ej. junto a P-1, lado salón)')
-                lines_.append('!  — a validar por el profesional / listado del sistema.')
+            dh = pmc.get('dist_to_hoods') or {}
+            lines_.append(f"Medido: {pmc['dist_to_egress_path']:.2f} m del recorrido de cocina; "
+                          f"{pmc['walk_from_line']:.1f} m a pie desde la línea.")
+            lines_.append('A campanas: ' + ' · '.join(f'{k} {v:.2f} m' for k, v in dh.items()) + ' (en planta, tras NW-1).')
+            if not pmc.get('on_route'):
+                lines_.append('!→ Llevar al recorrido de salida del personal (p. ej. junto')
+                lines_.append('!  a P-1, lado salón) — a validar por el profesional.')
+            elif not pmc.get('ifc_ref_3_6m_ok', True):
+                lines_.append('!3–6 m de la campana = criterio IFC (NFPA 96 no fija')
+                lines_.append('!distancia): VERIFICAR con el listado del sistema.')
         cboxes.append((C_FIRE, lines_, (sx(pm['at'][0]) + 1.9, sy(pm['at'][1]) + 1.9)))
     cboxes.append(('#1b1b1b', ['DETECCIÓN Y ALARMA (NFPA 72 · VERIFY)', f'H humo en salón y ala ({n_smoke}) · T térmico en',
                                f'cocina caliente / BBQ ({n_heat}): no usar detector de humo', 'junto a la línea. Integrar a la alarma del centro',
-                               'comercial si existe; el disparo de la supresión HD-1', 'se señaliza en esa alarma (NFPA 96 / 72).',
+                               'comercial si existe; el disparo de la supresión HD-1 /', 'HD-2 se señaliza en esa alarma (NFPA 96 / 72).',
                                'Rótulos y luces de emergencia: ver leyenda.'], None))
     for i, (col, lines_, tgt) in enumerate(cboxes):
         bx = x0c + i * (wc + 1.6)
@@ -1177,8 +1254,8 @@ def build_sheet(ex, lay, val, res):
     for p in sorted(shown, key=lambda q: -q['length']):
         alt = res['alt_with_ps1'].get(p['id']) or {}
         name = p['name'] + (' ◄ más remoto' if crit and p is crit else '')
-        rows.append([p['id'], name[:58], f"{p['length']:.2f}", 'CUMPLE' if p['ok_common_path'] else 'NO CUMPLE',
-                     'CUMPLE' if p['ok_travel'] else 'NO CUMPLE', f"{p['margin_m']:+.2f}",
+        rows.append([p['id'], name[:58], f"{p['length']:.2f}", 'DENTRO' if p['ok_common_path'] else 'EXCEDE',
+                     'DENTRO' if p['ok_travel'] else 'EXCEDE', f"{p['margin_m']:+.2f}",
                      f"{alt['length']:.2f}" if alt.get('length') is not None else '—'])
         okc = C_EGR if p['ok_common_path'] else C_EGR2
         okt = C_EGR if p['ok_travel'] else C_EGR2
@@ -1192,16 +1269,17 @@ def build_sheet(ex, lay, val, res):
            f'bancas), a {BODY:.2f} m de obstáculos (radio corporal), suavizado por visibilidad y medido hasta el plano de la puerta. NFPA 101',
            "7.6 mide por el eje del recorrido natural a 0.30 m de las esquinas: " + (
                f"con 0.30 m, {res['sensitivity_030']['path']} = {res['sensitivity_030']['length']:.2f} m "
-               f"({'CUMPLE' if res['sensitivity_030']['ok'] else 'NO CUMPLE'}). " if res.get('sensitivity_030') else '')
-           + 'Datos: data/life_safety_calcs.json.',
-           '* Con PS-1 (SAL-2 condicional): solo informativo, NO se cuenta como salida.']
+               f"({'dentro del límite' if res['sensitivity_030']['ok'] else 'EXCEDE el límite'}). " if res.get('sensitivity_030') else '')
+           + 'Detalle: documento 03 (seguridad humana).',
+           '* Con PS-1 (SAL-2 condicional): solo informativo, NO se cuenta como salida. DENTRO = medido en planta del anteproyecto,',
+           'a validar por el profesional responsable (CFIA) y Bomberos.']
     for ln in mth:
         g.append(text(X, yy, ln, 1.6, anchor='start', fill='#444'))
         yy += 2.6
     # clear widths along egress (from the validator) + doors
     yy += 2.4
     g.append(text(X, yy, 'ANCHOS LIBRES EN LA RUTA DE EGRESO', 2.4, anchor='start', weight='800', extra='letter-spacing="0.2"'))
-    g.append(text(X + 62, yy, '(cuello de botella medido · validation.json / A-103)', 1.65, anchor='start', fill='#555'))
+    g.append(text(X + 62, yy, '(cuello de botella medido en planta · ver A-103)', 1.65, anchor='start', fill='#555'))
     yy += 1.6
     pname = {'entrance': 'entrada', 'barra_front': 'frente de barra', 'pass_dining': 'pase (salón)', 'dining_far': 'fondo del salón',
              'kitchen_door': 'P-1', 'dish_drop': 'lavado', 'cold_storage': 'cold prep', 'line': 'línea caliente',
@@ -1216,18 +1294,24 @@ def build_sheet(ex, lay, val, res):
         ok = w_ + 0.005 >= MINW
         tight = ok and w_ - MINW < 0.03
         wrows.append([f"{pname.get(c['from'], c['from'])} ↔ {pname.get(c['to'], c['to'])}", f"{w_:.2f}", f"≥ {MINW:.3f}",
-                      'CUMPLE (VERIFY)' if tight else ('CUMPLE' if ok else 'NO CUMPLE')])
+                      'DENTRO (VERIFY)' if tight else ('DENTRO' if ok else 'INSUFICIENTE')])
         wcol.append([None, None, '#666', C_EGR2 if not ok else ('#b35900' if tight else C_EGR)])
         wwt.append([None, '800', None, '700'])
+    DOOR_MIN = float(ls.get('limits', {}).get('door_clear_min_m', 0.81))
+    kind_txt = {'double_acting_door': 'puerta de vaivén', 'door': 'puerta abatible', 'sliding_door': 'puerta corrediza'}
     for o in lay.get('new_openings', []):
-        if o.get('type') in ('double_acting_door', 'door') and not o.get('conditional'):
-            wrows.append([f"{o.get('label', o['id'])} puerta de vaivén (hoja libre ≈ vano − 0.05 VERIFY)", f"{o.get('width', 0):.2f}", '≥ 0.810',
-                          'CUMPLE (VERIFY)'])
-            wcol.append([None, None, '#666', '#b35900'])
+        if o.get('type') in kind_txt and not o.get('conditional'):
+            cl = float(o.get('width', 0)) - DOOR_LOSS
+            okd = cl + 0.005 >= DOOR_MIN
+            wrows.append([f"{o.get('label', o['id'])} {kind_txt[o['type']]} {float(o.get('width', 0)):.2f} (libre ≈ vano − {DOOR_LOSS:.2f}, VERIFY)",
+                          f"≈{cl:.2f}", f'≥ {DOOR_MIN:.3f}', 'DENTRO (VERIFY)' if okd else 'INSUFICIENTE'])
+            wcol.append([None, None, '#666', '#b35900' if okd else C_EGR2])
             wwt.append([None, '800', None, '700'])
     if ex1:
-        wrows.append([f"SAL-1 {ex1['opening']} (2 hojas, libre por hoja VERIFY)", f"{ex1['width_m']:.2f}", '≥ 0.810 c/hoja', 'CUMPLE (VERIFY)'])
-        wcol.append([None, None, '#666', '#b35900'])
+        cl = ex1['leaf_m'] - DOOR_LOSS
+        wrows.append([f"SAL-1 {ex1['opening']} {ex1['width_m']:.2f} (2 hojas {ex1['leaf_m']:.2f}; libre por hoja, VERIFY)", f"≈{cl:.2f}",
+                      f'≥ {DOOR_MIN:.3f} c/hoja', 'DENTRO (VERIFY)' if cl + 0.005 >= DOOR_MIN else 'INSUFICIENTE'])
+        wcol.append([None, None, '#666', '#b35900' if cl + 0.005 >= DOOR_MIN else C_EGR2])
         wwt.append([None, '800', None, '700'])
     cols = [(0, 'Tramo / componente', 'start'), (86, 'Ancho m', 'end'), (106, 'Mín. NFPA 101', 'end'), (137, 'Estado', 'end')]
     tsvg, yy = table(X, yy, cols, wrows, size=1.85, rh=3.8, head_size=1.7, families=[None, MONO, MONO, None], colors=wcol, weights=wwt)
@@ -1242,12 +1326,15 @@ def build_sheet(ex, lay, val, res):
     y0 = 321.0
     g = [text(12, y0 + 3, 'CARGA DE OCUPANTES · NFPA 101 Tabla 7.3.1.2 (verificar edición)', 2.7, anchor='start', weight='800',
               extra='letter-spacing="0.3"')]
-    cols = [(0, 'Zona', 'start'), (46, 'Uso (factor según layout.life_safety)', 'start'), (126, 'Área m²', 'end'), (139, 'm²/p', 'end'),
+    cols = [(0, 'Zona', 'start'), (46, 'Uso (factor de carga del anteproyecto)', 'start'), (126, 'Área m²', 'end'), (139, 'm²/p', 'end'),
             (143, 'Base', 'start'), (171, 'Cálculo', 'end'), (190, 'Ocup.', 'end')]
     rows, colors, weights = [], [], []
     for r in L['rows']:
         use = r['use'].replace(' (NFPA 101 Tabla 7.3.1.2)', '')
-        rows.append([f"{r['zone']} · {r['name']}"[:28], use[:44], f"{r['area_m2']:.2f}", f"{r['factor_m2_per_person']:g}", r['basis'],
+        use = use.split(' (')[0] if tw(use, 1.95) > 76 else use
+        while tw(use, 1.95) > 76:
+            use = use.rsplit(' ', 1)[0].rstrip(',;:') + '…'
+        rows.append([f"{r['zone']} · {r['name']}"[:28], use, f"{r['area_m2']:.2f}", f"{r['factor_m2_per_person']:g}", r['basis'],
                      f"{r['raw']:.2f}", f"{r['occupants']}"])
         colors.append([zones.get(r['zone'], {}).get('color'), None, None, None, None, '#666', None])
         weights.append(['800', None, None, None, None, None, '800'])
@@ -1288,28 +1375,36 @@ def build_sheet(ex, lay, val, res):
                   'SF': f'2-A agua o K 6 L ≤ {LIM_SOLID:.0f} m (NFPA 96 comb. sólido)',
                   'B': f'10-B ≤ {LIM_B:.2f} m (NFPA 10 §6.3.1)',
                   'A': f'2-A ≤ {LIM_A:.1f} m (NFPA 10 Tabla 6.2.1.1)',
-                  'PM': 'En ruta de egreso, h 1.07–1.22 (NFPA 96 §10.5.1)'}
+                  'PM': 'En ruta de egreso, h 1.07–1.22, uno por campana (NFPA 96 §10.5.1)'}
     cols = [(0, 'Riesgo protegido', 'start'), (56, 'Equipo', 'start'), (96, 'Medido m', 'end'), (110, 'Límite', 'end'),
             (114, 'Criterio (verificar edición)', 'start'), (220, 'Estado', 'end')]
     rows, colors, weights = [], [], []
     for c in checks:
         if c['kind'] == 'PM':
-            med, lim = f"{c['length']:.2f}", '3–6*'
-            st = 'VERIFICAR' if not c['ok'] else 'CUMPLE'
+            med, lim = f"{c['dist_to_egress_path']:.2f}" if c.get('dist_to_egress_path') is not None else '—', f"≤ {c['limit']:.2f}†"
+            st = 'FUERA DE RUTA' if not c.get('on_route') else ('EN RUTA' if c['ok'] else 'EN RUTA · VERIFICAR')
+            stc = C_EGR2 if not c.get('on_route') else (C_EGR if c['ok'] else '#b35900')
         else:
             med, lim = f"{c['length']:.2f}", f"{c['limit']:.2f}"
-            st = 'CUMPLE' if c['ok'] else 'NO CUMPLE'
-        rows.append([c['hazard'][:34], c['device'][:22], med, lim, crit_short.get(c['kind'], '')[:58], st])
-        stc = C_EGR if st == 'CUMPLE' else C_EGR2
+            st = 'DENTRO' if c['ok'] else 'EXCEDE'
+            stc = C_EGR if c['ok'] else C_EGR2
+        rows.append([c['hazard'][:40], c['device'][:22], med, lim, crit_short.get(c['kind'], '')[:70], st])
         colors.append([None, C_FIRE, None, '#666', '#444', stc])
         weights.append(['700', '800', '800', None, None, '800'])
     tsvg, yy = table(x2, y0 + 5.5, cols, rows, size=1.9, rh=4.0, head_size=1.75, families=[None, None, MONO, MONO, None, None],
                      colors=colors, weights=weights)
     g.append(tsvg)
     yy += 3.2
-    foot = ['Solo K 6 L o 2-A tipo AGUA protegen combustible sólido (NFPA 96): un ABC de polvo no califica → EX-K cubre freidoras, parrilla, smoker y',
-            'leña; EX-A cubren clase A/B. Montaje: parte superior ≤ 1.53 m y inferior ≥ 0.10 m del piso, visibles y señalizados (NFPA 10).',
-            'Rótulo junto a EX-K: "accionar primero el sistema fijo". * 3–6 m de la campana: criterio IFC de referencia (NFPA 96 no fija distancia).']
+    dk = ', '.join(sorted({c['device'] for c in checks if c['kind'] == 'K'})) or '—'
+    dsf = ', '.join(sorted({c['device'] for c in checks if c['kind'] == 'SF'})) or '—'
+    dab = ', '.join(sorted({d.strip() for c in checks if c['kind'] in ('A', 'B') for d in c['device'].split(',')} - {''}))
+    pmc_ = next((c for c in checks if c['kind'] == 'PM'), None)
+    foot = [f'Solo K 6 L o 2-A tipo AGUA protegen combustible sólido (NFPA 96): un ABC de polvo no califica → freidoras: {dk}; parrilla, smoker',
+            f'y leña: {dsf}; clase A/B: {dab}. Montaje: parte superior ≤ 1.53 m e inferior ≥ 0.10 m del piso, visibles y señalizados (NFPA 10).',
+            'Rótulo junto a los extintores K: "accionar primero el sistema fijo". Recorridos medidos a pie sobre la planta (a validar por el profesional).',
+            '† Pulsadores: distancia al recorrido de egreso medido' + (
+                f"; a la campana más cercana {pmc_['length']:.2f} m en planta (criterio IFC 3–6 m, solo referencia: NFPA 96 no fija distancia)."
+                if pmc_ else '.')]
     for ln in foot:
         g.append(text(x2, yy, ln, 1.65, anchor='start', fill='#444'))
         yy += 2.7
@@ -1361,11 +1456,11 @@ def build_sheet(ex, lay, val, res):
               (sw_origin, 'Origen + longitud del recorrido (m)'),
               (sw_exit, 'SALIDA SAL-1 · (contorno rojo = condicional)'),
               (sw_sym(lambda cx, cy: sym_exit_sign(cx, cy, 'E')), 'Rótulo SALIDA iluminado / direccional (RS)'),
-              (sw_sym(sym_em_light), 'Luz de emergencia (LE) · 1.5 h'),
-              (sw_sym(lambda cx, cy: sym_ext(cx, cy, 'K')), 'Extintor clase K 6 L (EX-K)'),
-              (sw_sym(lambda cx, cy: sym_ext(cx, cy, 'ABC')), 'Extintor ABC 2-A:10-B:C (EX-A)'),
-              (sw_cov, 'Radio 9.15 m (K) / 6 m (comb. sólido) desde EX-K'),
-              (sw_sym(sym_pull), 'Disparo manual supresión HD-1 (PM)'),
+              (sw_sym(sym_em_light), 'Luz de emergencia (EM) · 1.5 h'),
+              (sw_sym(lambda cx, cy: sym_ext(cx, cy, 'K')), f"Extintor clase K 6 L ({', '.join(e['id'] for e in kx)})"),
+              (sw_sym(lambda cx, cy: sym_ext(cx, cy, 'ABC')), f"Extintor ABC 2-A:10-B:C ({', '.join(e['id'] for e in exts if e not in kx)})"),
+              (sw_cov, 'Radio 9.15 m (K, freidoras) / 6 m (comb. sólido) · extintor asignado'),
+              (sw_sym(sym_pull), f"Disparo manual supresión HD-1 / HD-2 ({' / '.join(pm_ids)})"),
               (sw_det2, 'Detector de humo (H) / térmico (T)'),
               (sw_valves, 'Acometida gas (G) · válvula de corte manual (VM)'),
               (sw_sym(lambda cx, cy: sym_valve(cx, cy + 0.8, True)), 'Válvula solenoide (VS) enclavada a HD-1'),
@@ -1373,9 +1468,10 @@ def build_sheet(ex, lay, val, res):
     far = crit['length'] if crit else 0
     tot = L['total_rounded_per_zone']
     load_bad = tot >= THRESHOLD or tot > L['declared_capacity']
-    pm_bad = any(c['kind'] == 'PM' and not c['ok'] for c in checks)
+    pm_bad = any(c['kind'] == 'PM' and not c.get('on_route') for c in checks)
+    pm_ref = any(c['kind'] == 'PM' and c.get('on_route') and not c['ok'] for c in checks)
     summary = [
-        ('Clasificación pretendida', 'Mercantil < 50 p (Clase C)', None),
+        ('Clasificación pretendida (NFPA 101)', 'Mercantil < 50 p (clase C)', None),
         ('Capacidad declarada / calculada', f"{L['declared_capacity']} / {tot} p", C_EGR2 if load_bad else C_EGR),
         ('Salidas contadas', f"{sum(1 for e in res['exits'] if e['counted'])} (SAL-1) + SAL-2 cond.", None),
         ('Recorrido más largo medido', f"{far:.2f} m ≤ {LIM_COMMON:.2f} m", C_EGR if crit and crit['ok'] else C_EGR2),
@@ -1383,7 +1479,8 @@ def build_sheet(ex, lay, val, res):
         ('Rótulos SALIDA / luces de emergencia', f"{len(ls.get('exit_signs', []))} / {len(ls.get('emergency_lights', []))}", None),
         ('Extintores K / ABC', f"{len(kx)} / {len(exts) - len(kx)}", None),
         ('Detectores humo / térmicos', f"{n_smoke} / {n_heat}", None),
-        ('Disparo manual PM-1 en ruta de egreso', 'VERIFICAR' if pm_bad else 'CUMPLE', C_EGR2 if pm_bad else C_EGR),
+        (f"Disparo manual {' / '.join(pm_ids)} en ruta de egreso", 'FUERA DE RUTA' if pm_bad else ('EN RUTA · VERIFY' if pm_ref else 'EN RUTA'),
+         C_EGR2 if pm_bad else ('#b35900' if pm_ref else C_EGR)),
     ]
     y = s.side_panel([('h', 'Leyenda'), ('legend', legend), ('h', 'Resumen (medido en planta)')])
     g = []
@@ -1414,10 +1511,11 @@ def build_sheet(ex, lay, val, res):
         'SS.HH.: comunes del C.C., fuera del local (≤ 36 m + autorización: VERIFY).',
     ]
     y = s.side_panel([('h', 'Normativa y criterios'), ('para', notes)], y=y)
-    big = ['Segunda salida independiente desde el salón (PS-1 no sirve: pasa por cocina).',
-           'Puertas con giro hacia afuera; herraje antipánico (≥ 100 p; ≥ 50 p en ed. 2027).',
-           'Rociadores automáticos supervisados (NFPA 101 12.3.5, restaurante nuevo).',
-           'Pasillos de mesas ≥ 1.12 m y rótulo de capacidad obligatorio (12.7.9.3).']
+    big = ['!Reunión pública (NFPA 101 cap. 12) — requisitos a confirmar en la edición exigible:',
+           'Segunda salida independiente desde el salón (PS-1 no sirve: pasa por cocina).',
+           'Puertas con giro hacia afuera; herraje antipánico (umbral 100 / 50 p según edición).',
+           'Rociadores automáticos: evaluar NFPA 101 12.3.5.1 (umbral según edición).',
+           'Pasillos de mesas ≥ 1.12 m y rótulo de capacidad (12.7.9.3) — verificar.']
     verify = ['Altura libre de cielo (3.00 m supuesta) · ruta de ductos y chimenea.',
               'Ancho libre real de hojas D-ENT y P-1 · giro y cerrajería de D-ENT.',
               'Pasillo abierto del C.C. = descarga al exterior · plan de evacuación del C.C.',
@@ -1427,7 +1525,7 @@ def build_sheet(ex, lay, val, res):
 
 
 def sheets(ex, lay, val):
-    res = compute(ex, lay, val)
+    res = compute_cached(ex, lay, val)
     try:
         with open(os.path.join(ROOT, 'data', 'life_safety_calcs.json'), 'w') as fh:
             json.dump(calcs_json(res, lay), fh, indent=1, ensure_ascii=False)

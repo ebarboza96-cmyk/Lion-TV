@@ -260,14 +260,14 @@
   },
   {
    "tag": "K3",
-   "name": "Lavamanos cocina (recomendado)",
+   "name": "Lavamanos cocina",
    "cat": "wash",
    "w": 0.33,
    "d": 0.38,
    "h": 0.9,
    "tbv": false,
    "overhead": false,
-   "note": "Recomendado por higiene junto a la línea y a la entrada desde frío (verificar requisito Ministerio de Salud)."
+   "note": "Lavamanos exclusivo de la cocina (obligatorio, DE 37308-S): jabón líquido y toallas desechables, junto a la línea."
   },
   {
    "tag": "S1",

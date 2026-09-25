@@ -67,8 +67,8 @@ L['new_openings'] += [
     {'id': 'P-1', 'type': 'double_acting_door', 'rect': [P0, DOOR[0], P1, DOOR[1]], 'width': round(DOOR[1] - DOOR[0], 2), 'label': 'P-1',
      'note': 'Puerta de cocina de vaivén: vano 1.02, hoja ≈0.96 con visor, paso libre ≥0.90 (Ley 7600 art. 140). Única conexión cocina/salón: '
              'entrada de loza sucia y salida de platos; circulación por la derecha. Siempre libre (ruta de evacuación del personal).'},
-    {'id': 'P-2', 'type': 'door', 'rect': [1.46, 7.076, 1.56, 7.986], 'width': 0.91, 'label': 'P-2',
-     'hinge': [1.56, 7.986], 'closed_to': [1.56, 7.076], 'swing_to': [2.47, 7.986],
+    {'id': 'P-2', 'type': 'door', 'rect': [1.46, 7.00, 1.56, 7.986], 'width': 0.99, 'label': 'P-2',
+     'hinge': [1.56, 7.986], 'closed_to': [1.56, 7.00], 'swing_to': [2.546, 7.986],
      'note': 'Puerta de cierre automático en el vano existente pasillo limpio → lavado (separa limpio/sucio y conserva la ruta de evacuación del ala).'},
     {'id': 'PS-1', 'type': 'service_door', 'rect': [2.56, 11.486, 3.46, 11.616], 'width': 0.90, 'label': 'PS-1',
      'hinge': [3.46, 11.616], 'closed_to': [2.56, 11.616], 'swing_to': [3.46, 12.516], 'conditional': True,
@@ -77,6 +77,7 @@ L['new_openings'] += [
              'puede exigirse puerta cortafuego autocerrante — VERIFY ON SITE.'},
 ]
 L['remove_items'] = [{'id': 'HOOD-EX', 'rect': [2.397, 0.116, 6.197, 1.219], 'label': 'Campana existente Marna’s 3.80 × 1.10 — A RETIRAR'}]
+L['demolish'].append({'id': 'IP-P1', 'rect': [1.46, 7.00, 1.56, 7.076], 'note': 'Recorte de 7.6 cm del extremo de IP-P1 para que P-2 tenga vano 0.99 (paso libre ≥0.90, Ley 7600).'})
 L['demolish'].append({'id': 'IP-P2', 'rect': [1.46, 8.536, 1.56, 8.886], 'note': 'Recorte del remate liviano de IP-P2 bajo IP-P3 (35 cm) para liberar la boca del pasillo limpio.'})
 L['demolish'].append({'id': 'EW-S2', 'rect': [3.365, 11.486, 3.46, 11.616], 'conditional': True,
                       'note': 'Solo si se aprueba PS-1: ampliar vano 9.5 cm en muro sur.'})
@@ -106,8 +107,8 @@ eq('K1', 'mesa_1', 'Mesa de trabajo inox', 'prep', [0.875, YN, 2.275, 0.816], 'S
    note='Apoyo / mise en place / bandejeo / terminación junto a la línea. 140 × 70 (ajustada para dejar 1.10 m frente a freidoras).')
 eq('K2', 'oven', 'Horno (sobre mesa)', 'fire', [1.525, YN, 2.275, 0.816], None, 0, 1.55, True, stack_with='K1', no_label=True,
    note='Horno eléctrico de convección de mesa ≈75 × 70 TBV, con campana de recirculación integrada listada UL 710B (ventless) porque queda fuera de las campanas — TO BE ENGINEERED.')
-eq('K3', 'handwash_k', 'Lavamanos cocina (recomendado)', 'wash', [1.85, 4.606, 2.18, 4.986], 'N', 0.60, 0.90, False,
-   note='Recomendado por higiene junto a la línea y a la entrada desde frío (verificar requisito Ministerio de Salud).')
+eq('K3', 'handwash_k', 'Lavamanos cocina', 'wash', [1.85, 4.606, 2.18, 4.986], 'N', 0.60, 0.90, False,
+   note='Lavamanos exclusivo de la cocina (obligatorio, DE 37308-S): jabón líquido y toallas desechables, junto a la línea.')
 
 # ---------------------------------------------------------------- E · BBQ PRODUCTION (west wall)
 eq('S1', 'smoker', 'Smoker vertical (ahumador)', 'smoker', [-0.085, 1.00, 0.665, 2.40], 'E', 1.00, 1.90, True,
@@ -125,7 +126,7 @@ eq('W2', 'handwash', 'Lavamanos', 'wash', [4.13, 7.25, 4.51, 7.58], 'W', 0.60, 0
    note='33 × 38. Reutiliza la zona húmeda WP2.')
 eq('W3', 'mop_sink', 'Pileta / mop sink', 'wash', [3.91, 7.936, 4.51, 8.436], 'W', 0.60, 0.45, False,
    note='60 × 50 en la posición exacta de la pila palo de piso existente (WP3).')
-eq('W4', 'mesa_opt', 'Mesa de apoyo / escurrido', 'wash', [1.56, 5.20, 2.16, 7.07], 'E', 1.00, 0.90, False, plan_label='Mesa escurrido (limpio)',
+eq('W4', 'mesa_opt', 'Mesa de apoyo / escurrido', 'wash', [1.56, 5.12, 2.16, 6.99], 'E', 1.00, 0.90, False, plan_label='Mesa escurrido (limpio)',
    note='187 × 60 (mesa opcional del programa) contra la división existente P1: racks limpios / apoyo.')
 eq('W6', 'waste_bins', 'Basureros con tapa (bajo escurridor sucio)', 'wash', [3.36, 5.20, 4.06, 6.00], None, 0, 0.70, False, stack_with='W1', no_label=True,
    note='3 contenedores con tapa y pedal (orgánicos / valorizables / ordinarios) bajo el escurridor norte de W1, donde entra la loza sucia. '
@@ -219,7 +220,7 @@ BQ.append({'id': 'BQ-S', 'rect': [6.50, YS - 0.55, round(xs_end + 0.05, 3), YS],
 
 # accessible tables (Ley 7600): wheelchair takes the aisle-side chair position
 for t in T:
-    if t['id'] in ('TN6', 'TS8'):
+    if t['id'] in ('TN6', 'TS5'):
         t['accessible'] = True
         t['note'] = 'Mesa accesible: h 0.76–0.80, espacio libre inferior ≥0.70 m, aproximación 0.80 × 1.20 desde el pasillo (se retira la silla del pasillo).'
 
@@ -290,7 +291,7 @@ L['life_safety'] = {
     'waiting_area': 'Sin zona de espera interior: el vestíbulo y el barrido de D-ENT son área de egreso libre. Cola y retiro de delivery afuera.',
     'exit_signs': [
         {'id': 'RS-1', 'at': [16.15, 2.643], 'text': 'SALIDA', 'dir': 'E', 'note': 'Sobre la puerta principal, iluminado'},
-        {'id': 'RS-2', 'at': [6.20, 2.55], 'text': 'SALIDA →', 'dir': 'E', 'note': 'Direccional colgante en el salón (visible desde P-1 y la barra)'},
+        {'id': 'RS-2', 'at': [6.90, 2.75], 'text': 'SALIDA →', 'dir': 'E', 'note': 'Direccional colgante en el salón (visible desde P-1 y la barra)'},
         {'id': 'RS-3', 'at': [4.20, 4.48], 'text': 'SALIDA →', 'dir': 'E', 'note': 'Cara de cocina de la puerta P-1'},
         {'id': 'RS-4', 'at': [0.90, 5.15], 'text': 'SALIDA ↑', 'dir': 'N', 'note': 'Pasillo limpio del ala, hacia la cocina'},
         {'id': 'RS-5', 'at': [1.00, 8.95], 'text': 'SALIDA ↑', 'dir': 'N', 'note': 'Boca del pasillo limpio desde cold prep'},
@@ -300,16 +301,17 @@ L['life_safety'] = {
     'emergency_note': 'Iluminación de emergencia en todo el recorrido: autonomía ≥1.5 h, ≥10.8 lux promedio y ≥1.1 lux mínimo iniciales (NFPA 101 7.9).',
     'extinguishers': [
         {'id': 'EX-K', 'type': 'Clase K 6 L', 'at': [1.60, 4.95], 'note': 'Freidoras a ≤9.15 m; rótulo: accionar primero el sistema fijo'},
-        {'id': 'EX-A1', 'type': 'Clase K 6 L (combustible sólido)', 'at': [-0.04, 4.70],
+        {'id': 'EX-K2', 'type': 'Clase K 6 L (combustible sólido)', 'at': [-0.04, 4.70],
          'note': 'Smoker y parrilla a ≤6 m (NFPA 96 cap. 14: 2-A de agua pulverizada o químico húmedo K 6 L). Si un hogar supera 0.14 m³: manguera fija de agua.'},
         {'id': 'EX-B1', 'type': 'ABC 2-A:10-B:C', 'at': [2.45, 0.13], 'note': 'Cocina caliente: equipos a gas (10-B a ≤9.15 m de las freidoras)'},
         {'id': 'EX-A2', 'type': 'ABC 2-A:10-B:C', 'at': [15.80, 4.95], 'note': 'Salón, junto a la salida'},
         {'id': 'EX-A3', 'type': 'ABC 2-A:10-B:C', 'at': [0.35, 8.50], 'note': 'Ala de servicio (lavado / cold prep)'},
     ],
     'pull_station': {'at': [P1 + 0.05, 3.85], 'h': '1.07–1.22 m', 'ids': ['PM-1', 'PM-2'],
-                     'note': 'Pulsadores manuales de supresión de la campana 1 (PM-1) y de la campana 2 (PM-2), con tapa, en la cara salón de NW-1 '
-                             'junto al marco norte de P-1: sobre la ruta de salida del personal, ≈3 m de la parrilla (distancia exigida según edición NFPA 96 / 17A: VERIFY).'},
-    'smoke_detectors': [[2.40, 1.20], [0.60, 6.20], [2.40, 9.80], [8.50, 2.55], [12.40, 2.55]],
+                     'note': 'Pulsadores manuales de supresión de la campana 1 (PM-1) y de la campana 2 (PM-2), con tapa e identificados, en la cara salón de NW-1 '
+                             'junto al marco norte de P-1: sobre la ruta de salida del personal (NFPA 96 §10.5.1) y separados del fuego por NW-1/NW-2 incombustibles. '
+                             'La referencia de 3–6 m de la campana (IFC / listado) no se alcanza en este local: validar con el listado del sistema y Bomberos — VERIFY.'},
+    'smoke_detectors': [[2.60, 1.90], [0.60, 6.20], [2.40, 9.80], [9.80, 2.00], [13.20, 3.10]],
     'detector_note': 'Detección e integración a la alarma del centro comercial si existe (VERIFY). En cocina caliente: detector térmico, no de humo. '
                      'Monitoreo de CO recomendado por los dos aparatos de combustible sólido.',
     'sprinklers': 'NFPA 101 no exige rociadores con <50 personas. Si el centro comercial tiene red o alarma, integrarse según NFPA 13/72 — VERIFY con la administración.',
@@ -337,12 +339,12 @@ L['mep'] = {
          'riser': 'Chimenea listada vertical (NFPA 211) sobre el smoker hasta cubierta, con arrestachispas — VERIFY. Alternativa: smoker eléctrico o de pellet listado.',
          'note': 'Remate según NFPA 96 7.8 / INVU (altura sobre edificios vecinos y distancia a tomas de aire: VERIFY).'},
     ],
-    'makeup_air': {'id': 'AR-1', 'diffusers': [[2.40, 1.60], [2.40, 3.00]],
+    'makeup_air': {'id': 'AR-1', 'diffusers': [[2.40, 1.60], [2.40, 3.00]], 'riser': [2.40, 1.116],
                    'note': 'Aire de reposición ≈80–90 % del caudal extraído, entregado sin perturbar la captura de las campanas; suministro positivo para combustible sólido — TO BE ENGINEERED.'},
     'panel': {'id': 'TE-1', 'rect': [6.25, 0.116, 6.85, 0.26],
               'note': 'Tablero eléctrico del local (ubicación propuesta, frente libre 0.90 m) — acometida existente: VERIFY ON SITE.'},
     'grease_trap': 'GT-1',
-    'drain_existing': ['WP1', 'WP2', 'WP3', 'WP5'],
+    'drain_existing': ['WP1', 'WP2', 'WP3', 'WP4', 'WP5'],
     'engineering_notes': ['Anclaje sísmico (Código Sísmico de CR) de campanas, ductos, gas y equipos altos (A1, A2, S1).',
                           'Ventilación / aire acondicionado del salón y de la cocina: el local solo tiene fachada al este — TO BE ENGINEERED.',
                           'Aire de combustión y monitoreo de CO para la parrilla y el smoker.'],
@@ -351,7 +353,7 @@ L['mep'] = {
 # ---------------------------------------------------------------- 3D decor + tour (walkthrough app)
 L['decor'] = [
     {'type': 'slat_wall', 'rect': [6.55, YS - 0.075, 15.35, YS], 'face': 'N', 'text': 'LAVA', 'z': 1.0, 'h': 2.85, 'text_at': 0.55},
-    {'type': 'sign', 'rect': [P1, 1.30, P1 + 0.06, 3.70], 'face': 'E', 'text': 'LAVA', 'h': 2.62, 'size': 0.42},
+    {'type': 'sign', 'rect': [P1, 1.30, P1 + 0.06, 3.70], 'face': 'E', 'text': 'LAVA', 'h': 2.75, 'size': 0.42, 'note': 'Letras metálicas incombustibles.'},
     {'type': 'poster', 'rect': [11.10, YN, 11.84, YN + 0.03], 'face': 'S', 'text': 'vaca', 'h': 1.72, 'size': 1.0},
     {'type': 'poster', 'rect': [12.00, YN, 12.74, YN + 0.03], 'face': 'S', 'text': 'GOOD MEAT|GOOD PEOPLE', 'h': 1.72, 'size': 1.0},
     {'type': 'poster', 'rect': [12.90, YN, 13.64, YN + 0.03], 'face': 'S', 'text': 'cerdo', 'h': 1.72, 'size': 1.0},

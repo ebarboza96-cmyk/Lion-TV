@@ -15,6 +15,16 @@
    "note": "Tramo liviano cocina/pilas: abre el paso directo puerta de cocina → lavado."
   },
   {
+   "id": "IP-P1",
+   "rect": [
+    1.46,
+    7.0,
+    1.56,
+    7.076
+   ],
+   "note": "Recorte de 7.6 cm del extremo de IP-P1 para que P-2 tenga vano 0.99 (paso libre ≥0.90, Ley 7600)."
+  },
+  {
    "id": "IP-P2",
    "rect": [
     1.46,
@@ -85,11 +95,11 @@
    "type": "door",
    "rect": [
     1.46,
-    7.076,
+    7.0,
     1.56,
     7.986
    ],
-   "width": 0.91,
+   "width": 0.99,
    "label": "P-2",
    "hinge": [
     1.56,
@@ -97,10 +107,10 @@
    ],
    "closed_to": [
     1.56,
-    7.076
+    7.0
    ],
    "swing_to": [
-    2.47,
+    2.546,
     7.986
    ],
    "note": "Puerta de cierre automático en el vano existente pasillo limpio → lavado (separa limpio/sucio y conserva la ruta de evacuación del ala)."
@@ -567,7 +577,7 @@
    "id": "K3",
    "tag": "K3",
    "key": "handwash_k",
-   "label": "Lavamanos cocina (recomendado)",
+   "label": "Lavamanos cocina",
    "cat": "wash",
    "rect": [
     1.85,
@@ -579,7 +589,7 @@
    "clear": 0.6,
    "h": 0.9,
    "tbv": false,
-   "note": "Recomendado por higiene junto a la línea y a la entrada desde frío (verificar requisito Ministerio de Salud)."
+   "note": "Lavamanos exclusivo de la cocina (obligatorio, DE 37308-S): jabón líquido y toallas desechables, junto a la línea."
   },
   {
    "id": "S1",
@@ -698,9 +708,9 @@
    "cat": "wash",
    "rect": [
     1.56,
-    5.2,
+    5.12,
     2.16,
-    7.07
+    6.99
    ],
    "front": "E",
    "clear": 1.0,
@@ -1213,7 +1223,9 @@
     4.386
    ],
    "seats": 2,
-   "type": "2top"
+   "type": "2top",
+   "accessible": true,
+   "note": "Mesa accesible: h 0.76–0.80, espacio libre inferior ≥0.70 m, aproximación 0.80 × 1.20 desde el pasillo (se retira la silla del pasillo)."
   },
   {
    "id": "TS6",
@@ -1252,9 +1264,7 @@
     4.386
    ],
    "seats": 2,
-   "type": "2top",
-   "accessible": true,
-   "note": "Mesa accesible: h 0.76–0.80, espacio libre inferior ≥0.70 m, aproximación 0.80 × 1.20 desde el pasillo (se retira la silla del pasillo)."
+   "type": "2top"
   }
  ],
  "chairs": [
@@ -1877,8 +1887,9 @@
    ],
    "face": "E",
    "text": "LAVA",
-   "h": 2.62,
-   "size": 0.42
+   "h": 2.75,
+   "size": 0.42,
+   "note": "Letras metálicas incombustibles."
   },
   {
    "type": "poster",
@@ -2873,8 +2884,8 @@
    {
     "id": "RS-2",
     "at": [
-     6.2,
-     2.55
+     6.9,
+     2.75
     ],
     "text": "SALIDA →",
     "dir": "E",
@@ -2971,7 +2982,7 @@
     "note": "Freidoras a ≤9.15 m; rótulo: accionar primero el sistema fijo"
    },
    {
-    "id": "EX-A1",
+    "id": "EX-K2",
     "type": "Clase K 6 L (combustible sólido)",
     "at": [
      -0.04,
@@ -3017,12 +3028,12 @@
     "PM-1",
     "PM-2"
    ],
-   "note": "Pulsadores manuales de supresión de la campana 1 (PM-1) y de la campana 2 (PM-2), con tapa, en la cara salón de NW-1 junto al marco norte de P-1: sobre la ruta de salida del personal, ≈3 m de la parrilla (distancia exigida según edición NFPA 96 / 17A: VERIFY)."
+   "note": "Pulsadores manuales de supresión de la campana 1 (PM-1) y de la campana 2 (PM-2), con tapa e identificados, en la cara salón de NW-1 junto al marco norte de P-1: sobre la ruta de salida del personal (NFPA 96 §10.5.1) y separados del fuego por NW-1/NW-2 incombustibles. La referencia de 3–6 m de la campana (IFC / listado) no se alcanza en este local: validar con el listado del sistema y Bomberos — VERIFY."
   },
   "smoke_detectors": [
    [
-    2.4,
-    1.2
+    2.6,
+    1.9
    ],
    [
     0.6,
@@ -3033,12 +3044,12 @@
     9.8
    ],
    [
-    8.5,
-    2.55
+    9.8,
+    2.0
    ],
    [
-    12.4,
-    2.55
+    13.2,
+    3.1
    ]
   ],
   "detector_note": "Detección e integración a la alarma del centro comercial si existe (VERIFY). En cocina caliente: detector térmico, no de humo. Monitoreo de CO recomendado por los dos aparatos de combustible sólido.",
@@ -3140,6 +3151,10 @@
      3.0
     ]
    ],
+   "riser": [
+    2.4,
+    1.116
+   ],
    "note": "Aire de reposición ≈80–90 % del caudal extraído, entregado sin perturbar la captura de las campanas; suministro positivo para combustible sólido — TO BE ENGINEERED."
   },
   "panel": {
@@ -3157,6 +3172,7 @@
    "WP1",
    "WP2",
    "WP3",
+   "WP4",
    "WP5"
   ],
   "engineering_notes": [

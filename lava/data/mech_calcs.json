@@ -1,0 +1,844 @@
+{
+ "sheets": [
+  "M-101",
+  "M-102"
+ ],
+ "status": "ANTEPROYECTO / PRELIMINAR — a validar por el profesional responsable (CFIA); PRELIMINAR — TO BE ENGINEERED",
+ "layout_version": "3.0",
+ "date": "2026-09-25",
+ "flags": [
+  "EXTRACTION / MAKE-UP AIR / FIRE SUPPRESSION TO BE ENGINEERED",
+  "SOLID-FUEL SMOKER - LOCATION / FLUE / FIRE CODE TO BE VALIDATED",
+  "VERIFY ON SITE",
+  "DIMENSION TO VERIFY"
+ ],
+ "exhaust": {
+  "basis": {
+   "rates": "Caudal por metro lineal de campana según el servicio (ASHRAE 154 / IMC 507, campana mural no listada = referencia conservadora); campanas listadas UL 710 suelen operar en el rango indicado (guías CKV / fabricante). La selección final la hace el ingeniero con el listado del equipo.",
+   "duty_table_cfm_per_ft": {
+    "light": {
+     "name": "liviano",
+     "unlisted": 200,
+     "listed_typical": [
+      150,
+      200
+     ]
+    },
+    "medium": {
+     "name": "medio",
+     "unlisted": 300,
+     "listed_typical": [
+      200,
+      300
+     ]
+    },
+    "heavy": {
+     "name": "pesado",
+     "unlisted": 400,
+     "listed_typical": [
+      200,
+      400
+     ]
+    },
+    "extra_heavy": {
+     "name": "extra-pesado (combustible sólido)",
+     "unlisted": 550,
+     "listed_typical": [
+      350,
+      550
+     ]
+    }
+   },
+   "v_design_ms": 7.5,
+   "v_min_ms_nfpa96": 2.54,
+   "v_max_practical_ms": 12.7,
+   "duct_rule": "Sección = Q / v_diseño; rectangular en pasos de 50 mm (relación ≤1.5) y circular en pasos de 25 mm"
+  },
+  "systems": [
+   {
+    "id": "EXT-1",
+    "serves": "HD-1",
+    "kind": "grasa (gas)",
+    "collar": [
+     3.95,
+     0.67
+    ],
+    "route": [
+     [
+      3.95,
+      0.67
+     ],
+     [
+      4.3,
+      0.67
+     ]
+    ],
+    "riser": "Collarín nuevo en HD-1 con transición al riser existente de Marna’s (X 4.10–4.50, Y 0.47–0.87) solo si la inspección lo aprueba; si no, ducto nuevo acero 16 MSG soldado en cerramiento RF — VERIFY ON SITE",
+    "fan": "Ventilador en cubierta — VERIFY",
+    "note": null,
+    "hood": "HD-1",
+    "hood_length_m": 2.3,
+    "hood_depth_m": 1.15,
+    "hood_style": "mural (canopy contra la división NW-1), extremos cerrados",
+    "appliances": [
+     {
+      "id": "H2",
+      "label": "Cocina 4 quemadores (gas de red)",
+      "duty": "medium"
+     },
+     {
+      "id": "H3",
+      "label": "Plancha",
+      "duty": "medium"
+     },
+     {
+      "id": "H4",
+      "label": "Freidora 1",
+      "duty": "medium"
+     },
+     {
+      "id": "H5",
+      "label": "Freidora 2",
+      "duty": "medium"
+     }
+    ],
+    "duty": "medium",
+    "duty_name": "medio",
+    "rate_cfm_per_ft": 300,
+    "rate_Ls_per_m": 464.5,
+    "rate_basis": "ASHRAE 154 / IMC 507: caudal mínimo para campana mural NO listada (referencia de diseño)",
+    "listed_range_cfm_per_ft": [
+     200,
+     300
+    ],
+    "listed_range_Ls": [
+     712,
+     1068
+    ],
+    "Q_Ls": 1068.4,
+    "Q_m3h": 3846,
+    "Q_cfm": 2264,
+    "duct": {
+     "area_required_m2": 0.1425,
+     "rect_mm": [
+      450,
+      350
+     ],
+     "rect_area_m2": 0.1575,
+     "velocity_rect_ms": 6.78,
+     "round_mm": 450,
+     "velocity_round_ms": 6.72
+    },
+    "v_design_ms": 7.5,
+    "v_min_ms": 2.54,
+    "v_ok": true,
+    "existing_collar": {
+     "rect": [
+      4.096,
+      0.469,
+      4.496,
+      0.869
+     ],
+     "section_m": [
+      0.4,
+      0.4
+     ],
+     "area_m2": 0.16,
+     "velocity_ms": 6.68,
+     "note": "Compatible por velocidad si el ducto aguas arriba mantiene la sección y cumple NFPA 96 (material, soldadura, cerramiento) — VERIFY ON SITE. El collarín existente queda sobre la nueva división NW-1: requiere transición sobre el cielo."
+    }
+   },
+   {
+    "id": "EXT-2",
+    "serves": "HD-2",
+    "kind": "combustible sólido",
+    "collar": [
+     3.8,
+     3.2
+    ],
+    "route": [
+     [
+      3.8,
+      3.2
+     ]
+    ],
+    "riser": "Ducto vertical propio sobre la parrilla hasta cubierta, en cerramiento RF 1 h nuevo (penetración de losa: revisión estructural + aprobación del condominio)",
+    "fan": "Ventilador propio en cubierta",
+    "note": "Arrestachispas antes de filtros; limpieza mensual. S-PIL no sirve (celda ≈0.11 m).",
+    "hood": "HD-2",
+    "hood_length_m": 1.55,
+    "hood_depth_m": 1.1,
+    "hood_style": "mural (canopy contra la división NW-1), extremos cerrados",
+    "appliances": [
+     {
+      "id": "H1",
+      "label": "Parrilla argentina",
+      "duty": "extra_heavy"
+     }
+    ],
+    "duty": "extra_heavy",
+    "duty_name": "extra-pesado (combustible sólido)",
+    "rate_cfm_per_ft": 550,
+    "rate_Ls_per_m": 851.6,
+    "rate_basis": "ASHRAE 154 / IMC 507: caudal mínimo para campana mural NO listada (referencia de diseño)",
+    "listed_range_cfm_per_ft": [
+     350,
+     550
+    ],
+    "listed_range_Ls": [
+     840,
+     1320
+    ],
+    "Q_Ls": 1320.0,
+    "Q_m3h": 4752,
+    "Q_cfm": 2797,
+    "duct": {
+     "area_required_m2": 0.176,
+     "rect_mm": [
+      450,
+      400
+     ],
+     "rect_area_m2": 0.18,
+     "velocity_rect_ms": 7.33,
+     "round_mm": 475,
+     "velocity_round_ms": 7.45
+    },
+    "v_design_ms": 7.5,
+    "v_min_ms": 2.54,
+    "v_ok": true
+   },
+   {
+    "id": "EXT-3",
+    "serves": "S1",
+    "kind": "chimenea smoker",
+    "collar": [
+     0.29,
+     1.7
+    ],
+    "route": [
+     [
+      0.29,
+      1.7
+     ]
+    ],
+    "riser": "Chimenea listada vertical (NFPA 211) sobre el smoker hasta cubierta, con arrestachispas — VERIFY. Alternativa: smoker eléctrico o de pellet listado.",
+    "fan": null,
+    "note": "Remate según NFPA 96 7.8 / INVU (altura sobre edificios vecinos y distancia a tomas de aire: VERIFY).",
+    "appliance": "S1",
+    "duty": "extra_heavy",
+    "duty_name": "extra-pesado (combustible sólido)",
+    "primary": "Chimenea propia de tiro natural, listada según el fabricante del smoker y NFPA 211; diámetro del collarín del equipo (típ. 150–200 mm) — VERIFY ficha",
+    "flue_diameter_mm_typical": [
+     150,
+     200
+    ],
+    "Q_Ls": null,
+    "alternative_hood": {
+     "when": "Si el smoker deja escapar efluentes al abrir la puerta (NFPA 96 cap. 14): campana listada y sistema de extracción independiente",
+     "hood_length_m": 1.4,
+     "hood_depth_m": 0.75,
+     "rate_cfm_per_ft": 550,
+     "rate_Ls_per_m": 851.6,
+     "Q_Ls": 1192.3,
+     "Q_m3h": 4292,
+     "Q_cfm": 2526,
+     "duct": {
+      "area_required_m2": 0.159,
+      "rect_mm": [
+       400,
+       400
+      ],
+      "rect_area_m2": 0.16,
+      "velocity_rect_ms": 7.45,
+      "round_mm": 450,
+      "velocity_round_ms": 7.5
+     }
+    }
+   }
+  ]
+ },
+ "makeup_air": {
+  "basis": "Aire de reposición 80–90 % del caudal extraído (cocina levemente negativa respecto del salón; ΔP ≤ 4.98 Pa NFPA 96 §8.3; con combustible sólido, suministro positivo durante toda la cocción)",
+  "exhaust_total_Ls": 2388.4,
+  "exhaust_total_m3h": 8598,
+  "exhaust_total_cfm": 5061,
+  "cases": [
+   {
+    "pct": 80,
+    "Q_Ls": 1910.7,
+    "Q_m3h": 6879,
+    "Q_cfm": 4049,
+    "transfer_from_dining_Ls": 477.7
+   },
+   {
+    "pct": 85,
+    "Q_Ls": 2030.1,
+    "Q_m3h": 7309,
+    "Q_cfm": 4302,
+    "transfer_from_dining_Ls": 358.3
+   },
+   {
+    "pct": 90,
+    "Q_Ls": 2149.6,
+    "Q_m3h": 7738,
+    "Q_cfm": 4555,
+    "transfer_from_dining_Ls": 238.8
+   }
+  ],
+  "design_pct": 85,
+  "design_Q_Ls": 2030.1,
+  "duct": {
+   "area_required_m2": 0.3384,
+   "rect_mm": [
+    700,
+    500
+   ],
+   "rect_area_m2": 0.35,
+   "velocity_rect_ms": 5.8,
+   "round_mm": 675,
+   "velocity_round_ms": 5.67
+  },
+  "v_design_ms": 6.0,
+  "diffusers": {
+   "count": 2,
+   "Q_each_Ls": 1015.1,
+   "min_face_area_each_m2_at_0.5ms": 2.03,
+   "note": "Descarga a baja velocidad (≈0.5 m/s o menos cerca de las campanas; guías CKV / ASHRAE) para no perturbar la captura: difusores perforados o pleno perimetral — TO BE ENGINEERED"
+  },
+  "if_smoker_hood_required": {
+   "extra_exhaust_Ls": 1192.3,
+   "mua_design_Ls": 3043.6
+  },
+  "riser": [
+   2.4,
+   1.116
+  ],
+  "riser_note": "Riser / ventilador AR-1 propuesto (no está en layout.json) — alternativa ducto S1: VERIFY"
+ },
+ "gas": {
+  "source": "Red de gas del centro comercial (tipo de gas y presión: VERIFY)",
+  "entry": [
+   3.0,
+   0.0
+  ],
+  "entry_note": "Punto de acometida tentativo en el muro norte — VERIFY ON SITE con la administración",
+  "main_valve": [
+   3.0,
+   -0.15
+  ],
+  "solenoid": [
+   2.9,
+   0.2
+  ],
+  "note": "Llave de corte principal FUERA del local, en la acometida, rotulada. Válvula solenoide/mecánica enclavada con la supresión de la campana 1 (rearme manual) en el muro norte, fuera de la proyección de la campana. Manifold en el espacio técnico de 0.15 m detrás de la línea, válvula de servicio por equipo, conectores listados ≤1.5 m con cable de restricción. Detector según tipo de gas (GLP a ≤0.30 m del piso).",
+  "consumers": [
+   {
+    "id": "H2",
+    "label": "Cocina 4Q gas",
+    "kW_typ": 35.2,
+    "BTUh_typ": 120000.0,
+    "basis": "4 quemadores × 8.8 kW (30 000 BTU/h)",
+    "branch_LPG": "1/2\"",
+    "branch_NG": "1/2\""
+   },
+   {
+    "id": "H3",
+    "label": "Plancha",
+    "kW_typ": 14.7,
+    "BTUh_typ": 50000.0,
+    "basis": "plancha 70 cm, 2 quemadores × 25 000 BTU/h",
+    "branch_LPG": "1/2\"",
+    "branch_NG": "1/2\""
+   },
+   {
+    "id": "H4",
+    "label": "Freidora 1",
+    "kW_typ": 26.4,
+    "BTUh_typ": 90000.0,
+    "basis": "freidora 40 cm ≈ 18 kg de aceite, 90 000 BTU/h",
+    "branch_LPG": "1/2\"",
+    "branch_NG": "1/2\""
+   },
+   {
+    "id": "H5",
+    "label": "Freidora 2",
+    "kW_typ": 26.4,
+    "BTUh_typ": 90000.0,
+    "basis": "freidora 40 cm ≈ 18 kg de aceite, 90 000 BTU/h",
+    "branch_LPG": "1/2\"",
+    "branch_NG": "1/2\""
+   }
+  ],
+  "total_kW_typ": 102.7,
+  "total_BTUh_typ": 350000.0,
+  "flow_LPG_kg_h": 7.39,
+  "flow_LPG_m3_h": 3.97,
+  "flow_NG_m3_h": 9.91,
+  "plan_length_m": 3.54,
+  "developed_length_m": 8.31,
+  "main_pipe": {
+   "en el local": {
+    "length_ft_table": 30,
+    "LPG": "1\"",
+    "NG": "1\""
+   },
+   "hasta 15 m desde el regulador": {
+    "length_ft_table": 50,
+    "LPG": "1\"",
+    "NG": "1-1/4\""
+   }
+  },
+  "recommended_main": "1\" (25 mm) hierro negro cédula 40 si es GLP; 1-1/4\" (32 mm) si es gas natural — PRELIMINAR — TO BE ENGINEERED",
+  "table_basis": "NFPA 54 tablas de capacidad (tubería metálica céd. 40, ΔP 0.5\" c.a.; GLP 11\" c.a. / GN <2 psi) — valores de referencia, verificar edición; para GLP rigen además NFPA 58 y las disposiciones de Bomberos",
+  "basis_kW": "Potencias típicas de catálogo — reemplazar por las fichas técnicas de los equipos (DIMENSION TO VERIFY)"
+ },
+ "hot_water": {
+  "method": "ASHRAE Handbook HVAC Applications (Service Water Heating), restaurante de servicio completo: 5.7 L (1.5 gal) a 60 °C por comida en la hora máxima — referencia, verificar",
+  "seats": 36,
+  "meals_peak_hour": 36.0,
+  "peak_hour_demand_L_60C": 205,
+  "first_hour_formula": "Capacidad 1.ª hora = 0.7 × volumen + recuperación (kW × 3600 / (4.186 × 40 K))",
+  "options": [
+   {
+    "volume_L": 80,
+    "kW": 3.0,
+    "recovery_Lh": 65,
+    "first_hour_L": 121,
+    "ok": false
+   },
+   {
+    "volume_L": 100,
+    "kW": 4.5,
+    "recovery_Lh": 97,
+    "first_hour_L": 167,
+    "ok": false
+   },
+   {
+    "volume_L": 150,
+    "kW": 6.0,
+    "recovery_Lh": 129,
+    "first_hour_L": 234,
+    "ok": true
+   },
+   {
+    "volume_L": 200,
+    "kW": 6.0,
+    "recovery_Lh": 129,
+    "first_hour_L": 269,
+    "ok": true
+   },
+   {
+    "volume_L": 300,
+    "kW": 9.0,
+    "recovery_Lh": 194,
+    "first_hour_L": 404,
+    "ok": true
+   }
+  ],
+  "CA-1": {
+   "volume_L": 150,
+   "kW": 6.0,
+   "recovery_Lh": 129,
+   "first_hour_L": 234,
+   "ok": true,
+   "type": "termotanque eléctrico vertical",
+   "location": "mural sobre W3"
+  },
+  "CA-2": {
+   "volume_L": 15,
+   "kW": 1.5,
+   "type": "calentador eléctrico bajo barra (punto de uso)",
+   "serves": "PB-1 (C1)"
+  },
+  "storage_C": 60,
+  "handwash_mixing_C": 43,
+  "note": "Almacenamiento ≥60 °C; lavamanos con válvula mezcladora termostática (≈43 °C) — criterio usual, verificar CIHSE / Salud. Circuitos eléctricos de CA-1 y CA-2 en las láminas eléctricas. PRELIMINAR — TO BE ENGINEERED"
+ },
+ "grease_trap": {
+  "method": "PDI G-101 (referencia): caudal = volumen de tanques × 0.75 / periodo de vaciado; capacidad de grasa ≈ 2 × caudal (lb) — el CIHSE 2017 rige el dimensionamiento final",
+  "sink": "W1",
+  "compartments": 2,
+  "tank_assumed_m": [
+   0.5,
+   0.5,
+   0.3
+  ],
+  "tanks_volume_L": 150.0,
+  "drain_volume_gal_75pct": 29.7,
+  "1min": {
+   "flow_gpm": 29.7,
+   "flow_Ls": 1.88,
+   "pdi_size_gpm": 35,
+   "pdi_size_Ls": 2.21,
+   "grease_capacity_lb": 70,
+   "grease_capacity_kg": 31.8
+  },
+  "2min": {
+   "flow_gpm": 14.9,
+   "flow_Ls": 0.94,
+   "pdi_size_gpm": 15,
+   "pdi_size_Ls": 0.95,
+   "grease_capacity_lb": 30,
+   "grease_capacity_kg": 13.6
+  },
+  "layout_footprint_m": [
+   0.7,
+   0.7,
+   0.4
+  ],
+  "recommendation": "Interceptor hidromecánico bajo W1 de 15–35 gpm (0.95–2.21 L/s), accesible para limpieza; recibe W1, FD-1 y FD-2 — PRELIMINAR — TO BE ENGINEERED"
+ },
+ "plumbing_fixtures": [
+  {
+   "tag": "W1",
+   "eq": "W1",
+   "name": "Fregadero 2 tanques + ducha de prelavado",
+   "af": "1/2\" (12)",
+   "ac": "1/2\" (12)",
+   "drain": "2\" (50)",
+   "dfu": 3,
+   "trap": "sifón 2\" · vent. 1-1/2\"",
+   "to": "GT-1 → WP1",
+   "note": "Agua caliente al tanque de lavado; tanques ≈2 × 75 L supuestos (VERIFY ficha).",
+   "at": [
+    3.71,
+    6.15
+   ]
+  },
+  {
+   "tag": "W2",
+   "eq": "W2",
+   "name": "Lavamanos del lavado",
+   "af": "1/2\" (12)",
+   "ac": "1/2\" (VMT)",
+   "drain": "1-1/2\" (38)",
+   "dfu": 1,
+   "trap": "sifón 1-1/2\" · vent. 1-1/4\"",
+   "to": "WP2",
+   "note": "Grifo de pedal o sensor recomendado; jabón líquido y toallas desechables.",
+   "at": [
+    4.32,
+    7.415
+   ]
+  },
+  {
+   "tag": "K3",
+   "eq": "K3",
+   "name": "Lavamanos de cocina (exclusivo manos)",
+   "af": "1/2\" (12)",
+   "ac": "1/2\" (VMT)",
+   "drain": "1-1/2\" → 2\" bajo piso",
+   "dfu": 1,
+   "trap": "sifón 1-1/2\" · vent. 1-1/4\"",
+   "to": "WP4",
+   "note": "Salud DE 37308-S: lavamanos en el área de cocina (obligatorio).",
+   "at": [
+    2.015,
+    4.796
+   ]
+  },
+  {
+   "tag": "A8",
+   "eq": "A8",
+   "name": "Lavamanos de la zona fría",
+   "af": "1/2\" (12)",
+   "ac": "1/2\" (VMT)",
+   "drain": "1-1/2\" → 2\" bajo piso",
+   "dfu": 1,
+   "trap": "sifón 1-1/2\" · vent. 1-1/4\"",
+   "to": "WP4",
+   "note": "Exclusivo de cold prep; jabón y toallas desechables.",
+   "at": [
+    1.815,
+    8.726
+   ]
+  },
+  {
+   "tag": "W3",
+   "eq": "W3",
+   "name": "Pileta de aseo (mop sink)",
+   "af": "1/2\" (12)",
+   "ac": "1/2\" (12)",
+   "drain": "3\" (75)",
+   "dfu": 3,
+   "trap": "sifón 3\" · vent. 1-1/2\"",
+   "to": "WP3",
+   "note": "Llave con rosca de manguera y rompevacío. Recibe la descarga T&P de CA-1 (indirecta).",
+   "at": [
+    4.21,
+    8.186
+   ]
+  },
+  {
+   "tag": "PB-1",
+   "eq": "C1",
+   "name": "Pileta de barra (en la barra C1)",
+   "af": "1/2\" (desde WP5)",
+   "ac": "1/2\" (CA-2)",
+   "drain": "1-1/2\" (38)",
+   "dfu": 1,
+   "trap": "sifón 1-1/2\" · vent. 1-1/4\"",
+   "to": "WP5",
+   "note": "Reutiliza el punto de agua y desagüe de WP5; extensión ≈1 m — VERIFY ON SITE.",
+   "at": [
+    5.755,
+    0.458
+   ]
+  },
+  {
+   "tag": "C5",
+   "eq": "C5",
+   "name": "Lavamanos del personal de barra",
+   "af": "1/2\" (12)",
+   "ac": "1/2\" (CA-2)",
+   "drain": "1-1/2\" (38)",
+   "dfu": 1,
+   "trap": "sifón 1-1/2\" · vent. 1-1/4\"",
+   "to": "WP5",
+   "note": "Al fondo del pasillo de barra; desagüe al colector de barra → WP5.",
+   "at": [
+    4.665,
+    0.281
+   ]
+  },
+  {
+   "tag": "CA-1",
+   "eq": null,
+   "name": "Termotanque eléctrico ≈150 L / 6 kW",
+   "af": "3/4\" entrada",
+   "ac": "3/4\" salida",
+   "drain": "T&P 3/4\"",
+   "dfu": null,
+   "trap": "válv. T&P + expansión",
+   "to": "pileta de aseo (indir.)",
+   "note": "Mural sobre la pileta de aseo, anclado a EW-E2 (≈200 kg lleno — VERIFY). Hora pico ≈205 L/h a 60 °C.",
+   "at": [
+    4.23,
+    8.186
+   ]
+  },
+  {
+   "tag": "CA-2",
+   "eq": null,
+   "name": "Calentador bajo barra ≈15 L / 1.5 kW",
+   "af": "1/2\" (12)",
+   "ac": "1/2\" (12)",
+   "drain": "T&P 1/2\"",
+   "dfu": null,
+   "trap": "válv. T&P",
+   "to": "PB-1 (indirecta)",
+   "note": "Punto de uso para la barra (evita un ramal de agua caliente de ≈10 m desde CA-1).",
+   "at": [
+    5.91,
+    0.64
+   ]
+  },
+  {
+   "tag": "LL-1",
+   "eq": null,
+   "name": "Llave de manguera con rompevacío + carrete",
+   "af": "3/4\" (18)",
+   "ac": "—",
+   "drain": "—",
+   "dfu": null,
+   "trap": "—",
+   "to": "FD-1 (lavado de pisos)",
+   "note": "Manguera fija NFPA 96 cap. 14 si el hogar de H1 > 0.14 m³ (VERIFY ficha); si no, solo lavado.",
+   "at": [
+    3.746,
+    4.016
+   ]
+  },
+  {
+   "tag": "FD-1",
+   "eq": null,
+   "name": "Coladera de piso con canastilla · cocina (zonas B + E)",
+   "af": "—",
+   "ac": "—",
+   "drain": "2\" (50)",
+   "dfu": 2,
+   "trap": "sifón + sello (cebado)",
+   "to": "GT-1 → WP1",
+   "note": "Pendiente de piso hacia la coladera (1–2 %, verificar). Con grasa: pasa por la trampa.",
+   "at": [
+    2.045,
+    2.85
+   ]
+  },
+  {
+   "tag": "FD-2",
+   "eq": null,
+   "name": "Coladera de piso con canastilla · lavado (zona W)",
+   "af": "—",
+   "ac": "—",
+   "drain": "2\" (50)",
+   "dfu": 2,
+   "trap": "sifón + sello (cebado)",
+   "to": "GT-1 → WP1",
+   "note": "Pendiente de piso hacia la coladera (1–2 %, verificar). Con grasa: pasa por la trampa.",
+   "at": [
+    2.685,
+    7.41
+   ]
+  },
+  {
+   "tag": "FD-3",
+   "eq": null,
+   "name": "Coladera de piso con canastilla · cold prep (zona A)",
+   "af": "—",
+   "ac": "—",
+   "drain": "2\" (50)",
+   "dfu": 2,
+   "trap": "sifón + sello (cebado)",
+   "to": "WP3",
+   "note": "Pendiente de piso hacia la coladera (1–2 %, verificar). Recibe condensados indirectos si aplica.",
+   "at": [
+    2.828,
+    9.867
+   ]
+  },
+  {
+   "tag": "GT-1",
+   "eq": "GT-1",
+   "name": "Trampa / interceptor de grasa bajo el fregadero",
+   "af": "—",
+   "ac": "—",
+   "drain": "entrada 2\" · salida 3\" (75)",
+   "dfu": 7,
+   "trap": "ventilación propia 1-1/2\"",
+   "to": "WP1",
+   "note": "15–35 gpm (0.95–2.21 L/s), ref. PDI G-101; CIHSE rige; accesible.",
+   "at": [
+    3.71,
+    6.7
+   ]
+  },
+  {
+   "tag": "WP6",
+   "eq": null,
+   "name": "Punto húmedo existente sin uso",
+   "af": "tapón",
+   "ac": "tapón",
+   "drain": "tapón registrable",
+   "dfu": null,
+   "trap": "—",
+   "to": "—",
+   "note": "Anular agua y desagüe con tapones accesibles — VERIFY ON SITE.",
+   "at": [
+    6.74,
+    2.42
+   ]
+  }
+ ],
+ "wet_points_existing": [
+  {
+   "id": "WP1",
+   "use": "W1 vía GT-1, FD-1, FD-2",
+   "dfu_ref": 7,
+   "collector": "3\" (75)",
+   "in_mep_drain_existing": true
+  },
+  {
+   "id": "WP2",
+   "use": "W2",
+   "dfu_ref": 1,
+   "collector": "2\" (50)",
+   "in_mep_drain_existing": true
+  },
+  {
+   "id": "WP3",
+   "use": "W3, FD-3",
+   "dfu_ref": 5,
+   "collector": "3\" (75)",
+   "in_mep_drain_existing": true
+  },
+  {
+   "id": "WP4",
+   "use": "K3, A8",
+   "dfu_ref": 2,
+   "collector": "2\" (50)",
+   "in_mep_drain_existing": true
+  },
+  {
+   "id": "WP5",
+   "use": "PB-1, C5",
+   "dfu_ref": 2,
+   "collector": "2\" (50)",
+   "in_mep_drain_existing": true
+  },
+  {
+   "id": "WP6",
+   "use": "sin uso: anular (tapón registrable)",
+   "dfu_ref": null,
+   "collector": null,
+   "in_mep_drain_existing": false
+  }
+ ],
+ "wet_points_used_but_not_in_mep_drain_existing": [],
+ "grease_trap_inflow_dfu_ref": 7,
+ "floor_drains": [
+  {
+   "id": "FD-1",
+   "at": [
+    2.045,
+    2.85
+   ],
+   "zone": "cocina (zonas B + E)",
+   "to": "GT-1 → WP1",
+   "grease": true
+  },
+  {
+   "id": "FD-2",
+   "at": [
+    2.685,
+    7.41
+   ],
+   "zone": "lavado (zona W)",
+   "to": "GT-1 → WP1",
+   "grease": true
+  },
+  {
+   "id": "FD-3",
+   "at": [
+    2.828,
+    9.867
+   ],
+   "zone": "cold prep (zona A)",
+   "to": "WP3",
+   "grease": false
+  }
+ ],
+ "water_heaters": {
+  "CA-1": {
+   "at": [
+    4.23,
+    8.186
+   ],
+   "volume_L": 150,
+   "kW": 6.0,
+   "recovery_Lh": 129,
+   "first_hour_L": 234,
+   "ok": true,
+   "type": "termotanque eléctrico vertical",
+   "location": "mural sobre W3"
+  },
+  "CA-2": {
+   "at": [
+    5.91,
+    0.64
+   ],
+   "volume_L": 15,
+   "kW": 1.5,
+   "type": "calentador eléctrico bajo barra (punto de uso)",
+   "serves": "PB-1 (C1)"
+  }
+ },
+ "sources": [
+  "CIHSE 2017 (CFIA): agua potable, desagües, ventilación, interceptores de grasa — edición vigente a confirmar",
+  "Salud DE 37308-S (servicios de alimentación): lavamanos en cocina, agua caliente en lavado, pisos a coladeras",
+  "NFPA 96 (edición adoptada por el RNPCI 2023 a confirmar): cap. 7 ductos, §7.8 descargas, §8.2.1.1 velocidad ≥2.54 m/s, §8.3 aire de reposición, cap. 10 supresión y corte de combustible, cap. 14 combustible sólido",
+  "NFPA 17A / UL 300: supresión de químico húmedo · NFPA 211: chimeneas · NFPA 54 / 58: gas",
+  "ASHRAE 154 / IMC 507: caudales de referencia por servicio · PDI G-101: interceptores · ASHRAE HVAC Applications: agua caliente",
+  "Citas tomadas de resúmenes de búsqueda, no de textos primarios: verificar edición y numeración"
+ ]
+}
