@@ -570,7 +570,7 @@ function buildSconce(B, d) {
 }
 function buildPendant(CB, d) {
   const M = MODEL, x = rcx(d.rect), y = rcy(d.rect), z = d.h != null ? d.h : 1.95;
-  CB.cylV(MAT.matteBlack, x, y, z + 0.2, M.ceilH, 0.004, 4);
+  CB.cylV(MAT.matteBlack, x, y, z + 0.2, M.ceilH, 0.006, 5);
   if (d.style === 'cylinder') {
     CB.cylV(MAT.matteBlack, x, y, z, z + 0.3, 0.055, 16);
     CB.cylV(MAT.brass, x, y, z - 0.004, z + 0.035, 0.057, 16);

@@ -92,17 +92,17 @@ function initWalkInput(stage) {
   window.addEventListener('blur', () => WALK.keys.clear());
   // drag to look / tap to pick or walk
   stage.addEventListener('pointerdown', e => {
-    if (W3.aerial || e.button > 0) return;
-    stage.setPointerCapture && stage.setPointerCapture(e.pointerId);
+    if (e.button > 0) return;
+    if (!W3.aerial && stage.setPointerCapture) stage.setPointerCapture(e.pointerId);
     WALK.drag = { id: e.pointerId, x: e.clientX, y: e.clientY, x0: e.clientX, y0: e.clientY, t: performance.now(), moved: 0 };
     stage.classList.add('dragging');
   });
   stage.addEventListener('pointermove', e => {
     const d = WALK.drag;
-    if (!d || d.id !== e.pointerId) { if (!W3.aerial && e.pointerType === 'mouse') hoverPick(e); return; }
+    if (!d || d.id !== e.pointerId) { if (e.pointerType === 'mouse') hoverPick(e); return; }
     const dx = e.clientX - d.x, dy = e.clientY - d.y; d.x = e.clientX; d.y = e.clientY;
     d.moved += Math.abs(dx) + Math.abs(dy);
-    if (d.moved > 6) {
+    if (d.moved > 6 && !W3.aerial) {
       const k = (e.pointerType === 'touch' ? 0.0055 : 0.0042) * (W3.camera ? W3.camera.fov / 65 : 1);
       WALK.yaw -= dx * k; WALK.pitch = clamp(WALK.pitch + dy * k, -1.2, 1.1); userInput();
     }

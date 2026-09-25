@@ -450,7 +450,7 @@ function autoDecor(M, out, has) {
   if (!has('slat_wall') && slatRun && slatRun.a1 - slatRun.a0 > 1.5) {
     const a0 = slatRun.a0 + 0.25, a1 = slatRun.a1 - 0.25;
     out.push({ type: 'slat_wall', rect: mk(a0, a1, slatRun.face - 0.075, slatRun.face), face: faceDir(+1), text: 'LAVA',
-      z: bqAlong(slatRun.face, +1) ? 1.0 : 0.9, h: M.ceilH - 0.16, text_at: entAtHigh ? 0.74 : 0.26, src: 'auto' });
+      z: bqAlong(slatRun.face, +1) ? 1.0 : 0.9, h: M.ceilH - 0.16, text_at: entAtHigh ? 0.56 : 0.44, src: 'auto' });
   }
   if (!has('poster') && runsB.length) {
     // posters near the kitchen end, clear of tall equipment

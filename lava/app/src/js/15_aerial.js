@@ -13,7 +13,7 @@ function textSprite(text, sub, color) {
   x.fillText(text, 256, sub ? 60 : 80);
   if (sub) { x.fillStyle = '#ece5d8'; x.font = '500 34px Figtree,sans-serif'; x.fillText(sub.length > 26 ? sub.slice(0, 25) + '…' : sub, 256, 116); }
   const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: tex(c, { repeat: false, aniso: false }), depthTest: false, transparent: true }));
-  sp.scale.set(1.5, 0.47, 1); sp.renderOrder = 20;
+  sp.scale.set(2.3, 0.72, 1); sp.renderOrder = 20;
   return sp;
 }
 
@@ -91,13 +91,13 @@ function toggleAerial(force) {
   W3.hemi.intensity = on ? 1.6 : W3.hemiBase;
   if (on) {
     cancelTourMotion(); $('#caption').hidden = true;
-    const bb = M.pbb, cx = (bb[0] + bb[2]) / 2, cy = (bb[1] + bb[3]) / 2;
+    const c = polyCentroid(M.prem), cx = c[0], cy = c[1];
     const target = V3(cx, cy, 0);
     // fit the premises: portrait screens look along X so the long axis runs vertically
-    const portrait = cam.aspect < 0.9, radius = Math.hypot(rw(bb), rh(bb)) / 2;
+    const portrait = cam.aspect < 0.9, radius = Math.max(...M.prem.map(p => Math.hypot(p[0] - cx, p[1] - cy)));
     const vf = 42 * Math.PI / 180, hf = 2 * Math.atan(Math.tan(vf / 2) * cam.aspect);
-    const dist = radius / Math.sin(Math.min(vf, hf) / 2) * (portrait ? 0.82 : 0.78);
-    const el = 0.95, dir = portrait ? new THREE.Vector3(Math.cos(el), Math.sin(el), 0.18).normalize() : new THREE.Vector3(0.08, Math.sin(el), Math.cos(el)).normalize();
+    const dist = radius / Math.sin(Math.min(vf, hf) / 2) * (portrait ? 0.9 : 0.85);
+    const el = portrait ? 1.05 : 0.95, dir = portrait ? new THREE.Vector3(Math.cos(el), Math.sin(el), 0).normalize() : new THREE.Vector3(0.06, Math.sin(el), Math.cos(el)).normalize();
     const end = target.clone().addScaledVector(dir, dist);
     W3.controls.target.copy(target); W3.controls.enabled = true;
     cam.fov = 42; cam.updateProjectionMatrix();

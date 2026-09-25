@@ -77,6 +77,7 @@ const EQ = {
     for (let i = 0; i < 3; i++) { const p = f.P(lerp(0.25, f.w - 0.25, i / 2), f.d * 0.6); W3.flames.push({ x: p[0], y: p[1], z: zt + 0.1, w: 0.13, h: 0.16, ph: 5 + i * 2.3, small: true }); }
     const c = f.P(f.w / 2, f.d * 0.55); glow(c[0], c[1], zt + 0.2, 1.6, 0xc2540f);
     const c2 = f.P(f.w / 2, 0.15); glow(c2[0], c2[1], bz0 + 0.3, 2.6, 0xe0620f); glow(c2[0], c2[1], bz0 + 0.3, 1.0, 0xffb040);
+    const c3 = f.P(f.w / 2, f.d * 0.4); glow(c3[0], c3[1], h + 0.45, 3.6, 0x5a2206);
     W3.fire = { x: c[0], y: c[1], z: zt + 0.1 };
   },
   cocina_4q(B, e, f) {

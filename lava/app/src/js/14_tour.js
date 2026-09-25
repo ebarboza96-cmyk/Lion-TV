@@ -94,7 +94,7 @@ function startAuto() {
     const wait = () => {
       if (!TOUR.auto) return;
       if (TOUR.motion) { TOUR.autoTimer = setTimeout(wait, 250); return; }
-      TOUR.autoTimer = setTimeout(() => { if (TOUR.auto) step((i + 1) % MODEL.stops.length); }, 6500);
+      TOUR.autoTimer = setTimeout(() => { if (!TOUR.auto) return; if (i + 1 >= MODEL.stops.length) stopAuto(); else step(i + 1); }, 6500);
     };
     TOUR.autoTimer = setTimeout(wait, 400);
   };

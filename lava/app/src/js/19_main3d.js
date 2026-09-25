@@ -83,7 +83,7 @@ async function start3D() {
     await loaderStep(0.8, 'Encendiendo el fuego…');
     const cam = new THREE.PerspectiveCamera(65, 1, 0.05, 90); W3.camera = cam;
     const controls = new OrbitControls(cam, renderer.domElement);
-    controls.enabled = false; controls.enableDamping = true; controls.dampingFactor = 0.08; controls.maxPolarAngle = Math.PI * 0.47; controls.minDistance = 3; controls.maxDistance = 45; controls.screenSpacePanning = true;
+    controls.enabled = false; controls.enableDamping = true; controls.dampingFactor = 0.08; controls.maxPolarAngle = Math.PI * 0.47; controls.minDistance = 3; controls.maxDistance = 90; controls.screenSpacePanning = true;
     W3.controls = controls;
     initWalkInput(stage);
     initMinimap();
@@ -142,7 +142,7 @@ function buildGlowPoints(scene) {
   g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('color', new THREE.BufferAttribute(col, 3)); g.setAttribute('size', new THREE.BufferAttribute(size, 1));
   const mat = new THREE.ShaderMaterial({
     uniforms: { map: { value: TEX.glow }, uScale: { value: 500 }, uFlick: { value: 1 } },
-    vertexShader: 'attribute float size; attribute vec3 color; varying vec3 vC; uniform float uScale; uniform float uFlick; void main(){ vC = color * uFlick; vec4 mv = modelViewMatrix * vec4(position,1.0); gl_PointSize = min(size * uScale / max(0.05, -mv.z), 900.0); gl_Position = projectionMatrix * mv; }',
+    vertexShader: 'attribute float size; attribute vec3 color; varying vec3 vC; uniform float uScale; uniform float uFlick; void main(){ vec4 mv = modelViewMatrix * vec4(position,1.0); float d = max(0.05, -mv.z); vC = color * uFlick * smoothstep(0.35, 1.6, d); gl_PointSize = min(size * uScale / d, 420.0); gl_Position = projectionMatrix * mv; }',
     fragmentShader: 'uniform sampler2D map; varying vec3 vC; void main(){ float a = texture2D(map, gl_PointCoord).a; gl_FragColor = vec4(vC * a * 1.6, 1.0); }',
     blending: THREE.AdditiveBlending, depthWrite: false, transparent: true,
   });
@@ -212,7 +212,7 @@ function updateWhere(now) {
   const M = MODEL, x = W3.aerial ? W3.controls.target.x : WALK.x, y = W3.aerial ? W3.controls.target.z : WALK.y;
   const z = M.zones.find(zz => inPoly(x, y, zz.poly));
   let txt, col = '#9b9185';
-  if (W3.aerial) { txt = 'Vista aérea · corte a ' + fmt(CUT_H, 2) + ' m'; col = '#ff6a1a'; }
+  if (W3.aerial) { txt = 'Corte a ' + fmt(CUT_H, 2) + ' m'; col = '#ff6a1a'; }
   else if (z) { txt = `Zona ${z.id}${z.name ? ' · ' + z.name : ''}`; col = z.color; }
   else { const r = M.regionAt(x, y); txt = r === 1 ? 'Salón / barra' : r === 2 ? 'Cocina / back of house' : 'Local'; col = r === 1 ? '#6d7a60' : '#b35900'; }
   if (txt === WHERE_TXT) return; WHERE_TXT = txt;
