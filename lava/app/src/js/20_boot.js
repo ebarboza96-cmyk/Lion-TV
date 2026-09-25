@@ -48,4 +48,7 @@ function boot() {
   showView(routeFromHash() || 'recorrido');
 }
 
+// read-only debug handle (handy for QA from the console)
+try { Object.defineProperty(window, '__LAVA', { value: { MODEL, W3, WALK, TOUR, APP, goStop, toggleAerial, updateTour }, configurable: true }); } catch (e) { /* ignore */ }
+
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
