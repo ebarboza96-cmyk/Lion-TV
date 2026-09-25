@@ -1708,7 +1708,7 @@ function makeTextures(renderer) {
   /* board-formed concrete (walls): boards 0.15 m; canvas = 2.4 m */
   {
     const c = mkCanvas(S, S), x = c.getContext('2d'), rnd = mulberry32(31);
-    paintNoise(x, S, noise2(S, 4, 4, 32), '#8f887f', '#b1aaa0');
+    paintNoise(x, S, noise2(S, 4, 4, 32), '#7f7b75', '#a29d95');
     const bh = S / 16;
     for (let b = 0; b < 16; b++) {
       x.fillStyle = rnd() > 0.5 ? '#ffffff' : '#2a241e'; x.globalAlpha = 0.03 + rnd() * 0.06; x.fillRect(0, b * bh, S, bh);
@@ -2064,12 +2064,12 @@ function makeMaterials() {
   MAT.floor = std({ map: TEX.concrete, roughnessMap: TEX.concreteRough, roughness: 0.62, metalness: 0.0, envMapIntensity: 0.55 });
   MAT.tileFloor = std({ map: TEX.tile, roughness: 0.78, envMapIntensity: 0.4 });
   MAT.exterior = std({ map: TEX.tile, color: 0x6a655f, roughness: 0.6, envMapIntensity: 0.3 });
-  MAT.wallFOH = std({ map: TEX.boardConcrete, roughness: 0.92, envMapIntensity: 0.35 });
+  MAT.wallFOH = std({ map: TEX.boardConcrete, color: 0xb4b0aa, roughness: 0.95, envMapIntensity: 0.25 });
   MAT.wallTile = std({ map: TEX.subway, roughness: 0.28, envMapIntensity: 0.55 });
   MAT.wallPaint = std({ map: TEX.paint, roughness: 0.9, envMapIntensity: 0.35 });
   MAT.wallOuter = std({ color: 0x3b3834, roughness: 1, envMapIntensity: 0.2 });
   MAT.cap = basic({ color: 0x2b2622 });
-  MAT.ceiling = std({ color: 0x1b1917, roughness: 0.95, envMapIntensity: 0.2, side: THREE.DoubleSide });
+  MAT.ceiling = std({ color: 0x0f0e0d, roughness: 1, envMapIntensity: 0.1, side: THREE.DoubleSide });
   MAT.blackSteel = std({ map: TEX.blacksteel, roughness: 0.5, metalness: 0.65, envMapIntensity: 0.7 });
   MAT.matteBlack = std({ color: 0x141312, roughness: 0.75, metalness: 0.2, envMapIntensity: 0.4 });
   MAT.stainless = std({ map: TEX.brushed, roughness: 0.3, metalness: 1.0, envMapIntensity: 1.0 });
@@ -2098,7 +2098,7 @@ function makeMaterials() {
   MAT.leaves = std({ map: TEX.leaves, alphaTest: 0.45, side: THREE.DoubleSide, roughness: 0.8, envMapIntensity: 0.3 });
   MAT.kraft = std({ map: TEX.kraft, roughness: 0.9 });
   MAT.duct = std({ map: TEX.duct, metalness: 0.75, roughness: 0.42, envMapIntensity: 0.8 });
-  MAT.red = std({ color: 0x8c1d12, roughness: 0.45, envMapIntensity: 0.5 });
+  MAT.red = std({ color: 0x5e140d, roughness: 0.6, envMapIntensity: 0.3 });
   MAT.bark = std({ map: TEX.bark, roughness: 0.95 });
   MAT.endgrain = std({ map: TEX.endgrain, roughness: 0.85 });
   MAT.oil = std({ color: 0x5a3a0c, roughness: 0.08, metalness: 0.2, envMapIntensity: 1.2 });
@@ -2402,8 +2402,8 @@ function buildCeiling(CB) {
       for (let a = A0 + 0.6; a < A1; a += 1.6) { const q = pAt(a, p); CB.cylV(MAT.matteBlack, q[0], q[1], z + r, H, 0.006, 4); }
     }
     // red sprinkler main + branches
-    const ps = lerp(P0, P1, 0.52), zs = H - 0.12;
-    CB.cylAB(MAT.red, [...pAt(A0 - 0.2, ps), zs], [...pAt(A1, ps), zs], 0.032, 10);
+    const ps = lerp(P0, P1, 0.36), zs = H - 0.1;
+    CB.cylAB(MAT.red, [...pAt(A0 + 0.3, ps), zs], [...pAt(A1 - 0.3, ps), zs], 0.028, 10);
     for (let a = A0 + 1.0; a < A1; a += 3.0) {
       const q0 = pAt(a, lerp(P0, P1, 0.15)), q1 = pAt(a, lerp(P0, P1, 0.85));
       CB.cylAB(MAT.red, [...q0, zs], [...q1, zs], 0.018, 8);
@@ -2502,7 +2502,7 @@ function buildSign(B, d) {
   // halo on the board behind the letters
   const halo = signHaloTexture(text);
   const hw = H * (halo.wordW + 1.4) * 1.0, hh = hw / halo.aspect;
-  const hm = new THREE.Mesh(new THREE.PlaneGeometry(hw, hh), basic({ map: halo.tex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, color: new THREE.Color(1.6, 1.25, 1.0) }));
+  const hm = new THREE.Mesh(new THREE.PlaneGeometry(hw, hh), basic({ map: halo.tex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, color: new THREE.Color(3.2, 2.4, 1.8) }));
   hm.applyMatrix4(faceMatrix(d.face, V3(c[0], c[1], zc)));
   const o = faceBasis(d.face).out; hm.position.addScaledVector(o, 0.012); hm.renderOrder = 3;
   W3.root.add(hm);
@@ -2568,7 +2568,7 @@ function buildLights(scene) {
   const add = (x, y, z, color, intensity, dist = 0, tag) => { const l = new THREE.PointLight(color, intensity, dist, 2); l.position.copy(V3(x, y, z)); scene.add(l); W3.lights.push({ l, base: intensity, tag }); return l; };
   const D = M.dining, ax = M.diningAxis;
   if (M.tables.length || M.banquettes.length) {
-    for (const f of [0.18, 0.5, 0.82]) { const p = ax === 'x' ? [lerp(D[0], D[2], f), rcy(D)] : [rcx(D), lerp(D[1], D[3], f)]; add(p[0], p[1], H - 0.45, 0xffb46e, 11, 9, 'dining'); }
+    for (const f of [0.18, 0.5, 0.82]) { const p = ax === 'x' ? [lerp(D[0], D[2], f), rcy(D)] : [rcx(D), lerp(D[1], D[3], f)]; add(p[0], p[1], 2.2, 0xffb46e, 9, 9, 'dining'); }
   }
   if (W3.slat) add(W3.slat.mid[0], W3.slat.mid[1], 1.9, 0xff9a4a, 9, 8, 'slat');
   const parr = M.one('parrilla');
@@ -2872,7 +2872,7 @@ const EQ = {
     for (let u = 0.3; u < f.w - 0.1; u += 1.0) { const p = f.P(u, f.d - 0.08), q = f.P(u, f.d - 0.15); B.cylAB(MAT.brass, [p[0], p[1], 0.22], [q[0], q[1], 0.15], 0.012, 6); }
     // bartender side: under-counter shelf with glasses
     B.box(MAT.stainlessDark, f.R(0.02, 0.0, f.w - 0.02, 0.05), 0.6, 0.62);
-    for (let u = 0.25; u < f.w - 0.2; u += 0.7) { const p = f.P(u, f.d * 0.3); for (let k = 0; k < 3; k++) { const q = f.P(u + k * 0.09, f.d * 0.3); B.cylV(MAT.bottle, q[0], q[1], h, h + 0.24, 0.035, 10); B.cylV(MAT.bottle, q[0], q[1], h + 0.24, h + 0.32, 0.012, 8); } void p; }
+    for (let k = 0; k < 3; k++) { const q = f.P(0.12 + k * 0.08, f.d * 0.25); B.cylV(MAT.bottle, q[0], q[1], h, h + 0.22, 0.033, 10); B.cylV(MAT.bottle, q[0], q[1], h + 0.22, h + 0.3, 0.012, 8); }
     const L = f.P(f.w * 0.5, f.d - 0.2); glow(L[0], L[1], 0.1, 0.7, 0x5a2a0c);
   },
   pos(B, e, f, z0) {

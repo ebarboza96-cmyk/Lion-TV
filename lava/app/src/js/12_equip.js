@@ -258,7 +258,7 @@ const EQ = {
     for (let u = 0.3; u < f.w - 0.1; u += 1.0) { const p = f.P(u, f.d - 0.08), q = f.P(u, f.d - 0.15); B.cylAB(MAT.brass, [p[0], p[1], 0.22], [q[0], q[1], 0.15], 0.012, 6); }
     // bartender side: under-counter shelf with glasses
     B.box(MAT.stainlessDark, f.R(0.02, 0.0, f.w - 0.02, 0.05), 0.6, 0.62);
-    for (let u = 0.25; u < f.w - 0.2; u += 0.7) { const p = f.P(u, f.d * 0.3); for (let k = 0; k < 3; k++) { const q = f.P(u + k * 0.09, f.d * 0.3); B.cylV(MAT.bottle, q[0], q[1], h, h + 0.24, 0.035, 10); B.cylV(MAT.bottle, q[0], q[1], h + 0.24, h + 0.32, 0.012, 8); } void p; }
+    for (let k = 0; k < 3; k++) { const q = f.P(0.12 + k * 0.08, f.d * 0.25); B.cylV(MAT.bottle, q[0], q[1], h, h + 0.22, 0.033, 10); B.cylV(MAT.bottle, q[0], q[1], h + 0.22, h + 0.3, 0.012, 8); }
     const L = f.P(f.w * 0.5, f.d - 0.2); glow(L[0], L[1], 0.1, 0.7, 0x5a2a0c);
   },
   pos(B, e, f, z0) {

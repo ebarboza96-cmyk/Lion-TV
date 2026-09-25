@@ -89,7 +89,7 @@ function makeTextures(renderer) {
   /* board-formed concrete (walls): boards 0.15 m; canvas = 2.4 m */
   {
     const c = mkCanvas(S, S), x = c.getContext('2d'), rnd = mulberry32(31);
-    paintNoise(x, S, noise2(S, 4, 4, 32), '#8f887f', '#b1aaa0');
+    paintNoise(x, S, noise2(S, 4, 4, 32), '#7f7b75', '#a29d95');
     const bh = S / 16;
     for (let b = 0; b < 16; b++) {
       x.fillStyle = rnd() > 0.5 ? '#ffffff' : '#2a241e'; x.globalAlpha = 0.03 + rnd() * 0.06; x.fillRect(0, b * bh, S, bh);
