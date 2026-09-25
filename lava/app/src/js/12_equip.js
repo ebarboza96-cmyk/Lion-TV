@@ -30,7 +30,7 @@ function backsplash(B, M, e, f, zTop) {
   const t = castRay(M, back[0], back[1], -n[0], -n[1], 1).t;
   if (t > 0.15) return;
   const r = f.R(0, -t - 0.012, f.w, -t);
-  B.box(e.cat === 'fire' ? MAT.stainless : MAT.stainlessDark, r, e.h - 0.03, zTop);
+  B.box(e.cat === 'fire' ? MAT.splash : MAT.stainlessDark, r, e.h - 0.03, zTop);
 }
 
 const EQ = {

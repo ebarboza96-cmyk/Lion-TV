@@ -3,7 +3,7 @@
    (circle vs rects + premises edges, slides along obstacles).
    =================================================================================== */
 
-const EYE = 1.6, RADIUS = 0.24;
+const EYE = 1.6, RADIUS = 0.2;
 const WALK = { x: 0, y: 0, yaw: Math.PI, pitch: -0.03, keys: new Set(), joy: { x: 0, y: 0, active: false }, drag: null, speed: 1.55,
   lastInput: 0, moving: false };
 

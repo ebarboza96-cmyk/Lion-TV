@@ -21,6 +21,12 @@ function showView(v, focus) {
 function routeFromHash() { const h = (location.hash || '').replace('#', '').toLowerCase(); return VIEWS.includes(h) ? h : null; }
 
 function boot() {
+  if (!MODEL) {
+    const msg = 'No se pudieron interpretar los datos del proyecto (data/existing.json / data/layout.json). Revisa el formato y vuelve a generar la app con tools/build_app.py.';
+    for (const id of ['#view-recorrido', '#view-plano', '#view-datos']) { const v = $(id); if (v) v.replaceChildren(el('div', { class: 'fail', role: 'alert' }, el('div', null, el('h2', null, 'Datos no válidos'), el('p', null, msg)))); }
+    $$('.tab').forEach(t => t.addEventListener('click', () => { $$('.view').forEach(v => { v.hidden = v.id !== 'view-' + t.dataset.view; }); $$('.tab').forEach(x => x.setAttribute('aria-selected', String(x === t))); }));
+    return;
+  }
   const meta = $('#meta');
   const name = str(MODEL.meta.name);
   meta.replaceChildren(el('b', null, 'Test-fit'), name ? ' · ' + name : '', ' · ', el('span', { class: 'mono' }, `${MODEL.seats} asientos`));
@@ -49,6 +55,6 @@ function boot() {
 }
 
 // read-only debug handle (handy for QA from the console)
-try { Object.defineProperty(window, '__LAVA', { value: { MODEL, W3, WALK, TOUR, APP, goStop, toggleAerial, updateTour }, configurable: true }); } catch (e) { /* ignore */ }
+if (MODEL) try { Object.defineProperty(window, '__LAVA', { value: { MODEL, W3, WALK, TOUR, APP, goStop, toggleAerial, updateTour }, configurable: true }); } catch (e) { /* ignore */ }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();

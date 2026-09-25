@@ -107,7 +107,8 @@ function makeMaterials() {
   MAT.ceiling = std({ color: 0x0b0a0a, roughness: 1, envMapIntensity: 0.05, side: THREE.DoubleSide });
   MAT.blackSteel = std({ map: TEX.blacksteel, roughness: 0.5, metalness: 0.65, envMapIntensity: 0.7 });
   MAT.matteBlack = std({ color: 0x141312, roughness: 0.75, metalness: 0.2, envMapIntensity: 0.4 });
-  MAT.stainless = std({ map: TEX.brushed, roughness: 0.3, metalness: 1.0, envMapIntensity: 1.0 });
+  MAT.stainless = std({ map: TEX.brushed, roughness: 0.36, metalness: 1.0, envMapIntensity: 0.85 });
+  MAT.splash = std({ map: TEX.brushed, roughness: 0.45, metalness: 0.9, envMapIntensity: 0.45 });
   MAT.stainlessDark = std({ color: 0x8a8e92, roughness: 0.42, metalness: 1.0, envMapIntensity: 0.8 });
   MAT.grate = std({ color: 0x1a1918, roughness: 0.55, metalness: 0.8 });
   MAT.oak = std({ map: TEX.oak, roughness: 0.5, envMapIntensity: 0.6 });
@@ -128,6 +129,7 @@ function makeMaterials() {
   MAT.lightSoft = basic({ color: new THREE.Color(2.4, 1.5, 0.75) });
   MAT.lightCool = basic({ color: new THREE.Color(3.2, 3.1, 2.9) });
   MAT.ledStrip = basic({ color: new THREE.Color(3.5, 1.9, 0.8) });
+  MAT.neon = basic({ color: new THREE.Color(2.9, 2.1, 1.35) });
   MAT.ember = basic({ map: TEX.ember, color: new THREE.Color(3.2, 2.2, 1.6) });
   MAT.soil = std({ color: 0x241810, roughness: 1 });
   MAT.leaves = std({ map: TEX.leaves, alphaTest: 0.45, side: THREE.DoubleSide, roughness: 0.8, envMapIntensity: 0.3 });
@@ -354,13 +356,16 @@ function buildPartition(B, walls) {
     const a0 = alongY ? r[1] : r[0], a1 = alongY ? r[3] : r[2], c = alongY ? rcx(r) : rcy(r);
     const jamb = (p0, p1) => alongY ? [r[0] - 0.01, p0, r[2] + 0.01, p1] : [p0, r[1] - 0.01, p1, r[3] + 0.01];
     B.box(MAT.matteBlack, jamb(a0, a0 + 0.03), 0, headZ); B.box(MAT.matteBlack, jamb(a1 - 0.03, a1), 0, headZ);
-    if (o.type === 'opening') continue;
+    if (o.type === 'opening' || o.type === 'sliding_door') continue;   // open passage (sliding leaf parked in the wall)
     const width = a1 - a0 - 0.06;
     const two = o.type === 'double_acting_door' ? width > 1.05 : false;
     const leaves = o.type === 'double_acting_door' && !two ? 1 : two ? 2 : 1;
     const lw = width / leaves;
+    // single leaf: hinge at the end nearest to o.hinge when the data gives one
+    const hingeAtEnd = leaves === 1 && o.hinge ? (Math.abs((alongY ? o.hinge[1] : o.hinge[0]) - a1) < Math.abs((alongY ? o.hinge[1] : o.hinge[0]) - a0)) : false;
     for (let i = 0; i < leaves; i++) {
-      const hingeA = i === 0 ? a0 + 0.03 : a1 - 0.03, dir = i === 0 ? 1 : -1;
+      const second = i === 1 || hingeAtEnd;
+      const hingeA = second ? a1 - 0.03 : a0 + 0.03, dir = second ? -1 : 1;
       const pivot = new THREE.Group();
       const hp = alongY ? V3(c, hingeA, 0) : V3(hingeA, c, 0);
       pivot.position.copy(hp);
@@ -502,7 +507,8 @@ function buildSlatWall(B, d) {
   // canvas runs along +right direction of the face basis; map "a" coordinate to texture u
   const b = faceBasis(d.face);
   const rightIsPlusA = s.alongX ? b.right.x > 0 : b.right.z > 0;
-  const tex = slatGlowTexture(s.L, z1 - z0, d.text === '' ? '' : (d.text || 'LAVA'), rightIsPlusA ? textAt : 1 - textAt);
+  const word = d.text === '' ? '' : (d.text || 'LAVA');
+  const tex = slatGlowTexture(s.L, z1 - z0, '', rightIsPlusA ? textAt : 1 - textAt);
   const mat = basic({ map: tex, color: new THREE.Color(1.55, 1.45, 1.35) });
   const pg = new THREE.PlaneGeometry(s.L, z1 - z0);
   const mid = s.P((s.a0 + s.a1) / 2, 0.006);
@@ -516,9 +522,25 @@ function buildSlatWall(B, d) {
   B.box(MAT.walnut, Rr(s.a0 - 0.02, s.a1 + 0.02, 0.0, 0.1), z1, z1 + 0.035);
   B.box(MAT.ledStrip, Rr(s.a0, s.a1, 0.004, 0.012), z1 - 0.015, z1);
   B.box(MAT.walnut, Rr(s.a0 - 0.02, s.a1 + 0.02, 0.0, 0.09), z0 - 0.03, z0);
-  // text centre (for lights)
-  W3.slat = { p: s.P(lerp(s.a0, s.a1, rightIsPlusA ? textAt : 1 - textAt), 0.5), mid: s.P((s.a0 + s.a1) / 2, 0.45), L: s.L, z: (z0 + z1) / 2, d };
-  W3.slat.p = s.P(lerp(s.a0, s.a1, textAt), 0.5);
+  // backlit word mounted in front of the grid (reads even at grazing angles, like the render)
+  if (word) {
+    const { polys, width } = wordGlyphs(word);
+    const Hs = clamp((z1 - z0) * 0.34, 0.22, 0.7), Lw = width * Hs;
+    const at = clamp(lerp(s.a0, s.a1, textAt), s.a0 + Lw / 2 + 0.1, s.a1 - Lw / 2 - 0.1);
+    const zc = (z0 + z1) / 2 + 0.05, pc = s.P(at, 0.07);
+    const m = faceMatrix(d.face, V3(pc[0], pc[1], zc));
+    for (const p of polys) {
+      const sh = new THREE.Shape(p.map(([a, b]) => new THREE.Vector2((a - width / 2) * Hs, (b - 0.5) * Hs)));
+      const g = new THREE.ExtrudeGeometry(sh, { depth: 0.018, bevelEnabled: false });
+      B.geo(MAT.neon, g, m.clone(), 'own');
+    }
+    const halo = signHaloTexture(word);
+    const hw = Hs * (halo.wordW + 1.4), hh = hw / halo.aspect;
+    const hm = new THREE.Mesh(new THREE.PlaneGeometry(hw, hh), basic({ map: halo.tex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, color: new THREE.Color(2.2, 1.6, 1.1) }));
+    hm.applyMatrix4(faceMatrix(d.face, V3(pc[0], pc[1], zc))); hm.renderOrder = 3; W3.root.add(hm);
+    const q = s.P(at, 0.3); glow(q[0], q[1], zc, Lw * 1.2, 0x5a2a0c);
+  }
+  W3.slat = { p: s.P(lerp(s.a0, s.a1, textAt), 0.5), mid: s.P((s.a0 + s.a1) / 2, 0.45), L: s.L, z: (z0 + z1) / 2, d };
 }
 function buildSign(B, d) {
   const M = MODEL, s = wallSpan(d);
@@ -604,7 +626,7 @@ function buildLights(scene) {
   const hemi = new THREE.HemisphereLight(0xffd6a8, 0x1c130c, 0.55); scene.add(hemi); W3.hemi = hemi; W3.hemiBase = 0.55;
   const add = (x, y, z, color, intensity, dist = 0, tag) => { const l = new THREE.PointLight(color, intensity, dist, 2); l.position.copy(V3(x, y, z)); scene.add(l); W3.lights.push({ l, base: intensity, tag }); return l; };
   const D = M.dining, ax = M.diningAxis;
-  if (M.tables.length || M.banquettes.length) {
+  {
     for (const f of [0.18, 0.5, 0.82]) { const p = ax === 'x' ? [lerp(D[0], D[2], f), rcy(D)] : [rcx(D), lerp(D[1], D[3], f)]; add(p[0], p[1], 2.2, 0xffb46e, 9, 9, 'dining'); }
   }
   if (W3.slat) add(W3.slat.mid[0], W3.slat.mid[1], 1.9, 0xff9a4a, 9, 8, 'slat');
@@ -638,12 +660,12 @@ function makeEnvironment(renderer) {
   const room = new THREE.Mesh(new THREE.BoxGeometry(24, 6, 10), basic({ color: 0x120d0a, side: THREE.BackSide })); room.position.y = 2; s.add(room);
   const panel = (w, h, d, x, y, z, c) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), basic({ color: c })); m.position.set(x, y, z); s.add(m); };
   panel(18, 1.6, 0.1, 0, 1.9, 4.9, new THREE.Color(1.6, 0.8, 0.3));       // slat-wall glow
-  panel(4, 1.2, 0.1, -11.9, 1.6, 0, new THREE.Color(2.4, 2.2, 2.0));       // bright kitchen
+  panel(6, 2.4, 0.1, -11.9, 1.8, 0, new THREE.Color(0.9, 0.82, 0.72));    // kitchen (soft, large)
   panel(0.12, 0.12, 0.12, -11.8, 1.1, 0, new THREE.Color(6, 2.5, 0.8));
   for (let x = -9; x <= 9; x += 3) { panel(0.3, 0.05, 0.3, x, 4.9, -1.2, new THREE.Color(5, 3.4, 1.8)); panel(0.3, 0.05, 0.3, x, 4.9, 1.2, new THREE.Color(5, 3.4, 1.8)); }
   panel(24, 0.1, 10, 0, -0.95, 0, new THREE.Color(0.09, 0.075, 0.06));
   const pm = new THREE.PMREMGenerator(renderer);
-  const rt = pm.fromScene(s, 0.02);
+  const rt = pm.fromScene(s, 0.035);
   pm.dispose();
   return rt.texture;
 }

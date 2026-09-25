@@ -13,6 +13,10 @@ const METRIC_ES = {
   parrilla_to_glass_m: ['Parrilla → vidrio', 'm'], routes: ['Rutas', ''], connections: ['Conexiones', ''], zones: ['Zonas', ''],
   optional_present: ['Equipos opcionales presentes', ''], dirty_clean_conflicts: ['Conflictos flujo sucio / limpio', ''],
   dining_area_m2: ['Área de salón', 'm²'], kitchen_area_m2: ['Área de cocina', 'm²'], min_aisle_m: ['Pasillo mínimo', 'm'],
+  premises_m2: ['Área del local', 'm²'], dining_m2: ['Salón (zona D)', 'm²'], kitchen_hot_m2: ['Cocina caliente (zona B)', 'm²'],
+  boh_m2: ['Back of house (zona A)', 'm²'], pass_bar_m2: ['Pase + barra (zona C)', 'm²'], smoker_m2: ['Smoker (zona E)', 'm²'],
+  parrilla_view_pct: ['Asientos con vista a la parrilla', '%'], warnings: ['Avisos del validador', ''], issues: ['Incumplimientos del validador', ''],
+  seats_detail: ['Detalle de asientos', ''],
 };
 const COL_ES = { id: 'Id', kind: 'Tipo', label: 'Descripción', min_width: 'Ancho mín. (m)', at: 'En', required: 'Requerido (m)', length: 'Longitud (m)',
   ok: 'Estado', from: 'Desde', to: 'Hasta', bottleneck: 'Cuello (m)', name: 'Nombre', area_m2: 'Área (m²)', area: 'Área (m²)' };
@@ -21,7 +25,7 @@ const humanKey = k => (METRIC_ES[k] ? METRIC_ES[k][0] : COL_ES[k] || String(k).r
 function fmtVal(v, k) {
   if (v == null) return '—';
   if (typeof v === 'boolean') return v ? 'Sí' : 'No';
-  if (typeof v === 'number') return Number.isInteger(v) ? String(v) : v.toFixed(Math.abs(v) >= 100 ? 1 : 2);
+  if (typeof v === 'number') { const u = METRIC_ES[k] ? METRIC_ES[k][1] : ''; return Number.isInteger(v) && !/m/.test(u) ? String(v) : v.toFixed(Math.abs(v) >= 100 ? 1 : 2); }
   if (Array.isArray(v)) return v.every(x => typeof x !== 'object') ? v.join(', ') : `${v.length} elementos`;
   if (typeof v === 'object') return Object.entries(v).map(([a, b]) => `${a}: ${fmtVal(b)}`).join(' · ');
   return String(v);
@@ -53,6 +57,7 @@ function initDatos() {
   root.append(el('h2', null, 'Datos del test-fit'));
   const meta = [str(M.meta.name), str(M.meta.strategy), M.meta.version != null ? 'v' + M.meta.version : ''].filter(Boolean).join(' · ');
   root.append(el('p', { class: 'lead' }, meta || 'Propuesta LAVA sobre el local ex-Marna’s, Terrazas Lindora.'));
+  if (REPORT && typeof REPORT.intro === 'string' && REPORT.intro.trim()) root.append(el('p', { class: 'lead', style: 'color:#d9d1c4;margin-top:8px' }, REPORT.intro));
   if (!REPORT) root.append(el('p', { class: 'note' }, 'Informe de validación no incluido (data/report.json): las métricas de abajo se calculan en el navegador a partir de layout.json y existing.json. Ejecuta tools/validate.py para el informe completo.'));
 
   /* ---- metrics ---- */
@@ -76,10 +81,11 @@ function initDatos() {
   const complex = [];
   if (rep) {
     for (const [key, v] of Object.entries(rep)) {
-      if (v == null) continue;
+      if (v == null || key === 'seats_detail') continue;
       if (typeof v === 'object') { complex.push([key, v]); continue; }
       const [label, unit] = METRIC_ES[key] || [humanKey(key), ''];
-      k.append(kpi(fmtVal(v, key), unit, label));
+      if (typeof v === 'string' && v.length > 24) { complex.push([key, [v]]); continue; }
+      k.append(kpi(fmtVal(v, key), unit, label, key === 'seats' && typeof rep.seats_detail === 'string' ? el('div', { class: 'l' }, rep.seats_detail) : null));
     }
     if (!Object.keys(rep).some(x => /seat/.test(x))) k.prepend(kpi(String(mt.seats), '', 'Asientos'));
   } else computed.forEach(c => k.append(kpi(...c)));
@@ -96,17 +102,17 @@ function initDatos() {
   } else zc.append(el('p', { class: 'lead' }, 'El layout no define zonas.'));
   const rc = el('div'); cols.append(rc);
   rc.append(el('h3', null, 'Rutas y anchos libres'));
-  if (rep && Array.isArray(rep.routes)) rc.append(tableFrom(rep.routes));
-  else if (mt.routes.length) {
+  const rrows = rep && Array.isArray(rep.routes)
+    ? rep.routes.filter(r => r && typeof r === 'object').map(r => ({ id: str(r.id), kind: str(r.kind), label: str(r.label), len: num(r.length, num(r.len, null)), w: num(r.min_width, null), req: num(r.required, null), ok: typeof r.ok === 'boolean' ? r.ok : null }))
+    : mt.routes.map(r => ({ ...r, ok: r.req == null || r.w == null ? null : r.w + 0.005 >= r.req }));
+  if (rrows.length) {
     rc.append(el('div', { class: 'tbl-wrap' }, el('table', { class: 'tbl' },
       el('thead', null, el('tr', null, ['Ruta', 'Long. (m)', 'Ancho mín. (m)', 'Requerido', 'Estado'].map(t => el('th', { scope: 'col' }, t)))),
-      el('tbody', null, mt.routes.map(r => {
-        const ok = r.req == null || r.w == null ? null : r.w + 0.005 >= r.req;
-        return el('tr', null, el('td', null, el('span', { style: `display:inline-block;width:14px;height:3px;margin:0 8px 3px 0;background:${ROUTE_COLOR[r.kind] || '#777'}` }), r.label || r.id, el('div', { style: 'color:var(--muted);font-size:11.5px' }, ROUTE_ES[r.kind] || r.kind)),
-          el('td', { class: 'n' }, fmt(r.len, 1)), el('td', { class: 'n' }, fmt(r.w, 2)), el('td', { class: 'n' }, r.req != null ? fmt(r.req, 2) : '—'),
-          el('td', { class: ok == null ? '' : ok ? 'ok' : 'bad' }, ok == null ? '—' : ok ? 'OK' : 'No cumple'));
-      })))));
-    rc.append(el('p', { class: 'lead', style: 'font-size:12px;margin-top:6px' }, 'Ancho medido en el navegador sobre una grilla de 5 cm (muros, equipos, mesas y bancas).'));
+      el('tbody', null, rrows.map(r => el('tr', null,
+        el('td', null, el('span', { style: `display:inline-block;width:14px;height:3px;margin:0 8px 3px 0;background:${ROUTE_COLOR[r.kind] || '#777'}` }), r.label || r.id, el('div', { style: 'color:var(--muted);font-size:11.5px' }, ROUTE_ES[r.kind] || r.kind)),
+        el('td', { class: 'n' }, fmt(r.len, 1)), el('td', { class: 'n' }, fmt(r.w, 2)), el('td', { class: 'n' }, r.req != null ? fmt(r.req, 2) : '—'),
+        el('td', { class: r.ok == null ? '' : r.ok ? 'ok' : 'bad' }, r.ok == null ? '—' : r.ok ? 'OK' : 'No cumple')))))));
+    rc.append(el('p', { class: 'lead', style: 'font-size:12px;margin-top:6px' }, rep && Array.isArray(rep.routes) ? 'Anchos medidos por tools/validate.py (muros, equipos, mobiliario con sillas ocupadas).' : 'Ancho medido en el navegador sobre una grilla de 5 cm (muros, equipos, mesas, sillas y bancas).'));
   } else rc.append(el('p', { class: 'lead' }, 'El layout no define rutas.'));
   for (const [key, v] of complex) {
     if (key === 'zones' || key === 'routes') continue;
@@ -153,6 +159,34 @@ function initDatos() {
     root.append(el('h3', null, 'Validador'));
     const li = [...arr(REPORT.issues).map(t => ['Issue', t]), ...arr(REPORT.warnings).map(t => ['Aviso', t])];
     root.append(li.length ? el('ul', { class: 'list' }, li.map(([a, t]) => el('li', null, el('div', { class: 't' }, String(t)), el('div', { class: 's' }, a)))) : el('p', { class: 'lead' }, 'Sin issues ni avisos.'));
+  }
+  /* ---- report sections + equipment schedule (report.json from tools/report.py) ---- */
+  if (REPORT) {
+    for (const sec of arr(REPORT.sections)) {
+      if (!sec || typeof sec !== 'object') continue;
+      root.append(el('h3', null, str(sec.title, 'Sección')));
+      for (const p of arr(sec.paragraphs)) root.append(el('p', { class: 'lead', style: 'color:#d9d1c4;max-width:880px' }, String(p).replace(/\*\*/g, '')));
+      if (arr(sec.bullets).length) root.append(el('ul', { class: 'list' }, arr(sec.bullets).map(b => el('li', null, String(b).replace(/\*\*/g, '')))));
+      if (sec.table && Array.isArray(sec.table.header) && Array.isArray(sec.table.rows)) {
+        const head = el('thead', null, el('tr', null, sec.table.header.map(h => el('th', { scope: 'col' }, String(h)))));
+        const body = el('tbody', null, sec.table.rows.map(r => el('tr', null, arr(r).map(c => el('td', null, String(c).replace(/\*\*/g, ''))))));
+        root.append(el('div', { class: 'tbl-wrap' }, el('table', { class: 'tbl' }, head, body)));
+      }
+    }
+    const eqs = arr(REPORT.equipment).filter(e => e && typeof e === 'object');
+    if (eqs.length) {
+      root.append(el('h3', null, 'Cuadro de equipos'));
+      const rows = eqs.map(e => {
+        const dims = [e.w, e.d].map(v => fmt(num(v, NaN), 2)).join(' × ') + (e.h != null && !e.overhead ? ' × ' + fmt(num(e.h, NaN), 2) : '');
+        return el('tr', null,
+          el('td', { class: 'mono' }, str(e.tag, str(e.id))),
+          el('td', null, str(e.name, str(e.label)), el('div', { style: 'color:var(--muted);font-size:11.5px' }, CAT_ES[e.cat] || str(e.cat))),
+          el('td', { class: 'n' }, dims, e.tbv ? el('div', null, flagEl(FLAGS.DIM)) : null),
+          el('td', null, str(e.note)));
+      });
+      const head = el('thead', null, el('tr', null, ['Tag', 'Equipo', 'Frente × fondo × alto (m)', 'Nota'].map(t => el('th', { scope: 'col' }, t))));
+      root.append(el('div', { class: 'tbl-wrap' }, el('table', { class: 'tbl' }, head, el('tbody', null, rows))));
+    }
   }
   const notes = arr(LAY.notes).filter(n => typeof n === 'string');
   if (notes.length) { root.append(el('h3', null, 'Notas del layout')); root.append(el('ul', { class: 'list' }, notes.map(n => el('li', null, n)))); }

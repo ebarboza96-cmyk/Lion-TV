@@ -1,4 +1,4 @@
-<title>LΛVΛ · Recorrido del test-fit</title>
+<title>Recorrido LAVA</title>
 <style>
 :root{
   --char:#141210; --steel:#1f1b18; --steel2:#2a2521; --line:#3a332d;
@@ -25,9 +25,8 @@ body{overflow:hidden;}
 /* ---------- top bar ---------- */
 .bar{flex:0 0 var(--bar-h);height:var(--bar-h);display:flex;align-items:center;gap:18px;padding:0 16px;
   background:linear-gradient(180deg,#1b1714,#141210);border-bottom:1px solid #2b2521;position:relative;z-index:30;}
-.brand{display:flex;align-items:baseline;gap:10px;min-width:0;flex:0 0 auto;}
-.wordmark{font-family:var(--f-display);font-weight:800;font-size:27px;letter-spacing:.2em;color:var(--bone);
-  line-height:1;text-shadow:0 0 18px rgba(255,106,26,.35);padding-left:.06em;}
+.brand{display:flex;align-items:center;gap:12px;min-width:0;flex:0 0 auto;}
+.wordmark{display:block;height:21px;width:auto;color:var(--bone);filter:drop-shadow(0 0 10px rgba(255,106,26,.35));align-self:center;}
 .tagline{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--brass);white-space:nowrap;}
 .tabs{display:flex;gap:4px;background:#0f0d0c;border:1px solid #2d2723;border-radius:999px;padding:3px;margin-left:auto;}
 .tab{appearance:none;border:0;background:transparent;padding:7px 15px;border-radius:999px;cursor:pointer;
@@ -122,7 +121,8 @@ main{position:relative;flex:1 1 auto;min-height:0;}
 .hint{position:absolute;left:50%;top:62px;transform:translateX(-50%);z-index:6;padding:8px 14px;border-radius:999px;font-size:13px;
   background:rgba(20,18,16,.82);border:1px solid rgba(236,229,216,.14);color:var(--bone);white-space:nowrap;pointer-events:none;transition:opacity .6s;}
 .loader{position:absolute;inset:0;z-index:20;display:grid;place-content:center;justify-items:center;gap:16px;background:radial-gradient(ellipse at 50% 60%,#2a1a10 0%,#141210 60%);transition:opacity .7s;}
-.loader-mark{font-family:var(--f-display);font-weight:800;font-size:64px;letter-spacing:.24em;padding-left:.24em;color:var(--bone);text-shadow:0 0 34px rgba(255,106,26,.55);}
+.loader-mark{color:var(--bone);filter:drop-shadow(0 0 22px rgba(255,106,26,.6));}
+.loader-mark svg{display:block;height:54px;width:auto;}
 .loader-bar{width:200px;height:3px;border-radius:3px;background:#2c2521;overflow:hidden;}
 .loader-bar i{display:block;height:100%;width:8%;background:linear-gradient(90deg,var(--ember),#ffc27a);transition:width .3s;}
 .loader p{margin:0;font-size:13px;color:var(--muted);letter-spacing:.04em;}
@@ -174,7 +174,7 @@ main{position:relative;flex:1 1 auto;min-height:0;}
 @media (max-width:760px){
   :root{--bar-h:50px;--rail-h:56px;}
   .bar{gap:10px;padding:0 10px;}
-  .wordmark{font-size:22px;}
+  .wordmark{height:18px;}
   .tagline{display:none;}
   .meta{display:none;}
   .tab{padding:7px 11px;font-size:14px;}
@@ -202,7 +202,7 @@ main{position:relative;flex:1 1 auto;min-height:0;}
   .datos h2{font-size:25px;}
   .kpi .v{font-size:21px;}
 }
-@media (max-width:380px){ .tab{padding:6px 9px;font-size:13px;} .wordmark{font-size:20px;letter-spacing:.16em;} }
+@media (max-width:380px){ .tab{padding:6px 9px;font-size:13px;} .wordmark{height:16px;} }
 @media (prefers-reduced-motion:reduce){ .lava *{transition:none !important;scroll-behavior:auto !important;} }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -210,7 +210,7 @@ main{position:relative;flex:1 1 auto;min-height:0;}
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
 <div id="lava-app" class="lava">
   <header class="bar">
-    <div class="brand"><span class="wordmark" role="img" aria-label="LAVA">LΛVΛ</span><span class="tagline">Contemporary Fire &amp; BBQ</span></div>
+    <div class="brand"><svg class="wordmark" viewBox="0 0 422 100" role="img" aria-label="LAVA"><path fill="currentColor" d="M0 100 L62 100 L62 80 L20 80 L20 0 L0 0ZM92 100 L113 100 L137 38 L161 100 L182 100 L143 0 L131 0ZM251 100 L263 100 L302 0 L281 0 L257 62 L233 0 L212 0ZM332 100 L353 100 L377 38 L401 100 L422 100 L383 0 L371 0Z"/></svg><span class="tagline">Contemporary Fire &amp; BBQ</span></div>
     <nav class="tabs" role="tablist" aria-label="Secciones">
       <button class="tab" role="tab" id="tab-recorrido" aria-controls="view-recorrido" data-view="recorrido" aria-selected="true">Recorrido<span class="long"> 3D</span></button>
       <button class="tab" role="tab" id="tab-plano" aria-controls="view-plano" data-view="plano" aria-selected="false" tabindex="-1">Plano</button>
@@ -221,7 +221,7 @@ main{position:relative;flex:1 1 auto;min-height:0;}
   <main>
     <section id="view-recorrido" class="view" role="tabpanel" aria-labelledby="tab-recorrido">
       <div id="stage" class="stage" tabindex="0" role="application" aria-label="Recorrido 3D del restaurante. W A S D o flechas para caminar; arrastra para mirar; toca el piso para caminar hasta ahí; toca un equipo para ver sus medidas."></div>
-      <div id="loader" class="loader" aria-live="polite"><div class="loader-mark" aria-hidden="true">LΛVΛ</div><div class="loader-bar"><i id="loader-fill"></i></div><p id="loader-msg">Encendiendo la parrilla…</p></div>
+      <div id="loader" class="loader" aria-live="polite"><div class="loader-mark" aria-hidden="true"><svg class="lm" viewBox="0 0 422 100" role="img" aria-label="LAVA"><path fill="currentColor" d="M0 100 L62 100 L62 80 L20 80 L20 0 L0 0ZM92 100 L113 100 L137 38 L161 100 L182 100 L143 0 L131 0ZM251 100 L263 100 L302 0 L281 0 L257 62 L233 0 L212 0ZM332 100 L353 100 L377 38 L401 100 L422 100 L383 0 L371 0Z"/></svg></div><div class="loader-bar"><i id="loader-fill"></i></div><p id="loader-msg">Encendiendo la parrilla…</p></div>
       <div id="fail3d" class="fail" hidden role="alert">
         <div>
           <h2>Recorrido 3D no disponible</h2>

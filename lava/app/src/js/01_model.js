@@ -6,8 +6,9 @@
 const DOOR_TYPES = new Set(['door', 'double_acting_door', 'sliding_door', 'service_door', 'opening']);
 const HOT_KEYS = ['parrilla', 'cocina_4q', 'plancha', 'freidora_1', 'freidora_2'];
 const FOH_NAME = /sal[oó]n|comedor|dining|barra|\bbar\b|caja|entrada|recep|clientes|foh/i;
+const DECOR_TYPES = ['slat_wall', 'sign', 'poster', 'sconce', 'pendant', 'planter', 'firewood_niche'];
 
-const MODEL = buildModel();
+const MODEL = (() => { try { return buildModel(); } catch (e) { console.error('LAVA: no se pudo interpretar layout.json / existing.json', e); return null; } })();
 
 function buildModel() {
   const M = { warnings: [] };
@@ -129,11 +130,13 @@ function buildModel() {
 
   buildGrid(M);
   classifyRegions(M);
-  M.partInfo = partitionInfo(M);
-  M.decor = resolveDecor(M);
+  const safe = (label, f, dflt) => { try { return f(); } catch (e) { console.warn('LAVA: ' + label, e); M.warnings.push(`No se pudo calcular: ${label}.`); return dflt; } };
+  M.partInfo = safe('división cocina/salón', () => partitionInfo(M), null);
+  M.decor = safe('decoración', () => resolveDecor(M), []);
   for (const d of M.decor) if (d.collide) M.colliders.push(d.collide);
-  M.stops = buildStops(M);
-  M.metrics = computeMetrics(M);
+  M.stops = safe('paradas del recorrido', () => buildStops(M), []);
+  if (!M.stops.length) M.stops = [{ id: 'entrada', title: 'Entrada', text: '', flags: [], pos: M.entrance.slice(), look: [rcx(M.pbb), rcy(M.pbb)], lookH: 1.4 }];
+  M.metrics = safe('métricas', () => computeMetrics(M), { seats: M.seats, tables: M.tables.length, chairs: M.chairs.length, premArea: M.premArea, fohArea: M.fohArea || 0, zones: [], routes: [], equipment: M.equip.length, tbv: [], ceilH: M.ceilH });
   return M;
 }
 
@@ -207,7 +210,8 @@ function buildGrid(M) {
     }
     return true;
   };
-  M.findPath = (a, b, r = M.walkR) => findPath(M, a, b, r);
+  // try the comfortable radius first, then squeeze through tight kitchens
+  M.findPath = (a, b, r = M.walkR) => { for (const rr of [r, 0.18, 0.12]) { if (rr > r) continue; const p = findPath(M, a, b, rr); if (p) return p; } return null; };
 }
 
 function edt2(free, nx, ny) {
@@ -399,7 +403,6 @@ function partitionInfo(M) {
 }
 
 /* ============================ decor ============================ */
-const DECOR_TYPES = ['slat_wall', 'sign', 'poster', 'sconce', 'pendant', 'planter', 'firewood_niche'];
 function resolveDecor(M) {
   const out = [];
   for (const d of arr(LAY.decor)) {
@@ -450,7 +453,7 @@ function autoDecor(M, out, has) {
   if (!has('slat_wall') && slatRun && slatRun.a1 - slatRun.a0 > 1.5) {
     const a0 = slatRun.a0 + 0.25, a1 = slatRun.a1 - 0.25;
     out.push({ type: 'slat_wall', rect: mk(a0, a1, slatRun.face - 0.075, slatRun.face), face: faceDir(+1), text: 'LAVA',
-      z: bqAlong(slatRun.face, +1) ? 1.0 : 0.9, h: M.ceilH - 0.16, text_at: entAtHigh ? 0.56 : 0.44, src: 'auto' });
+      z: bqAlong(slatRun.face, +1) ? 1.0 : 0.9, h: M.ceilH - 0.16, text_at: entAtHigh ? 0.42 : 0.58, src: 'auto' });
   }
   if (!has('poster') && runsB.length) {
     // posters near the kitchen end, clear of tall equipment
@@ -590,22 +593,25 @@ function buildStops(M) {
     const pos = M.isWalk(M.entrance[0], M.entrance[1], 0.2) ? M.entrance.slice() : (M.snap(M.entrance[0], M.entrance[1], 0.22, 3) || M.entrance.slice());
     const d = distTo(pos, kitchenLook);
     S.push({ id: 'entrada', title: 'Entrada', pos, look: kitchenLook, lookH: 1.42,
-      text: `Desde la puerta, el eje del salón remata en la cocina a la vista: el fuego${parr ? ' de la parrilla' : ''}, enmarcado por el vidrio y el letrero LΛVΛ, es lo primero que ve el cliente (a ${fmt(d, 1)} m).`,
+      text: parr && M.partInfo ? `Desde la puerta, el eje del salón remata en la cocina a la vista: el fuego de la parrilla, enmarcado por el vidrio y el letrero LΛVΛ, es lo primero que ve el cliente (a ${fmt(d, 1)} m).`
+        : parr ? `Desde la puerta se ve el fuego de la parrilla al fondo del eje del local (a ${fmt(d, 1)} m).` : 'Desde la puerta se lee todo el eje del local hasta el fondo.',
       flags: [] });
   }
   // 2 Salón
   if (M.tables.length || M.banquettes.length) {
     const D = M.dining, ax = M.diningAxis;
     const entHigh = ax === 'x' ? Math.abs(M.entrance[0] - D[2]) < Math.abs(M.entrance[0] - D[0]) : Math.abs(M.entrance[1] - D[3]) < Math.abs(M.entrance[1] - D[1]);
-    const f = entHigh ? 0.62 : 0.38;
-    const guess = ax === 'x' ? [lerp(D[0], D[2], f), rcy(D)] : [rcx(D), lerp(D[1], D[3], f)];
-    const pos = M.snap(guess[0], guess[1], 0.3, 3) || guess;
     const slat = M.decor.find(d => d.type === 'slat_wall');
+    const tA = slat ? (rw(slat.rect) >= rh(slat.rect) ? lerp(slat.rect[0], slat.rect[2], slat.text_at != null ? slat.text_at : 0.5) : lerp(slat.rect[1], slat.rect[3], slat.text_at != null ? slat.text_at : 0.5)) : null;
+    const lo = ax === 'x' ? D[0] : D[1], hi = ax === 'x' ? D[2] : D[3], toK = entHigh ? -1 : 1;
+    let a = tA != null ? clamp(tA - toK * 2.3, lo + 0.5, hi - 0.5) : lerp(lo, hi, entHigh ? 0.62 : 0.38);
+    const guess = ax === 'x' ? [a, rcy(D)] : [rcx(D), a];
+    const pos = M.snap(guess[0], guess[1], 0.3, 3) || guess;
     let look;
-    if (slat) { const t = slat.text_at != null ? slat.text_at : 0.5; look = rw(slat.rect) >= rh(slat.rect) ? [lerp(slat.rect[0], slat.rect[2], t * 0.6 + 0.2), rcy(slat.rect)] : [rcx(slat.rect), lerp(slat.rect[1], slat.rect[3], t * 0.6 + 0.2)]; look = [lerp(look[0], kitchenLook[0], 0.25), lerp(look[1], kitchenLook[1], 0.08)]; }
-    else look = ax === 'x' ? [lerp(D[0], D[2], 1 - f), D[3]] : [D[2], lerp(D[1], D[3], 1 - f)];
+    if (slat) { const la = tA + toK * 0.8; look = ax === 'x' ? [la, rcy(slat.rect)] : [rcx(slat.rect), la]; }
+    else look = ax === 'x' ? [lerp(D[0], D[2], entHigh ? 0.38 : 0.62), D[3]] : [D[2], lerp(D[1], D[3], entHigh ? 0.38 : 0.62)];
     const nT = M.tables.length, sizes = [...new Set(M.tables.map(t => t.seats))].sort((a, b) => a - b);
-    S.push({ id: 'salon', title: 'Salón', pos, look, lookH: 1.25,
+    S.push({ id: 'salon', title: 'Salón', pos, look, lookH: 1.45,
       text: `${M.seats} asientos: ${M.banquettes.length ? 'bancas corridas tapizadas en verde salvia, ' : ''}${nT} mesa${nT === 1 ? '' : 's'} de ${sizes.join(' y ')} personas${M.tables.some(t => t.join.length) ? ' que se pueden unir' : ''} y sillas verde salvia con patas de latón. Celosía de madera retroiluminada en el muro sur; concreto, apliques y afiches en el muro norte; cielo expuesto negro a ${fmt(M.ceilH, 2)} m.`,
       flags: [FLAGS.SITE] });
   }

@@ -47,8 +47,14 @@ function moveTo(pos, yaw, pitch, { instant = false, onDone = null } = {}) {
   cancelTourMotion(true);
   if (instant || REDUCED) { setView(pos[0], pos[1], yaw, pitch); onDone && onDone(); return; }
   const start = [WALK.x, WALK.y];
-  let path = MODEL.findPath(start, pos) || [start, pos];
-  if (path.length < 2) path = [start, pos];
+  let path = MODEL.findPath(start, pos);
+  if (!path && Math.hypot(pos[0] - start[0], pos[1] - start[1]) > 0.6 && !MODEL.los(start, pos, 0.05)) {
+    // no walkable route (tight layout): cut instead of flying through walls
+    const fx = $('#stage'); fx.style.transition = 'opacity .25s'; fx.style.opacity = '0.15';
+    setTimeout(() => { setView(pos[0], pos[1], yaw, pitch); fx.style.opacity = '1'; onDone && onDone(); }, 260);
+    return;
+  }
+  if (!path || path.length < 2) path = [start, pos];
   // arc length table
   const L = [0]; for (let i = 1; i < path.length; i++) L.push(L[i - 1] + Math.hypot(path[i][0] - path[i - 1][0], path[i][1] - path[i - 1][1]));
   const total = L[L.length - 1];

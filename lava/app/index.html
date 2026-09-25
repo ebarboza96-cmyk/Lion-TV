@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#141210">
 <meta name="description" content="Recorrido 3D, plano y datos del test-fit de LAVA – Contemporary Fire & BBQ (Terrazas Lindora).">
-<title>LΛVΛ · Recorrido del test-fit</title>
+<title>Recorrido LAVA</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
@@ -35,9 +35,8 @@ body{overflow:hidden;}
 /* ---------- top bar ---------- */
 .bar{flex:0 0 var(--bar-h);height:var(--bar-h);display:flex;align-items:center;gap:18px;padding:0 16px;
   background:linear-gradient(180deg,#1b1714,#141210);border-bottom:1px solid #2b2521;position:relative;z-index:30;}
-.brand{display:flex;align-items:baseline;gap:10px;min-width:0;flex:0 0 auto;}
-.wordmark{font-family:var(--f-display);font-weight:800;font-size:27px;letter-spacing:.2em;color:var(--bone);
-  line-height:1;text-shadow:0 0 18px rgba(255,106,26,.35);padding-left:.06em;}
+.brand{display:flex;align-items:center;gap:12px;min-width:0;flex:0 0 auto;}
+.wordmark{display:block;height:21px;width:auto;color:var(--bone);filter:drop-shadow(0 0 10px rgba(255,106,26,.35));align-self:center;}
 .tagline{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--brass);white-space:nowrap;}
 .tabs{display:flex;gap:4px;background:#0f0d0c;border:1px solid #2d2723;border-radius:999px;padding:3px;margin-left:auto;}
 .tab{appearance:none;border:0;background:transparent;padding:7px 15px;border-radius:999px;cursor:pointer;
@@ -132,7 +131,8 @@ main{position:relative;flex:1 1 auto;min-height:0;}
 .hint{position:absolute;left:50%;top:62px;transform:translateX(-50%);z-index:6;padding:8px 14px;border-radius:999px;font-size:13px;
   background:rgba(20,18,16,.82);border:1px solid rgba(236,229,216,.14);color:var(--bone);white-space:nowrap;pointer-events:none;transition:opacity .6s;}
 .loader{position:absolute;inset:0;z-index:20;display:grid;place-content:center;justify-items:center;gap:16px;background:radial-gradient(ellipse at 50% 60%,#2a1a10 0%,#141210 60%);transition:opacity .7s;}
-.loader-mark{font-family:var(--f-display);font-weight:800;font-size:64px;letter-spacing:.24em;padding-left:.24em;color:var(--bone);text-shadow:0 0 34px rgba(255,106,26,.55);}
+.loader-mark{color:var(--bone);filter:drop-shadow(0 0 22px rgba(255,106,26,.6));}
+.loader-mark svg{display:block;height:54px;width:auto;}
 .loader-bar{width:200px;height:3px;border-radius:3px;background:#2c2521;overflow:hidden;}
 .loader-bar i{display:block;height:100%;width:8%;background:linear-gradient(90deg,var(--ember),#ffc27a);transition:width .3s;}
 .loader p{margin:0;font-size:13px;color:var(--muted);letter-spacing:.04em;}
@@ -184,7 +184,7 @@ main{position:relative;flex:1 1 auto;min-height:0;}
 @media (max-width:760px){
   :root{--bar-h:50px;--rail-h:56px;}
   .bar{gap:10px;padding:0 10px;}
-  .wordmark{font-size:22px;}
+  .wordmark{height:18px;}
   .tagline{display:none;}
   .meta{display:none;}
   .tab{padding:7px 11px;font-size:14px;}
@@ -212,14 +212,14 @@ main{position:relative;flex:1 1 auto;min-height:0;}
   .datos h2{font-size:25px;}
   .kpi .v{font-size:21px;}
 }
-@media (max-width:380px){ .tab{padding:6px 9px;font-size:13px;} .wordmark{font-size:20px;letter-spacing:.16em;} }
+@media (max-width:380px){ .tab{padding:6px 9px;font-size:13px;} .wordmark{height:16px;} }
 @media (prefers-reduced-motion:reduce){ .lava *{transition:none !important;scroll-behavior:auto !important;} }
 </style>
 </head>
 <body>
 <div id="lava-app" class="lava">
   <header class="bar">
-    <div class="brand"><span class="wordmark" role="img" aria-label="LAVA">LΛVΛ</span><span class="tagline">Contemporary Fire &amp; BBQ</span></div>
+    <div class="brand"><svg class="wordmark" viewBox="0 0 422 100" role="img" aria-label="LAVA"><path fill="currentColor" d="M0 100 L62 100 L62 80 L20 80 L20 0 L0 0ZM92 100 L113 100 L137 38 L161 100 L182 100 L143 0 L131 0ZM251 100 L263 100 L302 0 L281 0 L257 62 L233 0 L212 0ZM332 100 L353 100 L377 38 L401 100 L422 100 L383 0 L371 0Z"/></svg><span class="tagline">Contemporary Fire &amp; BBQ</span></div>
     <nav class="tabs" role="tablist" aria-label="Secciones">
       <button class="tab" role="tab" id="tab-recorrido" aria-controls="view-recorrido" data-view="recorrido" aria-selected="true">Recorrido<span class="long"> 3D</span></button>
       <button class="tab" role="tab" id="tab-plano" aria-controls="view-plano" data-view="plano" aria-selected="false" tabindex="-1">Plano</button>
@@ -230,7 +230,7 @@ main{position:relative;flex:1 1 auto;min-height:0;}
   <main>
     <section id="view-recorrido" class="view" role="tabpanel" aria-labelledby="tab-recorrido">
       <div id="stage" class="stage" tabindex="0" role="application" aria-label="Recorrido 3D del restaurante. W A S D o flechas para caminar; arrastra para mirar; toca el piso para caminar hasta ahí; toca un equipo para ver sus medidas."></div>
-      <div id="loader" class="loader" aria-live="polite"><div class="loader-mark" aria-hidden="true">LΛVΛ</div><div class="loader-bar"><i id="loader-fill"></i></div><p id="loader-msg">Encendiendo la parrilla…</p></div>
+      <div id="loader" class="loader" aria-live="polite"><div class="loader-mark" aria-hidden="true"><svg class="lm" viewBox="0 0 422 100" role="img" aria-label="LAVA"><path fill="currentColor" d="M0 100 L62 100 L62 80 L20 80 L20 0 L0 0ZM92 100 L113 100 L137 38 L161 100 L182 100 L143 0 L131 0ZM251 100 L263 100 L302 0 L281 0 L257 62 L233 0 L212 0ZM332 100 L353 100 L377 38 L401 100 L422 100 L383 0 L371 0Z"/></svg></div><div class="loader-bar"><i id="loader-fill"></i></div><p id="loader-msg">Encendiendo la parrilla…</p></div>
       <div id="fail3d" class="fail" hidden role="alert">
         <div>
           <h2>Recorrido 3D no disponible</h2>
@@ -465,8 +465,9 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 const DOOR_TYPES = new Set(['door', 'double_acting_door', 'sliding_door', 'service_door', 'opening']);
 const HOT_KEYS = ['parrilla', 'cocina_4q', 'plancha', 'freidora_1', 'freidora_2'];
 const FOH_NAME = /sal[oó]n|comedor|dining|barra|\bbar\b|caja|entrada|recep|clientes|foh/i;
+const DECOR_TYPES = ['slat_wall', 'sign', 'poster', 'sconce', 'pendant', 'planter', 'firewood_niche'];
 
-const MODEL = buildModel();
+const MODEL = (() => { try { return buildModel(); } catch (e) { console.error('LAVA: no se pudo interpretar layout.json / existing.json', e); return null; } })();
 
 function buildModel() {
   const M = { warnings: [] };
@@ -588,11 +589,13 @@ function buildModel() {
 
   buildGrid(M);
   classifyRegions(M);
-  M.partInfo = partitionInfo(M);
-  M.decor = resolveDecor(M);
+  const safe = (label, f, dflt) => { try { return f(); } catch (e) { console.warn('LAVA: ' + label, e); M.warnings.push(`No se pudo calcular: ${label}.`); return dflt; } };
+  M.partInfo = safe('división cocina/salón', () => partitionInfo(M), null);
+  M.decor = safe('decoración', () => resolveDecor(M), []);
   for (const d of M.decor) if (d.collide) M.colliders.push(d.collide);
-  M.stops = buildStops(M);
-  M.metrics = computeMetrics(M);
+  M.stops = safe('paradas del recorrido', () => buildStops(M), []);
+  if (!M.stops.length) M.stops = [{ id: 'entrada', title: 'Entrada', text: '', flags: [], pos: M.entrance.slice(), look: [rcx(M.pbb), rcy(M.pbb)], lookH: 1.4 }];
+  M.metrics = safe('métricas', () => computeMetrics(M), { seats: M.seats, tables: M.tables.length, chairs: M.chairs.length, premArea: M.premArea, fohArea: M.fohArea || 0, zones: [], routes: [], equipment: M.equip.length, tbv: [], ceilH: M.ceilH });
   return M;
 }
 
@@ -666,7 +669,8 @@ function buildGrid(M) {
     }
     return true;
   };
-  M.findPath = (a, b, r = M.walkR) => findPath(M, a, b, r);
+  // try the comfortable radius first, then squeeze through tight kitchens
+  M.findPath = (a, b, r = M.walkR) => { for (const rr of [r, 0.18, 0.12]) { if (rr > r) continue; const p = findPath(M, a, b, rr); if (p) return p; } return null; };
 }
 
 function edt2(free, nx, ny) {
@@ -858,7 +862,6 @@ function partitionInfo(M) {
 }
 
 /* ============================ decor ============================ */
-const DECOR_TYPES = ['slat_wall', 'sign', 'poster', 'sconce', 'pendant', 'planter', 'firewood_niche'];
 function resolveDecor(M) {
   const out = [];
   for (const d of arr(LAY.decor)) {
@@ -909,7 +912,7 @@ function autoDecor(M, out, has) {
   if (!has('slat_wall') && slatRun && slatRun.a1 - slatRun.a0 > 1.5) {
     const a0 = slatRun.a0 + 0.25, a1 = slatRun.a1 - 0.25;
     out.push({ type: 'slat_wall', rect: mk(a0, a1, slatRun.face - 0.075, slatRun.face), face: faceDir(+1), text: 'LAVA',
-      z: bqAlong(slatRun.face, +1) ? 1.0 : 0.9, h: M.ceilH - 0.16, text_at: entAtHigh ? 0.56 : 0.44, src: 'auto' });
+      z: bqAlong(slatRun.face, +1) ? 1.0 : 0.9, h: M.ceilH - 0.16, text_at: entAtHigh ? 0.42 : 0.58, src: 'auto' });
   }
   if (!has('poster') && runsB.length) {
     // posters near the kitchen end, clear of tall equipment
@@ -1049,22 +1052,25 @@ function buildStops(M) {
     const pos = M.isWalk(M.entrance[0], M.entrance[1], 0.2) ? M.entrance.slice() : (M.snap(M.entrance[0], M.entrance[1], 0.22, 3) || M.entrance.slice());
     const d = distTo(pos, kitchenLook);
     S.push({ id: 'entrada', title: 'Entrada', pos, look: kitchenLook, lookH: 1.42,
-      text: `Desde la puerta, el eje del salón remata en la cocina a la vista: el fuego${parr ? ' de la parrilla' : ''}, enmarcado por el vidrio y el letrero LΛVΛ, es lo primero que ve el cliente (a ${fmt(d, 1)} m).`,
+      text: parr && M.partInfo ? `Desde la puerta, el eje del salón remata en la cocina a la vista: el fuego de la parrilla, enmarcado por el vidrio y el letrero LΛVΛ, es lo primero que ve el cliente (a ${fmt(d, 1)} m).`
+        : parr ? `Desde la puerta se ve el fuego de la parrilla al fondo del eje del local (a ${fmt(d, 1)} m).` : 'Desde la puerta se lee todo el eje del local hasta el fondo.',
       flags: [] });
   }
   // 2 Salón
   if (M.tables.length || M.banquettes.length) {
     const D = M.dining, ax = M.diningAxis;
     const entHigh = ax === 'x' ? Math.abs(M.entrance[0] - D[2]) < Math.abs(M.entrance[0] - D[0]) : Math.abs(M.entrance[1] - D[3]) < Math.abs(M.entrance[1] - D[1]);
-    const f = entHigh ? 0.62 : 0.38;
-    const guess = ax === 'x' ? [lerp(D[0], D[2], f), rcy(D)] : [rcx(D), lerp(D[1], D[3], f)];
-    const pos = M.snap(guess[0], guess[1], 0.3, 3) || guess;
     const slat = M.decor.find(d => d.type === 'slat_wall');
+    const tA = slat ? (rw(slat.rect) >= rh(slat.rect) ? lerp(slat.rect[0], slat.rect[2], slat.text_at != null ? slat.text_at : 0.5) : lerp(slat.rect[1], slat.rect[3], slat.text_at != null ? slat.text_at : 0.5)) : null;
+    const lo = ax === 'x' ? D[0] : D[1], hi = ax === 'x' ? D[2] : D[3], toK = entHigh ? -1 : 1;
+    let a = tA != null ? clamp(tA - toK * 2.3, lo + 0.5, hi - 0.5) : lerp(lo, hi, entHigh ? 0.62 : 0.38);
+    const guess = ax === 'x' ? [a, rcy(D)] : [rcx(D), a];
+    const pos = M.snap(guess[0], guess[1], 0.3, 3) || guess;
     let look;
-    if (slat) { const t = slat.text_at != null ? slat.text_at : 0.5; look = rw(slat.rect) >= rh(slat.rect) ? [lerp(slat.rect[0], slat.rect[2], t * 0.6 + 0.2), rcy(slat.rect)] : [rcx(slat.rect), lerp(slat.rect[1], slat.rect[3], t * 0.6 + 0.2)]; look = [lerp(look[0], kitchenLook[0], 0.25), lerp(look[1], kitchenLook[1], 0.08)]; }
-    else look = ax === 'x' ? [lerp(D[0], D[2], 1 - f), D[3]] : [D[2], lerp(D[1], D[3], 1 - f)];
+    if (slat) { const la = tA + toK * 0.8; look = ax === 'x' ? [la, rcy(slat.rect)] : [rcx(slat.rect), la]; }
+    else look = ax === 'x' ? [lerp(D[0], D[2], entHigh ? 0.38 : 0.62), D[3]] : [D[2], lerp(D[1], D[3], entHigh ? 0.38 : 0.62)];
     const nT = M.tables.length, sizes = [...new Set(M.tables.map(t => t.seats))].sort((a, b) => a - b);
-    S.push({ id: 'salon', title: 'Salón', pos, look, lookH: 1.25,
+    S.push({ id: 'salon', title: 'Salón', pos, look, lookH: 1.45,
       text: `${M.seats} asientos: ${M.banquettes.length ? 'bancas corridas tapizadas en verde salvia, ' : ''}${nT} mesa${nT === 1 ? '' : 's'} de ${sizes.join(' y ')} personas${M.tables.some(t => t.join.length) ? ' que se pueden unir' : ''} y sillas verde salvia con patas de latón. Celosía de madera retroiluminada en el muro sur; concreto, apliques y afiches en el muro norte; cielo expuesto negro a ${fmt(M.ceilH, 2)} m.`,
       flags: [FLAGS.SITE] });
   }
@@ -1478,6 +1484,10 @@ const METRIC_ES = {
   parrilla_to_glass_m: ['Parrilla → vidrio', 'm'], routes: ['Rutas', ''], connections: ['Conexiones', ''], zones: ['Zonas', ''],
   optional_present: ['Equipos opcionales presentes', ''], dirty_clean_conflicts: ['Conflictos flujo sucio / limpio', ''],
   dining_area_m2: ['Área de salón', 'm²'], kitchen_area_m2: ['Área de cocina', 'm²'], min_aisle_m: ['Pasillo mínimo', 'm'],
+  premises_m2: ['Área del local', 'm²'], dining_m2: ['Salón (zona D)', 'm²'], kitchen_hot_m2: ['Cocina caliente (zona B)', 'm²'],
+  boh_m2: ['Back of house (zona A)', 'm²'], pass_bar_m2: ['Pase + barra (zona C)', 'm²'], smoker_m2: ['Smoker (zona E)', 'm²'],
+  parrilla_view_pct: ['Asientos con vista a la parrilla', '%'], warnings: ['Avisos del validador', ''], issues: ['Incumplimientos del validador', ''],
+  seats_detail: ['Detalle de asientos', ''],
 };
 const COL_ES = { id: 'Id', kind: 'Tipo', label: 'Descripción', min_width: 'Ancho mín. (m)', at: 'En', required: 'Requerido (m)', length: 'Longitud (m)',
   ok: 'Estado', from: 'Desde', to: 'Hasta', bottleneck: 'Cuello (m)', name: 'Nombre', area_m2: 'Área (m²)', area: 'Área (m²)' };
@@ -1486,7 +1496,7 @@ const humanKey = k => (METRIC_ES[k] ? METRIC_ES[k][0] : COL_ES[k] || String(k).r
 function fmtVal(v, k) {
   if (v == null) return '—';
   if (typeof v === 'boolean') return v ? 'Sí' : 'No';
-  if (typeof v === 'number') return Number.isInteger(v) ? String(v) : v.toFixed(Math.abs(v) >= 100 ? 1 : 2);
+  if (typeof v === 'number') { const u = METRIC_ES[k] ? METRIC_ES[k][1] : ''; return Number.isInteger(v) && !/m/.test(u) ? String(v) : v.toFixed(Math.abs(v) >= 100 ? 1 : 2); }
   if (Array.isArray(v)) return v.every(x => typeof x !== 'object') ? v.join(', ') : `${v.length} elementos`;
   if (typeof v === 'object') return Object.entries(v).map(([a, b]) => `${a}: ${fmtVal(b)}`).join(' · ');
   return String(v);
@@ -1518,6 +1528,7 @@ function initDatos() {
   root.append(el('h2', null, 'Datos del test-fit'));
   const meta = [str(M.meta.name), str(M.meta.strategy), M.meta.version != null ? 'v' + M.meta.version : ''].filter(Boolean).join(' · ');
   root.append(el('p', { class: 'lead' }, meta || 'Propuesta LAVA sobre el local ex-Marna’s, Terrazas Lindora.'));
+  if (REPORT && typeof REPORT.intro === 'string' && REPORT.intro.trim()) root.append(el('p', { class: 'lead', style: 'color:#d9d1c4;margin-top:8px' }, REPORT.intro));
   if (!REPORT) root.append(el('p', { class: 'note' }, 'Informe de validación no incluido (data/report.json): las métricas de abajo se calculan en el navegador a partir de layout.json y existing.json. Ejecuta tools/validate.py para el informe completo.'));
 
   /* ---- metrics ---- */
@@ -1541,10 +1552,11 @@ function initDatos() {
   const complex = [];
   if (rep) {
     for (const [key, v] of Object.entries(rep)) {
-      if (v == null) continue;
+      if (v == null || key === 'seats_detail') continue;
       if (typeof v === 'object') { complex.push([key, v]); continue; }
       const [label, unit] = METRIC_ES[key] || [humanKey(key), ''];
-      k.append(kpi(fmtVal(v, key), unit, label));
+      if (typeof v === 'string' && v.length > 24) { complex.push([key, [v]]); continue; }
+      k.append(kpi(fmtVal(v, key), unit, label, key === 'seats' && typeof rep.seats_detail === 'string' ? el('div', { class: 'l' }, rep.seats_detail) : null));
     }
     if (!Object.keys(rep).some(x => /seat/.test(x))) k.prepend(kpi(String(mt.seats), '', 'Asientos'));
   } else computed.forEach(c => k.append(kpi(...c)));
@@ -1561,17 +1573,17 @@ function initDatos() {
   } else zc.append(el('p', { class: 'lead' }, 'El layout no define zonas.'));
   const rc = el('div'); cols.append(rc);
   rc.append(el('h3', null, 'Rutas y anchos libres'));
-  if (rep && Array.isArray(rep.routes)) rc.append(tableFrom(rep.routes));
-  else if (mt.routes.length) {
+  const rrows = rep && Array.isArray(rep.routes)
+    ? rep.routes.filter(r => r && typeof r === 'object').map(r => ({ id: str(r.id), kind: str(r.kind), label: str(r.label), len: num(r.length, num(r.len, null)), w: num(r.min_width, null), req: num(r.required, null), ok: typeof r.ok === 'boolean' ? r.ok : null }))
+    : mt.routes.map(r => ({ ...r, ok: r.req == null || r.w == null ? null : r.w + 0.005 >= r.req }));
+  if (rrows.length) {
     rc.append(el('div', { class: 'tbl-wrap' }, el('table', { class: 'tbl' },
       el('thead', null, el('tr', null, ['Ruta', 'Long. (m)', 'Ancho mín. (m)', 'Requerido', 'Estado'].map(t => el('th', { scope: 'col' }, t)))),
-      el('tbody', null, mt.routes.map(r => {
-        const ok = r.req == null || r.w == null ? null : r.w + 0.005 >= r.req;
-        return el('tr', null, el('td', null, el('span', { style: `display:inline-block;width:14px;height:3px;margin:0 8px 3px 0;background:${ROUTE_COLOR[r.kind] || '#777'}` }), r.label || r.id, el('div', { style: 'color:var(--muted);font-size:11.5px' }, ROUTE_ES[r.kind] || r.kind)),
-          el('td', { class: 'n' }, fmt(r.len, 1)), el('td', { class: 'n' }, fmt(r.w, 2)), el('td', { class: 'n' }, r.req != null ? fmt(r.req, 2) : '—'),
-          el('td', { class: ok == null ? '' : ok ? 'ok' : 'bad' }, ok == null ? '—' : ok ? 'OK' : 'No cumple'));
-      })))));
-    rc.append(el('p', { class: 'lead', style: 'font-size:12px;margin-top:6px' }, 'Ancho medido en el navegador sobre una grilla de 5 cm (muros, equipos, mesas y bancas).'));
+      el('tbody', null, rrows.map(r => el('tr', null,
+        el('td', null, el('span', { style: `display:inline-block;width:14px;height:3px;margin:0 8px 3px 0;background:${ROUTE_COLOR[r.kind] || '#777'}` }), r.label || r.id, el('div', { style: 'color:var(--muted);font-size:11.5px' }, ROUTE_ES[r.kind] || r.kind)),
+        el('td', { class: 'n' }, fmt(r.len, 1)), el('td', { class: 'n' }, fmt(r.w, 2)), el('td', { class: 'n' }, r.req != null ? fmt(r.req, 2) : '—'),
+        el('td', { class: r.ok == null ? '' : r.ok ? 'ok' : 'bad' }, r.ok == null ? '—' : r.ok ? 'OK' : 'No cumple')))))));
+    rc.append(el('p', { class: 'lead', style: 'font-size:12px;margin-top:6px' }, rep && Array.isArray(rep.routes) ? 'Anchos medidos por tools/validate.py (muros, equipos, mobiliario con sillas ocupadas).' : 'Ancho medido en el navegador sobre una grilla de 5 cm (muros, equipos, mesas, sillas y bancas).'));
   } else rc.append(el('p', { class: 'lead' }, 'El layout no define rutas.'));
   for (const [key, v] of complex) {
     if (key === 'zones' || key === 'routes') continue;
@@ -1618,6 +1630,34 @@ function initDatos() {
     root.append(el('h3', null, 'Validador'));
     const li = [...arr(REPORT.issues).map(t => ['Issue', t]), ...arr(REPORT.warnings).map(t => ['Aviso', t])];
     root.append(li.length ? el('ul', { class: 'list' }, li.map(([a, t]) => el('li', null, el('div', { class: 't' }, String(t)), el('div', { class: 's' }, a)))) : el('p', { class: 'lead' }, 'Sin issues ni avisos.'));
+  }
+  /* ---- report sections + equipment schedule (report.json from tools/report.py) ---- */
+  if (REPORT) {
+    for (const sec of arr(REPORT.sections)) {
+      if (!sec || typeof sec !== 'object') continue;
+      root.append(el('h3', null, str(sec.title, 'Sección')));
+      for (const p of arr(sec.paragraphs)) root.append(el('p', { class: 'lead', style: 'color:#d9d1c4;max-width:880px' }, String(p).replace(/\*\*/g, '')));
+      if (arr(sec.bullets).length) root.append(el('ul', { class: 'list' }, arr(sec.bullets).map(b => el('li', null, String(b).replace(/\*\*/g, '')))));
+      if (sec.table && Array.isArray(sec.table.header) && Array.isArray(sec.table.rows)) {
+        const head = el('thead', null, el('tr', null, sec.table.header.map(h => el('th', { scope: 'col' }, String(h)))));
+        const body = el('tbody', null, sec.table.rows.map(r => el('tr', null, arr(r).map(c => el('td', null, String(c).replace(/\*\*/g, ''))))));
+        root.append(el('div', { class: 'tbl-wrap' }, el('table', { class: 'tbl' }, head, body)));
+      }
+    }
+    const eqs = arr(REPORT.equipment).filter(e => e && typeof e === 'object');
+    if (eqs.length) {
+      root.append(el('h3', null, 'Cuadro de equipos'));
+      const rows = eqs.map(e => {
+        const dims = [e.w, e.d].map(v => fmt(num(v, NaN), 2)).join(' × ') + (e.h != null && !e.overhead ? ' × ' + fmt(num(e.h, NaN), 2) : '');
+        return el('tr', null,
+          el('td', { class: 'mono' }, str(e.tag, str(e.id))),
+          el('td', null, str(e.name, str(e.label)), el('div', { style: 'color:var(--muted);font-size:11.5px' }, CAT_ES[e.cat] || str(e.cat))),
+          el('td', { class: 'n' }, dims, e.tbv ? el('div', null, flagEl(FLAGS.DIM)) : null),
+          el('td', null, str(e.note)));
+      });
+      const head = el('thead', null, el('tr', null, ['Tag', 'Equipo', 'Frente × fondo × alto (m)', 'Nota'].map(t => el('th', { scope: 'col' }, t))));
+      root.append(el('div', { class: 'tbl-wrap' }, el('table', { class: 'tbl' }, head, el('tbody', null, rows))));
+    }
   }
   const notes = arr(LAY.notes).filter(n => typeof n === 'string');
   if (notes.length) { root.append(el('h3', null, 'Notas del layout')); root.append(el('ul', { class: 'list' }, notes.map(n => el('li', null, n)))); }
@@ -2084,7 +2124,8 @@ function makeMaterials() {
   MAT.ceiling = std({ color: 0x0b0a0a, roughness: 1, envMapIntensity: 0.05, side: THREE.DoubleSide });
   MAT.blackSteel = std({ map: TEX.blacksteel, roughness: 0.5, metalness: 0.65, envMapIntensity: 0.7 });
   MAT.matteBlack = std({ color: 0x141312, roughness: 0.75, metalness: 0.2, envMapIntensity: 0.4 });
-  MAT.stainless = std({ map: TEX.brushed, roughness: 0.3, metalness: 1.0, envMapIntensity: 1.0 });
+  MAT.stainless = std({ map: TEX.brushed, roughness: 0.36, metalness: 1.0, envMapIntensity: 0.85 });
+  MAT.splash = std({ map: TEX.brushed, roughness: 0.45, metalness: 0.9, envMapIntensity: 0.45 });
   MAT.stainlessDark = std({ color: 0x8a8e92, roughness: 0.42, metalness: 1.0, envMapIntensity: 0.8 });
   MAT.grate = std({ color: 0x1a1918, roughness: 0.55, metalness: 0.8 });
   MAT.oak = std({ map: TEX.oak, roughness: 0.5, envMapIntensity: 0.6 });
@@ -2105,6 +2146,7 @@ function makeMaterials() {
   MAT.lightSoft = basic({ color: new THREE.Color(2.4, 1.5, 0.75) });
   MAT.lightCool = basic({ color: new THREE.Color(3.2, 3.1, 2.9) });
   MAT.ledStrip = basic({ color: new THREE.Color(3.5, 1.9, 0.8) });
+  MAT.neon = basic({ color: new THREE.Color(2.9, 2.1, 1.35) });
   MAT.ember = basic({ map: TEX.ember, color: new THREE.Color(3.2, 2.2, 1.6) });
   MAT.soil = std({ color: 0x241810, roughness: 1 });
   MAT.leaves = std({ map: TEX.leaves, alphaTest: 0.45, side: THREE.DoubleSide, roughness: 0.8, envMapIntensity: 0.3 });
@@ -2331,13 +2373,16 @@ function buildPartition(B, walls) {
     const a0 = alongY ? r[1] : r[0], a1 = alongY ? r[3] : r[2], c = alongY ? rcx(r) : rcy(r);
     const jamb = (p0, p1) => alongY ? [r[0] - 0.01, p0, r[2] + 0.01, p1] : [p0, r[1] - 0.01, p1, r[3] + 0.01];
     B.box(MAT.matteBlack, jamb(a0, a0 + 0.03), 0, headZ); B.box(MAT.matteBlack, jamb(a1 - 0.03, a1), 0, headZ);
-    if (o.type === 'opening') continue;
+    if (o.type === 'opening' || o.type === 'sliding_door') continue;   // open passage (sliding leaf parked in the wall)
     const width = a1 - a0 - 0.06;
     const two = o.type === 'double_acting_door' ? width > 1.05 : false;
     const leaves = o.type === 'double_acting_door' && !two ? 1 : two ? 2 : 1;
     const lw = width / leaves;
+    // single leaf: hinge at the end nearest to o.hinge when the data gives one
+    const hingeAtEnd = leaves === 1 && o.hinge ? (Math.abs((alongY ? o.hinge[1] : o.hinge[0]) - a1) < Math.abs((alongY ? o.hinge[1] : o.hinge[0]) - a0)) : false;
     for (let i = 0; i < leaves; i++) {
-      const hingeA = i === 0 ? a0 + 0.03 : a1 - 0.03, dir = i === 0 ? 1 : -1;
+      const second = i === 1 || hingeAtEnd;
+      const hingeA = second ? a1 - 0.03 : a0 + 0.03, dir = second ? -1 : 1;
       const pivot = new THREE.Group();
       const hp = alongY ? V3(c, hingeA, 0) : V3(hingeA, c, 0);
       pivot.position.copy(hp);
@@ -2479,7 +2524,8 @@ function buildSlatWall(B, d) {
   // canvas runs along +right direction of the face basis; map "a" coordinate to texture u
   const b = faceBasis(d.face);
   const rightIsPlusA = s.alongX ? b.right.x > 0 : b.right.z > 0;
-  const tex = slatGlowTexture(s.L, z1 - z0, d.text === '' ? '' : (d.text || 'LAVA'), rightIsPlusA ? textAt : 1 - textAt);
+  const word = d.text === '' ? '' : (d.text || 'LAVA');
+  const tex = slatGlowTexture(s.L, z1 - z0, '', rightIsPlusA ? textAt : 1 - textAt);
   const mat = basic({ map: tex, color: new THREE.Color(1.55, 1.45, 1.35) });
   const pg = new THREE.PlaneGeometry(s.L, z1 - z0);
   const mid = s.P((s.a0 + s.a1) / 2, 0.006);
@@ -2493,9 +2539,25 @@ function buildSlatWall(B, d) {
   B.box(MAT.walnut, Rr(s.a0 - 0.02, s.a1 + 0.02, 0.0, 0.1), z1, z1 + 0.035);
   B.box(MAT.ledStrip, Rr(s.a0, s.a1, 0.004, 0.012), z1 - 0.015, z1);
   B.box(MAT.walnut, Rr(s.a0 - 0.02, s.a1 + 0.02, 0.0, 0.09), z0 - 0.03, z0);
-  // text centre (for lights)
-  W3.slat = { p: s.P(lerp(s.a0, s.a1, rightIsPlusA ? textAt : 1 - textAt), 0.5), mid: s.P((s.a0 + s.a1) / 2, 0.45), L: s.L, z: (z0 + z1) / 2, d };
-  W3.slat.p = s.P(lerp(s.a0, s.a1, textAt), 0.5);
+  // backlit word mounted in front of the grid (reads even at grazing angles, like the render)
+  if (word) {
+    const { polys, width } = wordGlyphs(word);
+    const Hs = clamp((z1 - z0) * 0.34, 0.22, 0.7), Lw = width * Hs;
+    const at = clamp(lerp(s.a0, s.a1, textAt), s.a0 + Lw / 2 + 0.1, s.a1 - Lw / 2 - 0.1);
+    const zc = (z0 + z1) / 2 + 0.05, pc = s.P(at, 0.07);
+    const m = faceMatrix(d.face, V3(pc[0], pc[1], zc));
+    for (const p of polys) {
+      const sh = new THREE.Shape(p.map(([a, b]) => new THREE.Vector2((a - width / 2) * Hs, (b - 0.5) * Hs)));
+      const g = new THREE.ExtrudeGeometry(sh, { depth: 0.018, bevelEnabled: false });
+      B.geo(MAT.neon, g, m.clone(), 'own');
+    }
+    const halo = signHaloTexture(word);
+    const hw = Hs * (halo.wordW + 1.4), hh = hw / halo.aspect;
+    const hm = new THREE.Mesh(new THREE.PlaneGeometry(hw, hh), basic({ map: halo.tex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, color: new THREE.Color(2.2, 1.6, 1.1) }));
+    hm.applyMatrix4(faceMatrix(d.face, V3(pc[0], pc[1], zc))); hm.renderOrder = 3; W3.root.add(hm);
+    const q = s.P(at, 0.3); glow(q[0], q[1], zc, Lw * 1.2, 0x5a2a0c);
+  }
+  W3.slat = { p: s.P(lerp(s.a0, s.a1, textAt), 0.5), mid: s.P((s.a0 + s.a1) / 2, 0.45), L: s.L, z: (z0 + z1) / 2, d };
 }
 function buildSign(B, d) {
   const M = MODEL, s = wallSpan(d);
@@ -2581,7 +2643,7 @@ function buildLights(scene) {
   const hemi = new THREE.HemisphereLight(0xffd6a8, 0x1c130c, 0.55); scene.add(hemi); W3.hemi = hemi; W3.hemiBase = 0.55;
   const add = (x, y, z, color, intensity, dist = 0, tag) => { const l = new THREE.PointLight(color, intensity, dist, 2); l.position.copy(V3(x, y, z)); scene.add(l); W3.lights.push({ l, base: intensity, tag }); return l; };
   const D = M.dining, ax = M.diningAxis;
-  if (M.tables.length || M.banquettes.length) {
+  {
     for (const f of [0.18, 0.5, 0.82]) { const p = ax === 'x' ? [lerp(D[0], D[2], f), rcy(D)] : [rcx(D), lerp(D[1], D[3], f)]; add(p[0], p[1], 2.2, 0xffb46e, 9, 9, 'dining'); }
   }
   if (W3.slat) add(W3.slat.mid[0], W3.slat.mid[1], 1.9, 0xff9a4a, 9, 8, 'slat');
@@ -2615,12 +2677,12 @@ function makeEnvironment(renderer) {
   const room = new THREE.Mesh(new THREE.BoxGeometry(24, 6, 10), basic({ color: 0x120d0a, side: THREE.BackSide })); room.position.y = 2; s.add(room);
   const panel = (w, h, d, x, y, z, c) => { const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), basic({ color: c })); m.position.set(x, y, z); s.add(m); };
   panel(18, 1.6, 0.1, 0, 1.9, 4.9, new THREE.Color(1.6, 0.8, 0.3));       // slat-wall glow
-  panel(4, 1.2, 0.1, -11.9, 1.6, 0, new THREE.Color(2.4, 2.2, 2.0));       // bright kitchen
+  panel(6, 2.4, 0.1, -11.9, 1.8, 0, new THREE.Color(0.9, 0.82, 0.72));    // kitchen (soft, large)
   panel(0.12, 0.12, 0.12, -11.8, 1.1, 0, new THREE.Color(6, 2.5, 0.8));
   for (let x = -9; x <= 9; x += 3) { panel(0.3, 0.05, 0.3, x, 4.9, -1.2, new THREE.Color(5, 3.4, 1.8)); panel(0.3, 0.05, 0.3, x, 4.9, 1.2, new THREE.Color(5, 3.4, 1.8)); }
   panel(24, 0.1, 10, 0, -0.95, 0, new THREE.Color(0.09, 0.075, 0.06));
   const pm = new THREE.PMREMGenerator(renderer);
-  const rt = pm.fromScene(s, 0.02);
+  const rt = pm.fromScene(s, 0.035);
   pm.dispose();
   return rt.texture;
 }
@@ -2658,7 +2720,7 @@ function backsplash(B, M, e, f, zTop) {
   const t = castRay(M, back[0], back[1], -n[0], -n[1], 1).t;
   if (t > 0.15) return;
   const r = f.R(0, -t - 0.012, f.w, -t);
-  B.box(e.cat === 'fire' ? MAT.stainless : MAT.stainlessDark, r, e.h - 0.03, zTop);
+  B.box(e.cat === 'fire' ? MAT.splash : MAT.stainlessDark, r, e.h - 0.03, zTop);
 }
 
 const EQ = {
@@ -3064,7 +3126,7 @@ function buildLogs() {
    (circle vs rects + premises edges, slides along obstacles).
    =================================================================================== */
 
-const EYE = 1.6, RADIUS = 0.24;
+const EYE = 1.6, RADIUS = 0.2;
 const WALK = { x: 0, y: 0, yaw: Math.PI, pitch: -0.03, keys: new Set(), joy: { x: 0, y: 0, active: false }, drag: null, speed: 1.55,
   lastInput: 0, moving: false };
 
@@ -3153,17 +3215,17 @@ function initWalkInput(stage) {
   window.addEventListener('blur', () => WALK.keys.clear());
   // drag to look / tap to pick or walk
   stage.addEventListener('pointerdown', e => {
-    if (W3.aerial || e.button > 0) return;
-    stage.setPointerCapture && stage.setPointerCapture(e.pointerId);
+    if (e.button > 0) return;
+    if (!W3.aerial && stage.setPointerCapture) stage.setPointerCapture(e.pointerId);
     WALK.drag = { id: e.pointerId, x: e.clientX, y: e.clientY, x0: e.clientX, y0: e.clientY, t: performance.now(), moved: 0 };
     stage.classList.add('dragging');
   });
   stage.addEventListener('pointermove', e => {
     const d = WALK.drag;
-    if (!d || d.id !== e.pointerId) { if (!W3.aerial && e.pointerType === 'mouse') hoverPick(e); return; }
+    if (!d || d.id !== e.pointerId) { if (e.pointerType === 'mouse') hoverPick(e); return; }
     const dx = e.clientX - d.x, dy = e.clientY - d.y; d.x = e.clientX; d.y = e.clientY;
     d.moved += Math.abs(dx) + Math.abs(dy);
-    if (d.moved > 6) {
+    if (d.moved > 6 && !W3.aerial) {
       const k = (e.pointerType === 'touch' ? 0.0055 : 0.0042) * (W3.camera ? W3.camera.fov / 65 : 1);
       WALK.yaw -= dx * k; WALK.pitch = clamp(WALK.pitch + dy * k, -1.2, 1.1); userInput();
     }
@@ -3240,8 +3302,14 @@ function moveTo(pos, yaw, pitch, { instant = false, onDone = null } = {}) {
   cancelTourMotion(true);
   if (instant || REDUCED) { setView(pos[0], pos[1], yaw, pitch); onDone && onDone(); return; }
   const start = [WALK.x, WALK.y];
-  let path = MODEL.findPath(start, pos) || [start, pos];
-  if (path.length < 2) path = [start, pos];
+  let path = MODEL.findPath(start, pos);
+  if (!path && Math.hypot(pos[0] - start[0], pos[1] - start[1]) > 0.6 && !MODEL.los(start, pos, 0.05)) {
+    // no walkable route (tight layout): cut instead of flying through walls
+    const fx = $('#stage'); fx.style.transition = 'opacity .25s'; fx.style.opacity = '0.15';
+    setTimeout(() => { setView(pos[0], pos[1], yaw, pitch); fx.style.opacity = '1'; onDone && onDone(); }, 260);
+    return;
+  }
+  if (!path || path.length < 2) path = [start, pos];
   // arc length table
   const L = [0]; for (let i = 1; i < path.length; i++) L.push(L[i - 1] + Math.hypot(path[i][0] - path[i - 1][0], path[i][1] - path[i - 1][1]));
   const total = L[L.length - 1];
@@ -3287,7 +3355,7 @@ function startAuto() {
     const wait = () => {
       if (!TOUR.auto) return;
       if (TOUR.motion) { TOUR.autoTimer = setTimeout(wait, 250); return; }
-      TOUR.autoTimer = setTimeout(() => { if (TOUR.auto) step((i + 1) % MODEL.stops.length); }, 6500);
+      TOUR.autoTimer = setTimeout(() => { if (!TOUR.auto) return; if (i + 1 >= MODEL.stops.length) stopAuto(); else step(i + 1); }, 6500);
     };
     TOUR.autoTimer = setTimeout(wait, 400);
   };
@@ -3802,6 +3870,12 @@ function showView(v, focus) {
 function routeFromHash() { const h = (location.hash || '').replace('#', '').toLowerCase(); return VIEWS.includes(h) ? h : null; }
 
 function boot() {
+  if (!MODEL) {
+    const msg = 'No se pudieron interpretar los datos del proyecto (data/existing.json / data/layout.json). Revisa el formato y vuelve a generar la app con tools/build_app.py.';
+    for (const id of ['#view-recorrido', '#view-plano', '#view-datos']) { const v = $(id); if (v) v.replaceChildren(el('div', { class: 'fail', role: 'alert' }, el('div', null, el('h2', null, 'Datos no válidos'), el('p', null, msg)))); }
+    $$('.tab').forEach(t => t.addEventListener('click', () => { $$('.view').forEach(v => { v.hidden = v.id !== 'view-' + t.dataset.view; }); $$('.tab').forEach(x => x.setAttribute('aria-selected', String(x === t))); }));
+    return;
+  }
   const meta = $('#meta');
   const name = str(MODEL.meta.name);
   meta.replaceChildren(el('b', null, 'Test-fit'), name ? ' · ' + name : '', ' · ', el('span', { class: 'mono' }, `${MODEL.seats} asientos`));
@@ -3830,7 +3904,7 @@ function boot() {
 }
 
 // read-only debug handle (handy for QA from the console)
-try { Object.defineProperty(window, '__LAVA', { value: { MODEL, W3, WALK, TOUR, APP, goStop, toggleAerial, updateTour }, configurable: true }); } catch (e) { /* ignore */ }
+if (MODEL) try { Object.defineProperty(window, '__LAVA', { value: { MODEL, W3, WALK, TOUR, APP, goStop, toggleAerial, updateTour }, configurable: true }); } catch (e) { /* ignore */ }
 
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
 
