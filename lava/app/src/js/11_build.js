@@ -99,12 +99,12 @@ function makeMaterials() {
   MAT.floor = std({ map: TEX.concrete, roughnessMap: TEX.concreteRough, roughness: 0.62, metalness: 0.0, envMapIntensity: 0.55 });
   MAT.tileFloor = std({ map: TEX.tile, roughness: 0.78, envMapIntensity: 0.4 });
   MAT.exterior = std({ map: TEX.tile, color: 0x6a655f, roughness: 0.6, envMapIntensity: 0.3 });
-  MAT.wallFOH = std({ map: TEX.boardConcrete, color: 0xb4b0aa, roughness: 0.95, envMapIntensity: 0.25 });
+  MAT.wallFOH = std({ map: TEX.boardConcrete, color: 0xc2beb8, roughness: 0.96, envMapIntensity: 0.2 });
   MAT.wallTile = std({ map: TEX.subway, roughness: 0.28, envMapIntensity: 0.55 });
   MAT.wallPaint = std({ map: TEX.paint, roughness: 0.9, envMapIntensity: 0.35 });
   MAT.wallOuter = std({ color: 0x3b3834, roughness: 1, envMapIntensity: 0.2 });
   MAT.cap = basic({ color: 0x2b2622 });
-  MAT.ceiling = std({ color: 0x0f0e0d, roughness: 1, envMapIntensity: 0.1, side: THREE.DoubleSide });
+  MAT.ceiling = std({ color: 0x0b0a0a, roughness: 1, envMapIntensity: 0.05, side: THREE.DoubleSide });
   MAT.blackSteel = std({ map: TEX.blacksteel, roughness: 0.5, metalness: 0.65, envMapIntensity: 0.7 });
   MAT.matteBlack = std({ color: 0x141312, roughness: 0.75, metalness: 0.2, envMapIntensity: 0.4 });
   MAT.stainless = std({ map: TEX.brushed, roughness: 0.3, metalness: 1.0, envMapIntensity: 1.0 });
@@ -128,7 +128,7 @@ function makeMaterials() {
   MAT.lightSoft = basic({ color: new THREE.Color(2.4, 1.5, 0.75) });
   MAT.lightCool = basic({ color: new THREE.Color(3.2, 3.1, 2.9) });
   MAT.ledStrip = basic({ color: new THREE.Color(3.5, 1.9, 0.8) });
-  MAT.ember = basic({ map: TEX.ember, color: new THREE.Color(2.2, 1.7, 1.4) });
+  MAT.ember = basic({ map: TEX.ember, color: new THREE.Color(3.2, 2.2, 1.6) });
   MAT.soil = std({ color: 0x241810, roughness: 1 });
   MAT.leaves = std({ map: TEX.leaves, alphaTest: 0.45, side: THREE.DoubleSide, roughness: 0.8, envMapIntensity: 0.3 });
   MAT.kraft = std({ map: TEX.kraft, roughness: 0.9 });
@@ -458,7 +458,7 @@ function buildCeiling(CB) {
       }
     }
     // square supply grilles
-    for (let a = A0 + 2.2; a < A1 - 1; a += 4.2) { const q = pAt(a, lerp(P0, P1, 0.5)); CB.box(MAT.stainlessDark, [q[0] - 0.28, q[1] - 0.28, q[0] + 0.28, q[1] + 0.28], H - 0.02, H - 0.005); CB.box(MAT.matteBlack, [q[0] - 0.2, q[1] - 0.2, q[0] + 0.2, q[1] + 0.2], H - 0.024, H - 0.02); }
+    for (let a = A0 + 2.2; a < A1 - 1; a += 4.2) { const q = pAt(a, lerp(P0, P1, 0.5)); CB.box(MAT.matteBlack, [q[0] - 0.28, q[1] - 0.28, q[0] + 0.28, q[1] + 0.28], H - 0.02, H - 0.005); for (let k = -3; k <= 3; k++) CB.box(MAT.grate, [q[0] - 0.22, q[1] + k * 0.06 - 0.012, q[0] + 0.22, q[1] + k * 0.06 + 0.012], H - 0.03, H - 0.02); }
   }
   // BOH/kitchen LED panels on a grid (only above BOH floor)
   const G = M.grid;
@@ -508,10 +508,10 @@ function buildSlatWall(B, d) {
   const mid = s.P((s.a0 + s.a1) / 2, 0.006);
   B.geo(mat, pg, faceMatrix(d.face, V3(mid[0], mid[1], (z0 + z1) / 2)));
   // battens: horizontals behind, verticals in front
-  const gridV = 0.105, gridH = 0.24;
-  for (let z = z0; z <= z1 + 1e-6; z += gridH) B.box(MAT.walnut, Rr(s.a0, s.a1, 0.012, 0.035), Math.min(z, z1 - 0.022), Math.min(z, z1 - 0.022) + 0.022);
+  const gridV = 0.09, gridH = 0.2;
+  for (let z = z0; z <= z1 + 1e-6; z += gridH) B.box(MAT.walnut, Rr(s.a0, s.a1, 0.012, 0.03), Math.min(z, z1 - 0.018), Math.min(z, z1 - 0.018) + 0.018);
   const nV = Math.max(2, Math.round(s.L / gridV));
-  for (let i = 0; i <= nV; i++) { const a = lerp(s.a0, s.a1, i / nV); const w = (i === 0 || i === nV) ? 0.05 : 0.026; B.box(MAT.walnut, Rr(clamp(a - w / 2, s.a0, s.a1 - w), clamp(a + w / 2, s.a0 + w, s.a1), 0.035, 0.075), z0, z1); }
+  for (let i = 0; i <= nV; i++) { const a = lerp(s.a0, s.a1, i / nV); const w = (i === 0 || i === nV) ? 0.05 : 0.02; B.box(MAT.walnut, Rr(clamp(a - w / 2, s.a0, s.a1 - w), clamp(a + w / 2, s.a0 + w, s.a1), 0.03, 0.062), z0, z1); }
   // top cap + cove light line
   B.box(MAT.walnut, Rr(s.a0 - 0.02, s.a1 + 0.02, 0.0, 0.1), z1, z1 + 0.035);
   B.box(MAT.ledStrip, Rr(s.a0, s.a1, 0.004, 0.012), z1 - 0.015, z1);
@@ -537,10 +537,12 @@ function buildSign(B, d) {
   // halo on the board behind the letters
   const halo = signHaloTexture(text);
   const hw = H * (halo.wordW + 1.4) * 1.0, hh = hw / halo.aspect;
-  const hm = new THREE.Mesh(new THREE.PlaneGeometry(hw, hh), basic({ map: halo.tex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, color: new THREE.Color(3.2, 2.4, 1.8) }));
+  const hm = new THREE.Mesh(new THREE.PlaneGeometry(hw, hh), basic({ map: halo.tex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, color: new THREE.Color(5.0, 3.3, 2.2) }));
   hm.applyMatrix4(faceMatrix(d.face, V3(c[0], c[1], zc)));
   const o = faceBasis(d.face).out; hm.position.addScaledVector(o, 0.012); hm.renderOrder = 3;
   W3.root.add(hm);
+  const ob = faceBasis(d.face).out;
+  glow(c[0] + ob.x * 0.08, c[1] + ob.z * 0.08, zc, H * (width + 1) * 1.1, 0x4a1e06);
   W3.sign = { p: c, z: zc, face: d.face };
 }
 function buildPoster(B, d) {
@@ -599,7 +601,7 @@ function buildFreeNiche(B, d) {
 /* ---------- lights (budget: 1 hemisphere + <= 9 point lights, no shadows) ---------- */
 function buildLights(scene) {
   const M = MODEL, H = M.ceilH;
-  const hemi = new THREE.HemisphereLight(0xffd6a8, 0x1c130c, 0.55); scene.add(hemi); W3.hemi = hemi;
+  const hemi = new THREE.HemisphereLight(0xffd6a8, 0x1c130c, 0.55); scene.add(hemi); W3.hemi = hemi; W3.hemiBase = 0.55;
   const add = (x, y, z, color, intensity, dist = 0, tag) => { const l = new THREE.PointLight(color, intensity, dist, 2); l.position.copy(V3(x, y, z)); scene.add(l); W3.lights.push({ l, base: intensity, tag }); return l; };
   const D = M.dining, ax = M.diningAxis;
   if (M.tables.length || M.banquettes.length) {
@@ -607,7 +609,7 @@ function buildLights(scene) {
   }
   if (W3.slat) add(W3.slat.mid[0], W3.slat.mid[1], 1.9, 0xff9a4a, 9, 8, 'slat');
   const parr = M.one('parrilla');
-  if (parr) { const f = frameOf(parr.rect, itemFront(M, parr)); const p = f.P(f.w / 2, f.d * 0.55); W3.fireLight = add(p[0], p[1], 1.35, 0xff7a2a, 9, 7, 'fire'); }
+  if (parr) { const f = frameOf(parr.rect, itemFront(M, parr)); const p = f.P(f.w / 2, f.d * 0.55); W3.fireLight = add(p[0], p[1], 1.35, 0xff7a2a, 14, 8, 'fire'); }
   const hot = HOT_KEYS.flatMap(k => M.byKey(k)).concat(M.byKey('hood'));
   if (hot.length) {
     const bb = [Math.min(...hot.map(e => e.rect[0])), Math.min(...hot.map(e => e.rect[1])), Math.max(...hot.map(e => e.rect[2])), Math.max(...hot.map(e => e.rect[3]))];

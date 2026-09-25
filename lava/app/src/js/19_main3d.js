@@ -90,7 +90,7 @@ async function start3D() {
     renderStops();
     // initial view: entrance, looking at the show kitchen
     const s0 = MODEL.stops[0];
-    if (s0) { const v = lookAtPlan(s0.pos[0], s0.pos[1], s0.look[0], s0.look[1], s0.lookH); setView(s0.pos[0], s0.pos[1], v.yaw, v.pitch); markStop(0); }
+    if (s0) { const v = lookAtPlan(s0.pos[0], s0.pos[1], s0.look[0], s0.look[1], s0.lookH); setView(s0.pos[0], s0.pos[1], v.yaw, v.pitch + portraitBias()); markStop(0); }
     else { const p = MODEL.snap(MODEL.entrance[0], MODEL.entrance[1]) || MODEL.entrance; setView(p[0], p[1], Math.PI, -0.03); }
     resize3D();
     if (window.ResizeObserver) new ResizeObserver(() => resize3D()).observe(stage); else window.addEventListener('resize', resize3D);
@@ -129,7 +129,7 @@ function updatePointScale() {
 function buildFlames(scene) {
   W3.flameSprites = [];
   for (const f of W3.flames) {
-    const m = new THREE.SpriteMaterial({ map: TEX.flame, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, color: new THREE.Color(1.5, 1.2, 1.0) });
+    const m = new THREE.SpriteMaterial({ map: TEX.flame, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, color: new THREE.Color(2.4, 1.7, 1.2) });
     const s = new THREE.Sprite(m); s.center.set(0.5, 0.06); s.position.copy(V3(f.x, f.y, f.z)); s.scale.set(f.w, f.h, 1); s.renderOrder = 6;
     scene.add(s); W3.flameSprites.push({ s, f });
   }
@@ -173,7 +173,7 @@ function loop(now) {
   const fl = 0.82 + 0.12 * Math.sin(t * 7.3) + 0.08 * Math.sin(t * 13.1 + 1.3) + 0.06 * Math.sin(t * 23.7);
   if (W3.fireLight) W3.fireLight.intensity = W3.lights.find(l => l.l === W3.fireLight).base * fl;
   if (W3.smokerLight) W3.smokerLight.intensity = 1.6 * (0.8 + 0.2 * Math.sin(t * 3.1));
-  MAT.ember.color.setRGB(2.0 * fl + 0.2, 1.5 * fl, 1.2 * fl);
+  MAT.ember.color.setRGB(3.0 * fl + 0.3, 2.1 * fl, 1.5 * fl);
   if (TEX.ember) { TEX.ember.offset.x = Math.sin(t * 0.21) * 0.03; TEX.ember.offset.y = t * 0.004; }
   for (const { s, f } of W3.flameSprites) {
     const p = f.ph, k = f.small ? 0.35 : 1;

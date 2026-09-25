@@ -22,7 +22,7 @@ function buildAerialLayers(scene) {
   const zones = new THREE.Group(), routes = new THREE.Group(), labels = new THREE.Group(), caps = new THREE.Group();
   for (const z of M.zones) {
     const g = new THREE.ShapeGeometry(new THREE.Shape(z.poly.map(p => new THREE.Vector2(p[0], p[1])))); g.rotateX(Math.PI / 2);
-    const m = new THREE.Mesh(g, basic({ color: new THREE.Color(z.color), transparent: true, opacity: 0.34, depthWrite: false, side: THREE.DoubleSide }));
+    const m = new THREE.Mesh(g, basic({ color: new THREE.Color(z.color), transparent: true, opacity: 0.26, depthWrite: false, side: THREE.DoubleSide }));
     m.position.y = 0.012; m.renderOrder = 2; zones.add(m);
     const s = textSprite(z.id, z.name, z.color); s.position.copy(V3(z.c[0], z.c[1], 1.2)); labels.add(s);
   }
@@ -88,11 +88,17 @@ function toggleAerial(force) {
   W3.aer.zones.visible = on && $('#tg-zones').checked;
   W3.aer.routes.visible = on && $('#tg-routes').checked;
   W3.renderer.clippingPlanes = on ? [new THREE.Plane(new THREE.Vector3(0, -1, 0), CUT_H)] : [];
+  W3.hemi.intensity = on ? 1.6 : W3.hemiBase;
   if (on) {
     cancelTourMotion(); $('#caption').hidden = true;
-    const bb = M.pbb, cx = (bb[0] + bb[2]) / 2, cy = (bb[1] + bb[3]) / 2, span = Math.max(rw(bb), rh(bb));
+    const bb = M.pbb, cx = (bb[0] + bb[2]) / 2, cy = (bb[1] + bb[3]) / 2;
     const target = V3(cx, cy, 0);
-    const end = V3(cx + span * 0.08, cy + span * 0.72, span * 0.95);
+    // fit the premises: portrait screens look along X so the long axis runs vertically
+    const portrait = cam.aspect < 0.9, radius = Math.hypot(rw(bb), rh(bb)) / 2;
+    const vf = 42 * Math.PI / 180, hf = 2 * Math.atan(Math.tan(vf / 2) * cam.aspect);
+    const dist = radius / Math.sin(Math.min(vf, hf) / 2) * (portrait ? 0.82 : 0.78);
+    const el = 0.95, dir = portrait ? new THREE.Vector3(Math.cos(el), Math.sin(el), 0.18).normalize() : new THREE.Vector3(0.08, Math.sin(el), Math.cos(el)).normalize();
+    const end = target.clone().addScaledVector(dir, dist);
     W3.controls.target.copy(target); W3.controls.enabled = true;
     cam.fov = 42; cam.updateProjectionMatrix();
     if (REDUCED) { cam.position.copy(end); cam.lookAt(target); }

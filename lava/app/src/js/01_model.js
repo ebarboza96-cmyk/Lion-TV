@@ -486,9 +486,9 @@ function autoDecor(M, out, has) {
     const span = PI.spans.slice().sort((p, q) => (q[1] - q[0]) - (p[1] - p[0]))[0] || [PI.a0, PI.a1];
     const c = (span[0] + span[1]) / 2, L = Math.min(span[1] - span[0] - 0.3, 3.2);
     const [dx, dy] = DIRV[PI.face];
-    const f = PI.along === 'y' ? (dx > 0 ? PI.t1 : PI.t0) : (dy > 0 ? PI.t1 : PI.t0);
+    const f = (PI.along === 'y' ? (dx > 0 ? PI.t1 : PI.t0) : (dy > 0 ? PI.t1 : PI.t0)) + (dx + dy) * 0.021;   // fascia face (+2 cm cladding)
     const rect = PI.along === 'y' ? [Math.min(f, f + dx * 0.06), c - L / 2, Math.max(f, f + dx * 0.06), c + L / 2] : [c - L / 2, Math.min(f, f + dy * 0.06), c + L / 2, Math.max(f, f + dy * 0.06)];
-    out.push({ type: 'sign', rect, face: PI.face, text: 'LAVA', h: (PI.glassTop + M.ceilH) / 2, size: clamp((M.ceilH - PI.glassTop) * 0.55, 0.22, 0.5), src: 'auto' });
+    out.push({ type: 'sign', rect, face: PI.face, text: 'LAVA', h: (PI.glassTop + M.ceilH) / 2, size: clamp((M.ceilH - PI.glassTop) * 0.62, 0.22, 0.56), src: 'auto' });
   }
   if (!has('pendant')) {
     if (PI) {
@@ -709,6 +709,11 @@ function buildStops(M) {
 /* ============================ metrics ============================ */
 function computeMetrics(M) {
   const G = M.grid;
+  // clearance field including chairs (the walk grid ignores chairs)
+  const blk = G.block.slice(); for (const c of M.chairs) G.paint(blk, c.rect);
+  const fr = new Uint8Array(G.n); for (let k = 0; k < G.n; k++) fr[k] = G.inside[k] && !blk[k] ? 1 : 0;
+  const d2 = edt2(fr, G.nx, G.ny);
+  const clrAt = (x, y) => { const i = G.ix(x), j = G.iy(y); if (!G.ok(i, j)) return 0; const k = j * G.nx + i; return fr[k] ? Math.max(0, Math.sqrt(d2[k]) * G.cell - G.cell / 2) : 0; };
   const routeW = r => {
     let L = 0; const segs = [];
     for (let k = 1; k < r.pts.length; k++) { const a = r.pts[k - 1], b = r.pts[k], l = Math.hypot(b[0] - a[0], b[1] - a[1]); segs.push([a, b, l]); L += l; }
@@ -717,7 +722,7 @@ function computeMetrics(M) {
       for (let d = 0; d <= l; d += 0.05) {
         const tot = s + d; if (tot < 0.35 || tot > L - 0.35) continue;
         const x = lerp(a[0], b[0], d / l), y = lerp(a[1], b[1], d / l);
-        const c = 2 * M.clearanceAt(x, y); if (c < w) { w = c; at = [x, y]; }
+        const c = 2 * clrAt(x, y); if (c < w) { w = c; at = [x, y]; }
       }
       s += l;
     }

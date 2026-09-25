@@ -89,16 +89,18 @@ function makeTextures(renderer) {
   /* board-formed concrete (walls): boards 0.15 m; canvas = 2.4 m */
   {
     const c = mkCanvas(S, S), x = c.getContext('2d'), rnd = mulberry32(31);
-    paintNoise(x, S, noise2(S, 4, 4, 32), '#7f7b75', '#a29d95');
-    const bh = S / 16;
-    for (let b = 0; b < 16; b++) {
-      x.fillStyle = rnd() > 0.5 ? '#ffffff' : '#2a241e'; x.globalAlpha = 0.03 + rnd() * 0.06; x.fillRect(0, b * bh, S, bh);
-      x.globalAlpha = 0.07; x.strokeStyle = '#5e574f';
-      for (let k = 0; k < 7; k++) { x.lineWidth = 0.6 + rnd() * 1.2; x.beginPath(); const y = b * bh + rnd() * bh; x.moveTo(0, y); for (let xx = 0; xx <= S; xx += 64) x.lineTo(xx, y + Math.sin(xx * 0.01 + k) * 2 + (rnd() - 0.5) * 2); x.stroke(); }
-      x.globalAlpha = 0.45; x.fillStyle = '#6d665d'; x.fillRect(0, b * bh, S, 1.5);
+    paintNoise(x, S, noise2(S, 3, 5, 32), '#8a857e', '#aaa59d');
+    paintNoise(x, S, noise2(S, 24, 2, 33), '#8d8881', '#a8a39b', 0.25);
+    const bh = S / 8;   // 0.30 m boards
+    for (let b = 0; b < 8; b++) {
+      x.fillStyle = rnd() > 0.5 ? '#ffffff' : '#2a241e'; x.globalAlpha = 0.015 + rnd() * 0.03; x.fillRect(0, b * bh, S, bh);
+      x.globalAlpha = 0.035; x.strokeStyle = '#5e574f';
+      for (let k = 0; k < 4; k++) { x.lineWidth = 0.6 + rnd(); x.beginPath(); const y = b * bh + rnd() * bh; x.moveTo(0, y); for (let xx = 0; xx <= S; xx += 64) x.lineTo(xx, y + Math.sin(xx * 0.01 + k) * 2 + (rnd() - 0.5) * 2); x.stroke(); }
+      x.globalAlpha = 0.22; x.fillStyle = '#6d665d'; x.fillRect(0, b * bh, S, 1.2);
+      x.globalAlpha = 0.08; x.fillStyle = '#ffffff'; x.fillRect(0, b * bh + 1.2, S, 1);
     }
     x.globalAlpha = 1;
-    x.fillStyle = '#5b544c'; for (let yy = bh * 2; yy < S; yy += bh * 4) for (let xx = S / 8; xx < S; xx += S / 4) { x.beginPath(); x.arc(xx, yy, 4, 0, 7); x.fill(); }
+    x.globalAlpha = 0.5; x.fillStyle = '#5b544c'; for (let yy = bh; yy < S; yy += bh * 2) for (let xx = S / 8; xx < S; xx += S / 4) { x.beginPath(); x.arc(xx, yy, 3.5, 0, 7); x.fill(); } x.globalAlpha = 1;
     speckle(x, S, S, 2500, rnd, ['#6a635a', '#c4bdb2']);
     TEX.boardConcrete = tex(c, { meters: 2.4 });
   }

@@ -180,13 +180,15 @@ main{position:relative;flex:1 1 auto;min-height:0;}
   .tab{padding:7px 11px;font-size:14px;}
   .cols{grid-template-columns:1fr;}
   .only-phone{display:inline-flex !important;}
-  .minimap{right:10px;top:58px;bottom:auto;}
+  .minimap{right:10px;bottom:calc(var(--rail-h) + var(--safe-b) + 10px);}
   .minimap.collapsed{display:none;}
   .minimap canvas{width:196px;height:150px;}
-  .caption{left:8px;right:8px;width:auto;bottom:calc(var(--rail-h) + var(--safe-b) + 8px);padding:12px 14px 10px;max-height:40%;}
-  .caption.with-joy{bottom:calc(var(--rail-h) + var(--safe-b) + 150px);}
-  .cap-title{font-size:20px;}
-  .cap-text{font-size:13.5px;}
+  .caption{left:8px;right:8px;width:auto;top:56px;bottom:auto;padding:11px 13px 9px;max-height:44%;}
+  .cap-nav{margin-top:8px;}
+  .layers{left:8px;right:auto;top:auto;bottom:calc(var(--rail-h) + var(--safe-b) + 10px);min-width:0;}
+  .plan-note{display:none;}
+  .cap-title{font-size:19px;}
+  .cap-text{font-size:13px;line-height:1.4;margin:5px 0 2px;}
   .info{left:8px;right:8px;width:auto;top:56px;}
   .btn{height:36px;font-size:13px;padding:0 12px;}
   .btn.icon{width:36px;}
@@ -931,9 +933,9 @@ function autoDecor(M, out, has) {
     const span = PI.spans.slice().sort((p, q) => (q[1] - q[0]) - (p[1] - p[0]))[0] || [PI.a0, PI.a1];
     const c = (span[0] + span[1]) / 2, L = Math.min(span[1] - span[0] - 0.3, 3.2);
     const [dx, dy] = DIRV[PI.face];
-    const f = PI.along === 'y' ? (dx > 0 ? PI.t1 : PI.t0) : (dy > 0 ? PI.t1 : PI.t0);
+    const f = (PI.along === 'y' ? (dx > 0 ? PI.t1 : PI.t0) : (dy > 0 ? PI.t1 : PI.t0)) + (dx + dy) * 0.021;   // fascia face (+2 cm cladding)
     const rect = PI.along === 'y' ? [Math.min(f, f + dx * 0.06), c - L / 2, Math.max(f, f + dx * 0.06), c + L / 2] : [c - L / 2, Math.min(f, f + dy * 0.06), c + L / 2, Math.max(f, f + dy * 0.06)];
-    out.push({ type: 'sign', rect, face: PI.face, text: 'LAVA', h: (PI.glassTop + M.ceilH) / 2, size: clamp((M.ceilH - PI.glassTop) * 0.55, 0.22, 0.5), src: 'auto' });
+    out.push({ type: 'sign', rect, face: PI.face, text: 'LAVA', h: (PI.glassTop + M.ceilH) / 2, size: clamp((M.ceilH - PI.glassTop) * 0.62, 0.22, 0.56), src: 'auto' });
   }
   if (!has('pendant')) {
     if (PI) {
@@ -1154,6 +1156,11 @@ function buildStops(M) {
 /* ============================ metrics ============================ */
 function computeMetrics(M) {
   const G = M.grid;
+  // clearance field including chairs (the walk grid ignores chairs)
+  const blk = G.block.slice(); for (const c of M.chairs) G.paint(blk, c.rect);
+  const fr = new Uint8Array(G.n); for (let k = 0; k < G.n; k++) fr[k] = G.inside[k] && !blk[k] ? 1 : 0;
+  const d2 = edt2(fr, G.nx, G.ny);
+  const clrAt = (x, y) => { const i = G.ix(x), j = G.iy(y); if (!G.ok(i, j)) return 0; const k = j * G.nx + i; return fr[k] ? Math.max(0, Math.sqrt(d2[k]) * G.cell - G.cell / 2) : 0; };
   const routeW = r => {
     let L = 0; const segs = [];
     for (let k = 1; k < r.pts.length; k++) { const a = r.pts[k - 1], b = r.pts[k], l = Math.hypot(b[0] - a[0], b[1] - a[1]); segs.push([a, b, l]); L += l; }
@@ -1162,7 +1169,7 @@ function computeMetrics(M) {
       for (let d = 0; d <= l; d += 0.05) {
         const tot = s + d; if (tot < 0.35 || tot > L - 0.35) continue;
         const x = lerp(a[0], b[0], d / l), y = lerp(a[1], b[1], d / l);
-        const c = 2 * M.clearanceAt(x, y); if (c < w) { w = c; at = [x, y]; }
+        const c = 2 * clrAt(x, y); if (c < w) { w = c; at = [x, y]; }
       }
       s += l;
     }
@@ -1323,7 +1330,7 @@ function buildPlanSVG(M) {
   for (let i = 0; i < 5; i++) tb.append(sv('rect', { x: sx + i, y: sy, width: 1, height: 0.1, fill: i % 2 ? '#f3efe6' : '#141210', stroke: '#141210', 'stroke-width': 0.01 }));
   for (const i of [0, 1, 2, 5]) tb.append(T(sx + i, sy + 0.3, 0.14, `${i}`, { fill: '#3a352f' }));
   tb.append(T(sx + 2.5, sy - 0.22, 0.13, 'metros', { fill: '#5a544c' }));
-  const nx_ = vb[0] + vb[2] - 0.55, ny_ = vb[1] + 1.05;
+  const nx_ = sx - 0.9, ny_ = sy - 0.05;
   tb.append(sv('path', { d: `M${nx_} ${ny_ - 0.35}L${nx_ + 0.16} ${ny_ + 0.2}L${nx_} ${ny_ + 0.1}L${nx_ - 0.16} ${ny_ + 0.2}Z`, fill: '#141210' }));
   tb.append(T(nx_, ny_ - 0.55, 0.18, 'N', { 'font-weight': 700 }));
   tb.append(T(nx_, ny_ + 0.42, 0.09, '(plano)', { fill: '#6a645c' }));
@@ -1699,16 +1706,18 @@ function makeTextures(renderer) {
   /* board-formed concrete (walls): boards 0.15 m; canvas = 2.4 m */
   {
     const c = mkCanvas(S, S), x = c.getContext('2d'), rnd = mulberry32(31);
-    paintNoise(x, S, noise2(S, 4, 4, 32), '#7f7b75', '#a29d95');
-    const bh = S / 16;
-    for (let b = 0; b < 16; b++) {
-      x.fillStyle = rnd() > 0.5 ? '#ffffff' : '#2a241e'; x.globalAlpha = 0.03 + rnd() * 0.06; x.fillRect(0, b * bh, S, bh);
-      x.globalAlpha = 0.07; x.strokeStyle = '#5e574f';
-      for (let k = 0; k < 7; k++) { x.lineWidth = 0.6 + rnd() * 1.2; x.beginPath(); const y = b * bh + rnd() * bh; x.moveTo(0, y); for (let xx = 0; xx <= S; xx += 64) x.lineTo(xx, y + Math.sin(xx * 0.01 + k) * 2 + (rnd() - 0.5) * 2); x.stroke(); }
-      x.globalAlpha = 0.45; x.fillStyle = '#6d665d'; x.fillRect(0, b * bh, S, 1.5);
+    paintNoise(x, S, noise2(S, 3, 5, 32), '#8a857e', '#aaa59d');
+    paintNoise(x, S, noise2(S, 24, 2, 33), '#8d8881', '#a8a39b', 0.25);
+    const bh = S / 8;   // 0.30 m boards
+    for (let b = 0; b < 8; b++) {
+      x.fillStyle = rnd() > 0.5 ? '#ffffff' : '#2a241e'; x.globalAlpha = 0.015 + rnd() * 0.03; x.fillRect(0, b * bh, S, bh);
+      x.globalAlpha = 0.035; x.strokeStyle = '#5e574f';
+      for (let k = 0; k < 4; k++) { x.lineWidth = 0.6 + rnd(); x.beginPath(); const y = b * bh + rnd() * bh; x.moveTo(0, y); for (let xx = 0; xx <= S; xx += 64) x.lineTo(xx, y + Math.sin(xx * 0.01 + k) * 2 + (rnd() - 0.5) * 2); x.stroke(); }
+      x.globalAlpha = 0.22; x.fillStyle = '#6d665d'; x.fillRect(0, b * bh, S, 1.2);
+      x.globalAlpha = 0.08; x.fillStyle = '#ffffff'; x.fillRect(0, b * bh + 1.2, S, 1);
     }
     x.globalAlpha = 1;
-    x.fillStyle = '#5b544c'; for (let yy = bh * 2; yy < S; yy += bh * 4) for (let xx = S / 8; xx < S; xx += S / 4) { x.beginPath(); x.arc(xx, yy, 4, 0, 7); x.fill(); }
+    x.globalAlpha = 0.5; x.fillStyle = '#5b544c'; for (let yy = bh; yy < S; yy += bh * 2) for (let xx = S / 8; xx < S; xx += S / 4) { x.beginPath(); x.arc(xx, yy, 3.5, 0, 7); x.fill(); } x.globalAlpha = 1;
     speckle(x, S, S, 2500, rnd, ['#6a635a', '#c4bdb2']);
     TEX.boardConcrete = tex(c, { meters: 2.4 });
   }
@@ -2055,12 +2064,12 @@ function makeMaterials() {
   MAT.floor = std({ map: TEX.concrete, roughnessMap: TEX.concreteRough, roughness: 0.62, metalness: 0.0, envMapIntensity: 0.55 });
   MAT.tileFloor = std({ map: TEX.tile, roughness: 0.78, envMapIntensity: 0.4 });
   MAT.exterior = std({ map: TEX.tile, color: 0x6a655f, roughness: 0.6, envMapIntensity: 0.3 });
-  MAT.wallFOH = std({ map: TEX.boardConcrete, color: 0xb4b0aa, roughness: 0.95, envMapIntensity: 0.25 });
+  MAT.wallFOH = std({ map: TEX.boardConcrete, color: 0xc2beb8, roughness: 0.96, envMapIntensity: 0.2 });
   MAT.wallTile = std({ map: TEX.subway, roughness: 0.28, envMapIntensity: 0.55 });
   MAT.wallPaint = std({ map: TEX.paint, roughness: 0.9, envMapIntensity: 0.35 });
   MAT.wallOuter = std({ color: 0x3b3834, roughness: 1, envMapIntensity: 0.2 });
   MAT.cap = basic({ color: 0x2b2622 });
-  MAT.ceiling = std({ color: 0x0f0e0d, roughness: 1, envMapIntensity: 0.1, side: THREE.DoubleSide });
+  MAT.ceiling = std({ color: 0x0b0a0a, roughness: 1, envMapIntensity: 0.05, side: THREE.DoubleSide });
   MAT.blackSteel = std({ map: TEX.blacksteel, roughness: 0.5, metalness: 0.65, envMapIntensity: 0.7 });
   MAT.matteBlack = std({ color: 0x141312, roughness: 0.75, metalness: 0.2, envMapIntensity: 0.4 });
   MAT.stainless = std({ map: TEX.brushed, roughness: 0.3, metalness: 1.0, envMapIntensity: 1.0 });
@@ -2084,7 +2093,7 @@ function makeMaterials() {
   MAT.lightSoft = basic({ color: new THREE.Color(2.4, 1.5, 0.75) });
   MAT.lightCool = basic({ color: new THREE.Color(3.2, 3.1, 2.9) });
   MAT.ledStrip = basic({ color: new THREE.Color(3.5, 1.9, 0.8) });
-  MAT.ember = basic({ map: TEX.ember, color: new THREE.Color(2.2, 1.7, 1.4) });
+  MAT.ember = basic({ map: TEX.ember, color: new THREE.Color(3.2, 2.2, 1.6) });
   MAT.soil = std({ color: 0x241810, roughness: 1 });
   MAT.leaves = std({ map: TEX.leaves, alphaTest: 0.45, side: THREE.DoubleSide, roughness: 0.8, envMapIntensity: 0.3 });
   MAT.kraft = std({ map: TEX.kraft, roughness: 0.9 });
@@ -2414,7 +2423,7 @@ function buildCeiling(CB) {
       }
     }
     // square supply grilles
-    for (let a = A0 + 2.2; a < A1 - 1; a += 4.2) { const q = pAt(a, lerp(P0, P1, 0.5)); CB.box(MAT.stainlessDark, [q[0] - 0.28, q[1] - 0.28, q[0] + 0.28, q[1] + 0.28], H - 0.02, H - 0.005); CB.box(MAT.matteBlack, [q[0] - 0.2, q[1] - 0.2, q[0] + 0.2, q[1] + 0.2], H - 0.024, H - 0.02); }
+    for (let a = A0 + 2.2; a < A1 - 1; a += 4.2) { const q = pAt(a, lerp(P0, P1, 0.5)); CB.box(MAT.matteBlack, [q[0] - 0.28, q[1] - 0.28, q[0] + 0.28, q[1] + 0.28], H - 0.02, H - 0.005); for (let k = -3; k <= 3; k++) CB.box(MAT.grate, [q[0] - 0.22, q[1] + k * 0.06 - 0.012, q[0] + 0.22, q[1] + k * 0.06 + 0.012], H - 0.03, H - 0.02); }
   }
   // BOH/kitchen LED panels on a grid (only above BOH floor)
   const G = M.grid;
@@ -2464,10 +2473,10 @@ function buildSlatWall(B, d) {
   const mid = s.P((s.a0 + s.a1) / 2, 0.006);
   B.geo(mat, pg, faceMatrix(d.face, V3(mid[0], mid[1], (z0 + z1) / 2)));
   // battens: horizontals behind, verticals in front
-  const gridV = 0.105, gridH = 0.24;
-  for (let z = z0; z <= z1 + 1e-6; z += gridH) B.box(MAT.walnut, Rr(s.a0, s.a1, 0.012, 0.035), Math.min(z, z1 - 0.022), Math.min(z, z1 - 0.022) + 0.022);
+  const gridV = 0.09, gridH = 0.2;
+  for (let z = z0; z <= z1 + 1e-6; z += gridH) B.box(MAT.walnut, Rr(s.a0, s.a1, 0.012, 0.03), Math.min(z, z1 - 0.018), Math.min(z, z1 - 0.018) + 0.018);
   const nV = Math.max(2, Math.round(s.L / gridV));
-  for (let i = 0; i <= nV; i++) { const a = lerp(s.a0, s.a1, i / nV); const w = (i === 0 || i === nV) ? 0.05 : 0.026; B.box(MAT.walnut, Rr(clamp(a - w / 2, s.a0, s.a1 - w), clamp(a + w / 2, s.a0 + w, s.a1), 0.035, 0.075), z0, z1); }
+  for (let i = 0; i <= nV; i++) { const a = lerp(s.a0, s.a1, i / nV); const w = (i === 0 || i === nV) ? 0.05 : 0.02; B.box(MAT.walnut, Rr(clamp(a - w / 2, s.a0, s.a1 - w), clamp(a + w / 2, s.a0 + w, s.a1), 0.03, 0.062), z0, z1); }
   // top cap + cove light line
   B.box(MAT.walnut, Rr(s.a0 - 0.02, s.a1 + 0.02, 0.0, 0.1), z1, z1 + 0.035);
   B.box(MAT.ledStrip, Rr(s.a0, s.a1, 0.004, 0.012), z1 - 0.015, z1);
@@ -2493,10 +2502,12 @@ function buildSign(B, d) {
   // halo on the board behind the letters
   const halo = signHaloTexture(text);
   const hw = H * (halo.wordW + 1.4) * 1.0, hh = hw / halo.aspect;
-  const hm = new THREE.Mesh(new THREE.PlaneGeometry(hw, hh), basic({ map: halo.tex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, color: new THREE.Color(3.2, 2.4, 1.8) }));
+  const hm = new THREE.Mesh(new THREE.PlaneGeometry(hw, hh), basic({ map: halo.tex, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false, color: new THREE.Color(5.0, 3.3, 2.2) }));
   hm.applyMatrix4(faceMatrix(d.face, V3(c[0], c[1], zc)));
   const o = faceBasis(d.face).out; hm.position.addScaledVector(o, 0.012); hm.renderOrder = 3;
   W3.root.add(hm);
+  const ob = faceBasis(d.face).out;
+  glow(c[0] + ob.x * 0.08, c[1] + ob.z * 0.08, zc, H * (width + 1) * 1.1, 0x4a1e06);
   W3.sign = { p: c, z: zc, face: d.face };
 }
 function buildPoster(B, d) {
@@ -2555,7 +2566,7 @@ function buildFreeNiche(B, d) {
 /* ---------- lights (budget: 1 hemisphere + <= 9 point lights, no shadows) ---------- */
 function buildLights(scene) {
   const M = MODEL, H = M.ceilH;
-  const hemi = new THREE.HemisphereLight(0xffd6a8, 0x1c130c, 0.55); scene.add(hemi); W3.hemi = hemi;
+  const hemi = new THREE.HemisphereLight(0xffd6a8, 0x1c130c, 0.55); scene.add(hemi); W3.hemi = hemi; W3.hemiBase = 0.55;
   const add = (x, y, z, color, intensity, dist = 0, tag) => { const l = new THREE.PointLight(color, intensity, dist, 2); l.position.copy(V3(x, y, z)); scene.add(l); W3.lights.push({ l, base: intensity, tag }); return l; };
   const D = M.dining, ax = M.diningAxis;
   if (M.tables.length || M.banquettes.length) {
@@ -2563,7 +2574,7 @@ function buildLights(scene) {
   }
   if (W3.slat) add(W3.slat.mid[0], W3.slat.mid[1], 1.9, 0xff9a4a, 9, 8, 'slat');
   const parr = M.one('parrilla');
-  if (parr) { const f = frameOf(parr.rect, itemFront(M, parr)); const p = f.P(f.w / 2, f.d * 0.55); W3.fireLight = add(p[0], p[1], 1.35, 0xff7a2a, 9, 7, 'fire'); }
+  if (parr) { const f = frameOf(parr.rect, itemFront(M, parr)); const p = f.P(f.w / 2, f.d * 0.55); W3.fireLight = add(p[0], p[1], 1.35, 0xff7a2a, 14, 8, 'fire'); }
   const hot = HOT_KEYS.flatMap(k => M.byKey(k)).concat(M.byKey('hood'));
   if (hot.length) {
     const bb = [Math.min(...hot.map(e => e.rect[0])), Math.min(...hot.map(e => e.rect[1])), Math.max(...hot.map(e => e.rect[2])), Math.max(...hot.map(e => e.rect[3]))];
@@ -2677,11 +2688,11 @@ const EQ = {
     const nF = Math.max(4, Math.round(f.w / 0.17));
     for (let i = 0; i < nF; i++) {
       const u = lerp(0.14, f.w - 0.14, (i + 0.5) / nF), p = f.P(u, 0.14 + (i % 2) * 0.05);
-      W3.flames.push({ x: p[0], y: p[1], z: bz0 + 0.1, w: 0.2 + (i % 3) * 0.04, h: 0.42 + (i % 2) * 0.12, ph: i * 1.7 });
+      W3.flames.push({ x: p[0], y: p[1], z: bz0 + 0.06, w: 0.26 + (i % 3) * 0.05, h: 0.55 + (i % 2) * 0.16, ph: i * 1.7 });
     }
     for (let i = 0; i < 3; i++) { const p = f.P(lerp(0.25, f.w - 0.25, i / 2), f.d * 0.6); W3.flames.push({ x: p[0], y: p[1], z: zt + 0.1, w: 0.13, h: 0.16, ph: 5 + i * 2.3, small: true }); }
-    const c = f.P(f.w / 2, f.d * 0.55); glow(c[0], c[1], zt + 0.2, 1.2, 0x9a3a0c);
-    const c2 = f.P(f.w / 2, 0.15); glow(c2[0], c2[1], bz0 + 0.25, 1.4, 0xb4440c);
+    const c = f.P(f.w / 2, f.d * 0.55); glow(c[0], c[1], zt + 0.2, 1.6, 0xc2540f);
+    const c2 = f.P(f.w / 2, 0.15); glow(c2[0], c2[1], bz0 + 0.3, 2.6, 0xe0620f); glow(c2[0], c2[1], bz0 + 0.3, 1.0, 0xffb040);
     W3.fire = { x: c[0], y: c[1], z: zt + 0.1 };
   },
   cocina_4q(B, e, f) {
@@ -3173,6 +3184,7 @@ function initWalkInput(stage) {
    =================================================================================== */
 
 const TOUR = { idx: -1, motion: null, auto: false, autoTimer: null };
+function portraitBias() { const st = $('#stage'); const a = st && st.clientHeight ? st.clientWidth / st.clientHeight : 1.5; return a < 0.8 ? -0.12 : 0; }
 
 function renderStops() {
   const box = $('#stops'); box.replaceChildren();
@@ -3189,7 +3201,7 @@ function markStop(i) {
   TOUR.idx = i;
   $$('#stops .stop').forEach((b, k) => b.setAttribute('aria-current', String(k === i)));
   const b = $(`#stops .stop[data-i="${i}"]`);
-  if (b && b.scrollIntoView) { const box = $('#stops'); const L = b.offsetLeft - box.clientWidth / 2 + b.clientWidth / 2; box.scrollTo({ left: L, behavior: REDUCED ? 'auto' : 'smooth' }); }
+  if (b && b.scrollIntoView) { const box = $('#stops'); const L = (b.getBoundingClientRect().left - box.getBoundingClientRect().left + box.scrollLeft) - box.clientWidth / 2 + b.clientWidth / 2; box.scrollTo({ left: L, behavior: REDUCED ? 'auto' : 'smooth' }); }
 }
 function showCaption(i) {
   const s = MODEL.stops[i]; if (!s) return;
@@ -3206,7 +3218,7 @@ function goStop(i, opts = {}) {
   if (W3.aerial) toggleAerial(false);
   markStop(i); showCaption(i);
   const v = lookAtPlan(s.pos[0], s.pos[1], s.look[0], s.look[1], s.lookH);
-  moveTo(s.pos, v.yaw, v.pitch, opts);
+  moveTo(s.pos, v.yaw, v.pitch + portraitBias(), opts);
   emit('stop', i);
 }
 
@@ -3298,7 +3310,7 @@ function buildAerialLayers(scene) {
   const zones = new THREE.Group(), routes = new THREE.Group(), labels = new THREE.Group(), caps = new THREE.Group();
   for (const z of M.zones) {
     const g = new THREE.ShapeGeometry(new THREE.Shape(z.poly.map(p => new THREE.Vector2(p[0], p[1])))); g.rotateX(Math.PI / 2);
-    const m = new THREE.Mesh(g, basic({ color: new THREE.Color(z.color), transparent: true, opacity: 0.34, depthWrite: false, side: THREE.DoubleSide }));
+    const m = new THREE.Mesh(g, basic({ color: new THREE.Color(z.color), transparent: true, opacity: 0.26, depthWrite: false, side: THREE.DoubleSide }));
     m.position.y = 0.012; m.renderOrder = 2; zones.add(m);
     const s = textSprite(z.id, z.name, z.color); s.position.copy(V3(z.c[0], z.c[1], 1.2)); labels.add(s);
   }
@@ -3364,11 +3376,17 @@ function toggleAerial(force) {
   W3.aer.zones.visible = on && $('#tg-zones').checked;
   W3.aer.routes.visible = on && $('#tg-routes').checked;
   W3.renderer.clippingPlanes = on ? [new THREE.Plane(new THREE.Vector3(0, -1, 0), CUT_H)] : [];
+  W3.hemi.intensity = on ? 1.6 : W3.hemiBase;
   if (on) {
     cancelTourMotion(); $('#caption').hidden = true;
-    const bb = M.pbb, cx = (bb[0] + bb[2]) / 2, cy = (bb[1] + bb[3]) / 2, span = Math.max(rw(bb), rh(bb));
+    const bb = M.pbb, cx = (bb[0] + bb[2]) / 2, cy = (bb[1] + bb[3]) / 2;
     const target = V3(cx, cy, 0);
-    const end = V3(cx + span * 0.08, cy + span * 0.72, span * 0.95);
+    // fit the premises: portrait screens look along X so the long axis runs vertically
+    const portrait = cam.aspect < 0.9, radius = Math.hypot(rw(bb), rh(bb)) / 2;
+    const vf = 42 * Math.PI / 180, hf = 2 * Math.atan(Math.tan(vf / 2) * cam.aspect);
+    const dist = radius / Math.sin(Math.min(vf, hf) / 2) * (portrait ? 0.82 : 0.78);
+    const el = 0.95, dir = portrait ? new THREE.Vector3(Math.cos(el), Math.sin(el), 0.18).normalize() : new THREE.Vector3(0.08, Math.sin(el), Math.cos(el)).normalize();
+    const end = target.clone().addScaledVector(dir, dist);
     W3.controls.target.copy(target); W3.controls.enabled = true;
     cam.fov = 42; cam.updateProjectionMatrix();
     if (REDUCED) { cam.position.copy(end); cam.lookAt(target); }
@@ -3608,7 +3626,7 @@ async function start3D() {
     renderStops();
     // initial view: entrance, looking at the show kitchen
     const s0 = MODEL.stops[0];
-    if (s0) { const v = lookAtPlan(s0.pos[0], s0.pos[1], s0.look[0], s0.look[1], s0.lookH); setView(s0.pos[0], s0.pos[1], v.yaw, v.pitch); markStop(0); }
+    if (s0) { const v = lookAtPlan(s0.pos[0], s0.pos[1], s0.look[0], s0.look[1], s0.lookH); setView(s0.pos[0], s0.pos[1], v.yaw, v.pitch + portraitBias()); markStop(0); }
     else { const p = MODEL.snap(MODEL.entrance[0], MODEL.entrance[1]) || MODEL.entrance; setView(p[0], p[1], Math.PI, -0.03); }
     resize3D();
     if (window.ResizeObserver) new ResizeObserver(() => resize3D()).observe(stage); else window.addEventListener('resize', resize3D);
@@ -3647,7 +3665,7 @@ function updatePointScale() {
 function buildFlames(scene) {
   W3.flameSprites = [];
   for (const f of W3.flames) {
-    const m = new THREE.SpriteMaterial({ map: TEX.flame, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, color: new THREE.Color(1.5, 1.2, 1.0) });
+    const m = new THREE.SpriteMaterial({ map: TEX.flame, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, color: new THREE.Color(2.4, 1.7, 1.2) });
     const s = new THREE.Sprite(m); s.center.set(0.5, 0.06); s.position.copy(V3(f.x, f.y, f.z)); s.scale.set(f.w, f.h, 1); s.renderOrder = 6;
     scene.add(s); W3.flameSprites.push({ s, f });
   }
@@ -3691,7 +3709,7 @@ function loop(now) {
   const fl = 0.82 + 0.12 * Math.sin(t * 7.3) + 0.08 * Math.sin(t * 13.1 + 1.3) + 0.06 * Math.sin(t * 23.7);
   if (W3.fireLight) W3.fireLight.intensity = W3.lights.find(l => l.l === W3.fireLight).base * fl;
   if (W3.smokerLight) W3.smokerLight.intensity = 1.6 * (0.8 + 0.2 * Math.sin(t * 3.1));
-  MAT.ember.color.setRGB(2.0 * fl + 0.2, 1.5 * fl, 1.2 * fl);
+  MAT.ember.color.setRGB(3.0 * fl + 0.3, 2.1 * fl, 1.5 * fl);
   if (TEX.ember) { TEX.ember.offset.x = Math.sin(t * 0.21) * 0.03; TEX.ember.offset.y = t * 0.004; }
   for (const { s, f } of W3.flameSprites) {
     const p = f.ph, k = f.small ? 0.35 : 1;
@@ -3795,7 +3813,6 @@ function boot() {
   $('#tg-routes').addEventListener('change', e => { if (W3.aer) W3.aer.routes.visible = W3.aerial && e.target.checked; });
   $('#info-x').addEventListener('click', () => { $('#info').hidden = true; if (typeof setHighlight === 'function' && W3.renderer) setHighlight(null); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') { $('#info').hidden = true; help.hidden = true; hb.setAttribute('aria-expanded', 'false'); } });
-  if (COARSE) $('#caption').classList.add('with-joy');
   showView(routeFromHash() || 'recorrido');
 }
 

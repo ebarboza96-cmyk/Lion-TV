@@ -141,7 +141,7 @@ function buildPlanSVG(M) {
   for (let i = 0; i < 5; i++) tb.append(sv('rect', { x: sx + i, y: sy, width: 1, height: 0.1, fill: i % 2 ? '#f3efe6' : '#141210', stroke: '#141210', 'stroke-width': 0.01 }));
   for (const i of [0, 1, 2, 5]) tb.append(T(sx + i, sy + 0.3, 0.14, `${i}`, { fill: '#3a352f' }));
   tb.append(T(sx + 2.5, sy - 0.22, 0.13, 'metros', { fill: '#5a544c' }));
-  const nx_ = vb[0] + vb[2] - 0.55, ny_ = vb[1] + 1.05;
+  const nx_ = sx - 0.9, ny_ = sy - 0.05;
   tb.append(sv('path', { d: `M${nx_} ${ny_ - 0.35}L${nx_ + 0.16} ${ny_ + 0.2}L${nx_} ${ny_ + 0.1}L${nx_ - 0.16} ${ny_ + 0.2}Z`, fill: '#141210' }));
   tb.append(T(nx_, ny_ - 0.55, 0.18, 'N', { 'font-weight': 700 }));
   tb.append(T(nx_, ny_ + 0.42, 0.09, '(plano)', { fill: '#6a645c' }));

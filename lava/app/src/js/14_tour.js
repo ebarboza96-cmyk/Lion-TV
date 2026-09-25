@@ -4,6 +4,7 @@
    =================================================================================== */
 
 const TOUR = { idx: -1, motion: null, auto: false, autoTimer: null };
+function portraitBias() { const st = $('#stage'); const a = st && st.clientHeight ? st.clientWidth / st.clientHeight : 1.5; return a < 0.8 ? -0.12 : 0; }
 
 function renderStops() {
   const box = $('#stops'); box.replaceChildren();
@@ -20,7 +21,7 @@ function markStop(i) {
   TOUR.idx = i;
   $$('#stops .stop').forEach((b, k) => b.setAttribute('aria-current', String(k === i)));
   const b = $(`#stops .stop[data-i="${i}"]`);
-  if (b && b.scrollIntoView) { const box = $('#stops'); const L = b.offsetLeft - box.clientWidth / 2 + b.clientWidth / 2; box.scrollTo({ left: L, behavior: REDUCED ? 'auto' : 'smooth' }); }
+  if (b && b.scrollIntoView) { const box = $('#stops'); const L = (b.getBoundingClientRect().left - box.getBoundingClientRect().left + box.scrollLeft) - box.clientWidth / 2 + b.clientWidth / 2; box.scrollTo({ left: L, behavior: REDUCED ? 'auto' : 'smooth' }); }
 }
 function showCaption(i) {
   const s = MODEL.stops[i]; if (!s) return;
@@ -37,7 +38,7 @@ function goStop(i, opts = {}) {
   if (W3.aerial) toggleAerial(false);
   markStop(i); showCaption(i);
   const v = lookAtPlan(s.pos[0], s.pos[1], s.look[0], s.look[1], s.lookH);
-  moveTo(s.pos, v.yaw, v.pitch, opts);
+  moveTo(s.pos, v.yaw, v.pitch + portraitBias(), opts);
   emit('stop', i);
 }
 

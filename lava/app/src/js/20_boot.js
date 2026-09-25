@@ -45,7 +45,6 @@ function boot() {
   $('#tg-routes').addEventListener('change', e => { if (W3.aer) W3.aer.routes.visible = W3.aerial && e.target.checked; });
   $('#info-x').addEventListener('click', () => { $('#info').hidden = true; if (typeof setHighlight === 'function' && W3.renderer) setHighlight(null); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') { $('#info').hidden = true; help.hidden = true; hb.setAttribute('aria-expanded', 'false'); } });
-  if (COARSE) $('#caption').classList.add('with-joy');
   showView(routeFromHash() || 'recorrido');
 }
 
