@@ -1,0 +1,227 @@
+{
+ "issues": [],
+ "warnings": [],
+ "metrics": {
+  "routes": [
+   {
+    "id": "R-guest",
+    "kind": "guest",
+    "label": "Entrada → barra / caja",
+    "min_width": 1.28,
+    "at": [
+     14.75,
+     2.55
+    ],
+    "required": 1.1,
+    "length": 9.9,
+    "ok": true
+   },
+   {
+    "id": "R-server",
+    "kind": "server",
+    "label": "Pase → mesas (pasillo central)",
+    "min_width": 1.28,
+    "at": [
+     8.34,
+     2.55
+    ],
+    "required": 1.1,
+    "length": 8.56,
+    "ok": true
+   },
+   {
+    "id": "R-expo",
+    "kind": "server",
+    "label": "Línea → puerta P-1 → pase",
+    "min_width": 0.9,
+    "at": [
+     4.97,
+     2.45
+    ],
+    "required": 0.9,
+    "length": 5.63,
+    "ok": true
+   },
+   {
+    "id": "R-dirty",
+    "kind": "dirty",
+    "label": "Salón → puerta P-1 → lavado",
+    "min_width": 0.92,
+    "at": [
+     4.43,
+     4.48
+    ],
+    "required": 0.9,
+    "length": 14.15,
+    "ok": true
+   },
+   {
+    "id": "R-clean",
+    "kind": "clean",
+    "label": "Frío → prep → pasillo limpio → línea",
+    "min_width": 1.0,
+    "at": [
+     1.72,
+     4.15
+    ],
+    "required": 1.0,
+    "length": 11.41,
+    "ok": true
+   },
+   {
+    "id": "R-bbq",
+    "kind": "clean",
+    "label": "Smoker → holding → línea / pase",
+    "min_width": 1.0,
+    "at": [
+     1.15,
+     2.05
+    ],
+    "required": 1.0,
+    "length": 3.56,
+    "ok": true
+   },
+   {
+    "id": "R-deliv",
+    "kind": "delivery",
+    "label": "Pase → staging en recepción (retiro sin cruzar salón)",
+    "min_width": 0.98,
+    "at": [
+     6.14,
+     2.83
+    ],
+    "required": 0.9,
+    "length": 11.3,
+    "ok": true
+   },
+   {
+    "id": "R-fuel",
+    "kind": "fuel",
+    "label": "Leña / cenizas ↔ PS-1 (condicional, fuera de horario)",
+    "min_width": 1.04,
+    "at": [
+     0.93,
+     4.35
+    ],
+    "required": 0.9,
+    "length": 8.54,
+    "ok": true
+   }
+  ],
+  "connections": [
+   {
+    "from": "entrance",
+    "to": "barra_front",
+    "bottleneck": 1.28,
+    "required": 1.1,
+    "ok": true
+   },
+   {
+    "from": "pass_dining",
+    "to": "dining_far",
+    "bottleneck": 1.28,
+    "required": 1.1,
+    "ok": true
+   },
+   {
+    "from": "kitchen_door",
+    "to": "dish_drop",
+    "bottleneck": 0.92,
+    "required": 0.9,
+    "ok": true
+   },
+   {
+    "from": "cold_storage",
+    "to": "line",
+    "bottleneck": 1.12,
+    "required": 1.0,
+    "ok": true
+   },
+   {
+    "from": "line",
+    "to": "kitchen_door",
+    "bottleneck": 0.92,
+    "required": 0.9,
+    "ok": true
+   },
+   {
+    "from": "smoker_front",
+    "to": "kitchen_door",
+    "bottleneck": 0.92,
+    "required": 0.9,
+    "ok": true
+   },
+   {
+    "from": "expo_pass",
+    "to": "kitchen_door",
+    "bottleneck": 0.96,
+    "required": 0.9,
+    "ok": true
+   },
+   {
+    "from": "delivery_staging",
+    "to": "expo_pass",
+    "bottleneck": 0.96,
+    "required": 0.9,
+    "ok": true
+   },
+   {
+    "from": "service_door",
+    "to": "fuel",
+    "bottleneck": 1.12,
+    "required": 0.9,
+    "ok": true
+   }
+  ],
+  "dirty_clean_conflicts": [],
+  "optional_present": [
+   "holding",
+   "mesa_opt"
+  ],
+  "hot_line_length": 3.8,
+  "hood_length": 3.85,
+  "hood_min_end_overhang": 0.0,
+  "hot_line_uncovered_m2": 0.0,
+  "seats_with_parrilla_view": 36,
+  "seats_with_parrilla_view_pct": 100.0,
+  "parrilla_visible_from_entrance": true,
+  "entrance_to_parrilla_m": 12.04,
+  "parrilla_to_glass_m": 0.0,
+  "zones": [
+   {
+    "id": "B",
+    "name": "Cocina caliente / show kitchen",
+    "area_m2": 12.59
+   },
+   {
+    "id": "E",
+    "name": "Producción BBQ: smoker + holding",
+    "area_m2": 8.18
+   },
+   {
+    "id": "W",
+    "name": "Lavado (antiguas PILAS)",
+    "area_m2": 9.59
+   },
+   {
+    "id": "A",
+    "name": "Cold prep + refrigeración + almacén (antigua PASTELERÍA)",
+    "area_m2": 18.87
+   },
+   {
+    "id": "C",
+    "name": "Barra / caja / POS / pase",
+    "area_m2": 5.78
+   },
+   {
+    "id": "D",
+    "name": "Salón",
+    "area_m2": 51.58
+   }
+  ],
+  "seats": 36,
+  "premises_area_m2": 107.65,
+  "new_partition_x": 4.325,
+  "partition_shift_m": 1.97
+ }
+}

@@ -269,7 +269,7 @@ def validate(lay_path):
         metrics['hot_line_uncovered_m2'] = round(uncovered, 3)
         if uncovered > 0.01:
             warnings.append(f"Campana no cubre {uncovered:.2f} m2 de la linea caliente (linea {run:.2f} m vs campana {metrics['hood_length']:.2f} m)")
-        elif overhang < 0.15:
+        elif overhang < 0.15 and not any(h.get('closed_ends') for h in hoods):
             warnings.append(f"Voladizo lateral de campana {overhang:.2f} m < 0.15 m tipico")
 
     # fryer separation from open flame (typ. NFPA 96: 406 mm or baffle)

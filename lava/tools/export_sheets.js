@@ -7,7 +7,13 @@ const { chromium } = require('playwright');
 (async () => {
   const dir = path.resolve(process.argv[2] || path.join(__dirname, '..', 'plan'));
   const sheets = ['lava_A101_planta.svg', 'lava_A102_demolicion.svg', 'lava_A103_flujos.svg'].filter(f => fs.existsSync(path.join(dir, f)));
-  const fonts = '<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800&family=Figtree:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">';
+  // Fonts are cached in tools/fonts (Google Fonts, OFL) and inlined, so the export works offline / behind a proxy.
+  const fontDir = path.join(__dirname, 'fonts');
+  const fontCss = fs.existsSync(path.join(fontDir, 'fonts.css'))
+    ? fs.readFileSync(path.join(fontDir, 'fonts.css'), 'utf8').replace(/url\(([^)]+\.woff2)\)/g, (m, fn) =>
+        `url(data:font/woff2;base64,${fs.readFileSync(path.join(fontDir, fn)).toString('base64')})`)
+    : '';
+  const fonts = `<style>${fontCss}</style>`;
   const pages = sheets.map(f => `<section class="sheet">${fs.readFileSync(path.join(dir, f), 'utf8')}</section>`).join('');
   const html = `<!doctype html><html><head><meta charset="utf-8">${fonts}<style>
     @page { size: 594mm 420mm; margin: 0 }
@@ -19,7 +25,7 @@ const { chromium } = require('playwright');
   const browser = await chromium.launch();
   const page = await browser.newPage();
   await page.setContent(html, { waitUntil: 'networkidle' }).catch(() => {});
-  await page.evaluate(() => document.fonts.ready);
+  await page.evaluate(async () => { await document.fonts.ready; return [...document.fonts].filter(f => f.status === 'loaded').length; }).then(n => console.log('fonts loaded:', n));
   const pdf = path.join(dir, 'LAVA_test-fit_planos_A2.pdf');
   await page.pdf({ path: pdf, width: '594mm', height: '420mm', printBackground: true, preferCSSPageSize: true });
   console.log('wrote', pdf);

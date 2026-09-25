@@ -13,8 +13,10 @@ const METRIC_ES = {
   parrilla_to_glass_m: ['Parrilla → vidrio', 'm'], routes: ['Rutas', ''], connections: ['Conexiones', ''], zones: ['Zonas', ''],
   optional_present: ['Equipos opcionales presentes', ''], dirty_clean_conflicts: ['Conflictos flujo sucio / limpio', ''],
   dining_area_m2: ['Área de salón', 'm²'], kitchen_area_m2: ['Área de cocina', 'm²'], min_aisle_m: ['Pasillo mínimo', 'm'],
-  premises_m2: ['Área del local', 'm²'], dining_m2: ['Salón (zona D)', 'm²'], kitchen_hot_m2: ['Cocina caliente (zona B)', 'm²'],
+  premises_m2: ['Área del local', 'm²'], dining_m2: ['Dining · salón (zona D)', 'm²'], kitchen_hot_m2: ['Hot line / show kitchen (zona B)', 'm²'],
   boh_m2: ['Back of house (zona A)', 'm²'], pass_bar_m2: ['Pase + barra (zona C)', 'm²'], smoker_m2: ['Smoker (zona E)', 'm²'],
+  bar_m2: ['Bar / POS + pase (zona C)', 'm²'], bbq_m2: ['BBQ production (zona E)', 'm²'], washing_m2: ['Washing (zona W)', 'm²'],
+  cold_prep_m2: ['Cold prep (zona A)', 'm²'], production_m2: ['Producción total (B + E + W + A)', 'm²'], main_aisle_m: ['Pasillo principal (medido)', 'm'],
   parrilla_view_pct: ['Asientos con vista a la parrilla', '%'], warnings: ['Avisos del validador', ''], issues: ['Incumplimientos del validador', ''],
   seats_detail: ['Detalle de asientos', ''],
 };
@@ -57,7 +59,7 @@ function initDatos() {
   root.append(el('h2', null, 'Datos del test-fit'));
   const meta = [str(M.meta.name), str(M.meta.strategy), M.meta.version != null ? 'v' + M.meta.version : ''].filter(Boolean).join(' · ');
   root.append(el('p', { class: 'lead' }, meta || 'Propuesta LAVA sobre el local ex-Marna’s, Terrazas Lindora.'));
-  if (REPORT && typeof REPORT.intro === 'string' && REPORT.intro.trim()) root.append(el('p', { class: 'lead', style: 'color:#d9d1c4;margin-top:8px' }, REPORT.intro));
+  if (REPORT && typeof REPORT.intro === 'string' && REPORT.intro.trim()) root.append(el('p', { class: 'lead', style: 'color:#d9d1c4;margin-top:8px' }, REPORT.intro.replace(/\*\*/g, '')));
   if (!REPORT) root.append(el('p', { class: 'note' }, 'Informe de validación no incluido (data/report.json): las métricas de abajo se calculan en el navegador a partir de layout.json y existing.json. Ejecuta tools/validate.py para el informe completo.'));
 
   /* ---- metrics ---- */

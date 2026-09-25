@@ -37,10 +37,12 @@ Referencias útiles (de `existing.json`):
   "new_openings": [ {"id": "ND1", "type": "door|double_acting_door|sliding_door|service_door|pass_window|opening",
                      "rect": [...], "width": 0.9, "hinge": [x,y], "closed_to": [x,y], "swing_to": [x,y],
                      "label": "P-1", "conditional": false, "note": "..."} ],
-  "zones": [ {"id": "A|B|C|D|E", "name": "...", "poly": [[x,y],...], "color": "#hex", "prep": true} ],
+  "zones": [ {"id": "A|B|C|D|E|W", "name": "...", "short": "COLD PREP", "poly": [[x,y],...], "color": "#hex", "prep": true,
+              "label_at": [x,y], "label_lines": ["HOT LINE /", "SHOW KITCHEN"], "label_size": 4.4, "label_at_flows": [x,y]} ],
   "equipment": [ {"id": "H1", "key": "parrilla", "label": "Parrilla 150", "cat": "fire|cold|prep|wash|storage|smoker|bar|delivery|hood|misc",
                   "rect": [...], "h": 0.9, "front": "N|S|E|W|none", "clear": 1.2, "tbv": true,
-                  "overhead": false, "stack_with": "id", "note": "..."} ],
+                  "overhead": false, "stack_with": "id", "note": "...",
+                  "plan_label": "nombre corto en planta", "no_label": false, "label_at": [x,y], "label_side": "outside"} ],
   "tables": [ {"id": "T1", "rect": [...], "seats": 2, "type": "2top|4top", "joinable_with": ["T2"]} ],
   "chairs": [ {"id": "CH1", "rect": [...], "table": "T1", "facing": "N|S|E|W"} ],
   "banquettes": [ {"id": "BQ1", "rect": [...], "seats": 8, "back": "N|S|E|W"} ],
@@ -49,9 +51,18 @@ Referencias útiles (de `existing.json`):
                "pts": [[x,y],...], "min_width": 1.0} ],
   "checks": [ ["entrance", "barra_front", 1.1] ],
   "decor": [ {"type": "slat_wall|sign|poster|sconce|pendant|planter|firewood_niche", "rect": [...], "text": "LAVA", "h": 2.4} ],
+  "tour": [ {"id": "entrada", "title": "...", "pos": [x,y], "look": [x,y], "look_h": 1.25, "text": "...", "flags": ["..."]} ],
+  "dims": [ {"a": [x,y], "b": [x,y], "off": -1.05, "label": "4.41 cocina", "sheets": ["A101","A102"], "lpos": 0.5} ],
+  "dims_demo": [ ... ],                                      // solo lámina A-102 (corrimiento, estado Marna's)
+  "keynotes": [ {"anchor": [x,y], "text": ["TÍTULO", "detalle"], "sheets": ["A101"], "color": "#hex"} ],
+  "keynote_box": {"A101": [x0,y0,x1,y1]},                   // recuadro de la lista de notas (coordenadas del modelo)
+  "sheet_notes": ["..."], "structure_notes": ["..."], "flow_notes": ["..."],   // "!" al inicio = resaltado
   "notes": ["..."]
 }
 ```
+
+Cotas (`dims`): alineadas a los ejes. Si |b.x − a.x| ≥ |b.y − a.y| la cota es horizontal y su línea queda en
+y = a.y + off; si no, es vertical y su línea queda en x = a.x + off. `lpos` (0–1) desplaza el texto a lo largo de la cota.
 
 ### Claves de equipo (`key`)
 
@@ -66,6 +77,8 @@ Obligatorias: `fridge_2d`, `freezer_1d`, `mesa_fria`, `mesa_1`, `mesa_2`, `shelf
 ## Herramientas
 
 ```bash
+python3 tools/make_layout.py                         # genera data/layout.json (fuente editable del test-fit)
+tools/build_all.sh                                   # validación + láminas PDF/PNG + informe + app
 python3 tools/validate.py data/layout.json          # choques, despejes, anchos de ruta, campana, visibilidad
 python3 tools/render_png.py data/layout.json out.png  # vista rápida de trabajo
 python3 tools/overlay_check.py <pdf> out.png         # superpone la geometría sobre el PDF original

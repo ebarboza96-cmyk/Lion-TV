@@ -41,24 +41,29 @@ def main():
     banq = sum(int(b.get('seats', 0)) for b in lay.get('banquettes', []))
     chairs = len(lay.get('chairs', []))
 
+    z = lambda k: zones.get(k, {}).get('area_m2')
+    prod = round(sum(z(k) or 0 for k in ('B', 'E', 'W', 'A')), 2)
+    main_aisle = min((r['min_width'] for r in routes if r.get('kind') in ('guest', 'server') and r.get('required', 0) >= 1.1), default=None)
     metrics = {
         'seats': seats,
         'seats_detail': f"{chairs} sillas + {banq} puestos en banca · {n2} mesas de 2 (unibles) y {n4} mesas de 4",
         'partition_shift_m': m.get('partition_shift_m'),
         'new_partition_x': m.get('new_partition_x'),
-        'zones': m.get('zones', []),
-        'kitchen_hot_m2': zones.get('B', {}).get('area_m2'),
-        'boh_m2': zones.get('A', {}).get('area_m2'),
-        'pass_bar_m2': zones.get('C', {}).get('area_m2'),
-        'dining_m2': zones.get('D', {}).get('area_m2'),
-        'smoker_m2': zones.get('E', {}).get('area_m2'),
+        'dining_m2': z('D'),
+        'bar_m2': z('C'),
+        'kitchen_hot_m2': z('B'),
+        'bbq_m2': z('E'),
+        'washing_m2': z('W'),
+        'cold_prep_m2': z('A'),
+        'production_m2': prod,
         'premises_m2': m.get('premises_area_m2'),
-        'routes': routes,
+        'main_aisle_m': main_aisle,
         'hot_line_length': m.get('hot_line_length'),
         'hood_length': m.get('hood_length'),
         'parrilla_view_pct': m.get('seats_with_parrilla_view_pct'),
         'parrilla_visible_from_entrance': m.get('parrilla_visible_from_entrance'),
-        'parrilla_to_glass_m': m.get('parrilla_to_glass_m'),
+        'zones': m.get('zones', []),
+        'routes': routes,
         'warnings': val.get('warnings', []),
         'issues': val.get('issues', []),
     }
@@ -89,19 +94,20 @@ def main():
     L.append(f"| Asientos en salón | **{seats}** ({metrics['seats_detail']}) |")
     if metrics['partition_shift_m'] is not None:
         L.append(f"| Corrimiento de la división cocina/salón | {metrics['partition_shift_m']:.2f} m hacia atrás (de X = 6.30 a X = {metrics['new_partition_x']:.2f}) |")
-    for zid, label in (('A', 'A · Back of house (prep fría, frío, lavado, almacén)'), ('B', 'B · Cocina caliente / show kitchen'),
-                       ('C', 'C · Pase + barra/caja'), ('D', 'D · Salón'), ('E', 'E · Smoker / zona técnica')):
+    for zid, label in (('B', 'B · Hot line / show kitchen (incluye mesa + horno)'), ('E', 'E · BBQ production (smoker + holding + leña)'),
+                       ('W', 'W · Washing (antiguas PILAS)'), ('A', 'A · Cold prep + frío + almacén (antigua PASTELERÍA)'),
+                       ('C', 'C · Bar / POS + pase'), ('D', 'D · Dining (salón)')):
         if zid in zones:
             L.append(f"| Área {label} | ≈ {zones[zid]['area_m2']:.1f} m² |")
-    k_total = sum(zones.get(z, {}).get('area_m2', 0) for z in ('A', 'B', 'E'))
-    L.append(f"| Área total de producción (A + B + E) | ≈ {k_total:.1f} m² |")
+    L.append(f"| Área total de producción (B + E + W + A) | ≈ {prod:.1f} m² |")
+    L.append(f"| Área de salón + barra (D + C) | ≈ {(z('D') or 0) + (z('C') or 0):.1f} m² |")
     L.append(f"| Área interior del local (medida sobre el PDF) | ≈ {metrics['premises_m2']:.1f} m² |")
+    if main_aisle:
+        L.append(f"| Pasillo principal del salón (ancho libre medido) | {main_aisle:.2f} m |")
     if metrics['hot_line_length']:
-        L.append(f"| Línea caliente / campana propuesta | {metrics['hot_line_length']:.2f} m / {metrics['hood_length']:.2f} m |")
+        L.append(f"| Hot line / campana propuesta | {metrics['hot_line_length']:.2f} m / {metrics['hood_length']:.2f} m |")
     if metrics['parrilla_view_pct'] is not None:
         L.append(f"| Asientos con línea de vista directa a la parrilla | {metrics['parrilla_view_pct']:.0f} % · visible desde la entrada: {'sí' if metrics['parrilla_visible_from_entrance'] else 'no'} |")
-    if metrics['parrilla_to_glass_m'] is not None:
-        L.append(f"| Distancia parrilla → vidrio | {metrics['parrilla_to_glass_m']:.2f} m |")
     L.append('')
     L.append('## 2. Anchos de pasillo (medidos automáticamente sobre la planta)')
     L.append('')
@@ -130,6 +136,15 @@ def main():
             for row in sec['table']['rows']:
                 L.append('| ' + ' | '.join(str(c) for c in row) + ' |')
             L.append('')
+    for title, key in (('Dimensiones y condiciones a verificar en sitio', 'verify'), ('Riesgos de circulación y operación', 'risks'),
+                       ('Banderas de ingeniería', 'flags')):
+        items = content.get(key) or []
+        if items:
+            L.append(f'## {title}')
+            L.append('')
+            for i, it in enumerate(items, 1):
+                L.append(f"{i}. {it}" if key != 'flags' else f"- **{it}**")
+            L.append('')
     L.append('## Cuadro de equipos')
     L.append('')
     L.append('Frente × fondo × alto en metros. **\\*** = DIMENSION TO VERIFY.')
@@ -138,7 +153,8 @@ def main():
     L.append('|---|---|---|---|')
     for e in equipment:
         dims = f"{e['w']:.2f} × {e['d']:.2f}" + (f" × {float(e['h']):.2f}" if e['h'] and not e['overhead'] else '')
-        L.append(f"| {e['tag']} | {e['name']} | {dims}{' \\*' if e['tbv'] else ''} | {e['note']} |")
+        star = ' \\*' if e['tbv'] else ''
+        L.append(f"| {e['tag']} | {e['name']} | {dims}{star} | {e['note']} |")
     L.append('')
     if metrics['warnings']:
         L.append('## Alertas del validador geométrico')

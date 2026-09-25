@@ -1,908 +1,1275 @@
 {
  "meta": {
-  "name": "TEST draft B"
+  "name": "LAVA test-fit v2 · zonificación operativa del cliente",
+  "strategy": "Hot line sobre la división con el salón; BBQ (smoker + holding) al fondo; lavado en PILAS; cold prep en PASTELERÍA",
+  "version": "2.0",
+  "date": "2026-09-25"
  },
  "demolish": [
   {
-   "id": "IP-KB"
+   "id": "IP-KB",
+   "note": "División liviana actual cocina/barra (10 cm, sin trama ni columnas)."
   },
   {
-   "id": "IP-P0a"
+   "id": "IP-P0b",
+   "note": "Tramo liviano cocina/pilas: abre el paso directo puerta de cocina → lavado."
   },
   {
-   "id": "IP-P0b"
+   "id": "IP-P2",
+   "rect": [
+    1.46,
+    8.536,
+    1.56,
+    8.886
+   ],
+   "note": "Recorte del remate liviano de IP-P2 bajo IP-P3 (35 cm) para liberar la boca del pasillo limpio."
   },
   {
-   "id": "IP-P1"
-  },
-  {
-   "id": "IP-P2"
+   "id": "EW-S2",
+   "rect": [
+    3.365,
+    11.486,
+    3.46,
+    11.616
+   ],
+   "conditional": true,
+   "note": "Solo si se aprueba PS-1: ampliar vano 9.5 cm en muro sur."
   }
  ],
  "new_walls": [
   {
-   "id": "NW1",
+   "id": "NW-1",
    "rect": [
-    4.3,
+    4.325,
     0.116,
-    4.45,
-    4.036
+    4.4750000000000005,
+    4.986
    ],
    "type": "glass_partition",
    "role": "kitchen_dining_partition",
-   "h": 2.7
+   "h": 3.0,
+   "base_h": 1.0,
+   "short": "Muro bajo h 1.00 + vidrio",
+   "note": "NEW PARTITION WALL → PROPOSED. Base sólida incombustible h≈1.00 m + vidrio hacia el salón. Especificación térmica/cortafuego del vidrio y del muro detrás de la parrilla TO BE ENGINEERED."
+  },
+  {
+   "id": "NW-2",
+   "rect": [
+    3.4250000000000003,
+    3.916,
+    4.325,
+    3.966
+   ],
+   "type": "partition",
+   "h": 2.05,
+   "short": "Panel térmico",
+   "note": "Panel lateral incombustible piso-campana entre parrilla y puerta (protección térmica y cierre lateral de campana)."
   }
  ],
  "new_openings": [
   {
-   "id": "ND1",
+   "id": "P-1",
    "type": "double_acting_door",
    "rect": [
-    4.3,
-    4.036,
-    4.45,
-    4.986
+    4.325,
+    4.03,
+    4.4750000000000005,
+    4.93
    ],
-   "label": "P1"
+   "width": 0.9,
+   "label": "P-1",
+   "note": "Puerta de cocina de vaivén 0.90 con visor. Entrada de loza sucia y salida de platos al pase."
+  },
+  {
+   "id": "PS-1",
+   "type": "service_door",
+   "rect": [
+    2.56,
+    11.486,
+    3.46,
+    11.616
+   ],
+   "width": 0.9,
+   "label": "PS-1",
+   "hinge": [
+    3.46,
+    11.616
+   ],
+   "closed_to": [
+    2.56,
+    11.616
+   ],
+   "swing_to": [
+    3.46,
+    12.516
+   ],
+   "conditional": true,
+   "note": "PUERTA DE SERVICIO CONDICIONAL: sustituye parte de la ventana sur existente (hacia pasillo del edificio). Requiere aprobación de la administración y revisión estructural — VERIFY ON SITE."
   }
  ],
  "zones": [
   {
    "id": "B",
-   "name": "Cocina caliente",
+   "name": "Cocina caliente / show kitchen",
+   "short": "HOT LINE / SHOW KITCHEN",
+   "color": "#f07c14",
    "poly": [
     [
-     -0.085,
+     0.865,
      0.116
     ],
     [
-     4.3,
+     4.325,
      0.116
     ],
     [
-     4.3,
+     4.325,
      4.986
     ],
     [
-     -0.085,
+     1.9,
      4.986
+    ],
+    [
+     1.9,
+     0.866
+    ],
+    [
+     0.865,
+     0.866
     ]
    ],
-   "color": "#f28c28"
+   "label_at": [
+    2.18,
+    2.55
+   ],
+   "label_lines": [
+    "HOT LINE /",
+    "SHOW KITCHEN"
+   ],
+   "label_size": 4.4,
+   "label_at_flows": [
+    2.2,
+    2.4
+   ]
   },
   {
-   "id": "D",
-   "name": "Salon",
+   "id": "E",
+   "name": "Producción BBQ: smoker + holding",
+   "short": "BBQ PRODUCTION",
+   "color": "#c2410c",
    "poly": [
     [
-     6.2,
-     0.116
+     -0.085,
+     0.866
     ],
     [
-     16.285,
-     0.116
+     1.9,
+     0.866
     ],
     [
-     16.285,
+     1.9,
      4.986
     ],
     [
-     6.2,
+     -0.085,
      4.986
     ]
    ],
-   "color": "#2e7d32"
+   "label_at": [
+    1.2,
+    3.8
+   ],
+   "label_lines": [
+    "BBQ",
+    "PRODUCTION"
+   ],
+   "label_size": 4.6,
+   "label_at_flows": [
+    1.0,
+    3.45
+   ]
+  },
+  {
+   "id": "W",
+   "name": "Lavado (antiguas PILAS)",
+   "short": "WASHING",
+   "color": "#17737a",
+   "poly": [
+    [
+     1.46,
+     4.986
+    ],
+    [
+     4.11,
+     4.986
+    ],
+    [
+     4.11,
+     6.456
+    ],
+    [
+     4.51,
+     6.456
+    ],
+    [
+     4.51,
+     8.436
+    ],
+    [
+     1.56,
+     8.436
+    ],
+    [
+     1.56,
+     4.986
+    ]
+   ],
+   "label_at": [
+    2.75,
+    7.55
+   ]
   },
   {
    "id": "A",
-   "name": "BOH",
+   "name": "Cold prep + refrigeración + almacén (antigua PASTELERÍA)",
+   "short": "COLD PREP",
+   "color": "#2f6fd0",
+   "prep": true,
    "poly": [
     [
      -0.085,
      4.986
     ],
     [
-     4.51,
+     1.46,
      4.986
     ],
     [
+     1.46,
+     8.436
+    ],
+    [
      4.51,
      8.436
     ],
     [
+     4.51,
+     11.486
+    ],
+    [
+     0.0,
+     11.486
+    ],
+    [
+     0.0,
+     8.816
+    ],
+    [
+     0.315,
+     8.816
+    ],
+    [
+     0.315,
+     8.186
+    ],
+    [
      -0.085,
-     8.436
+     8.186
     ]
    ],
-   "color": "#1f5fbf",
-   "prep": false
+   "label_at": [
+    2.2,
+    9.35
+   ],
+   "label_at_flows": [
+    1.9,
+    10.35
+   ]
+  },
+  {
+   "id": "C",
+   "name": "Barra / caja / POS / pase",
+   "short": "BAR / POS",
+   "color": "#7a4fb8",
+   "poly": [
+    [
+     4.4750000000000005,
+     0.116
+    ],
+    [
+     6.95,
+     0.116
+    ],
+    [
+     6.95,
+     2.45
+    ],
+    [
+     4.4750000000000005,
+     2.45
+    ]
+   ],
+   "label_at": [
+    6.52,
+    1.25
+   ],
+   "label_size": 3.6,
+   "label_at_flows": [
+    6.5,
+    0.6
+   ]
+  },
+  {
+   "id": "D",
+   "name": "Salón",
+   "short": "DINING",
+   "color": "#2e9a3a",
+   "poly": [
+    [
+     4.4750000000000005,
+     2.45
+    ],
+    [
+     6.95,
+     2.45
+    ],
+    [
+     6.95,
+     0.116
+    ],
+    [
+     16.285,
+     0.116
+    ],
+    [
+     16.285,
+     4.986
+    ],
+    [
+     4.4750000000000005,
+     4.986
+    ]
+   ],
+   "label_at": [
+    10.35,
+    2.55
+   ],
+   "label_at_flows": [
+    10.9,
+    4.0
+   ]
   }
  ],
  "equipment": [
   {
    "id": "H1",
+   "tag": "H1",
    "key": "parrilla",
-   "label": "Parrilla 150",
+   "label": "Parrilla argentina",
    "cat": "fire",
    "rect": [
-    -0.085,
-    0.95,
-    0.815,
-    2.45
+    3.425,
+    2.416,
+    4.325,
+    3.916
    ],
-   "front": "E",
+   "front": "W",
    "clear": 1.2,
    "h": 0.9,
-   "tbv": true
+   "tbv": true,
+   "note": "Carbón/leña. 150 cm; fondo y brasero TBV. Pieza visual principal: de frente al salón tras el vidrio."
   },
   {
    "id": "H2",
+   "tag": "H2",
    "key": "cocina_4q",
-   "label": "Cocina 4Q",
+   "label": "Cocina LPG 4 quemadores",
    "cat": "fire",
    "rect": [
-    -0.085,
-    2.45,
-    0.815,
-    3.25
-   ],
-   "front": "E",
-   "clear": 1.2,
-   "h": 0.9,
-   "tbv": true
-  },
-  {
-   "id": "H3",
-   "key": "plancha",
-   "label": "Plancha 70",
-   "cat": "fire",
-   "rect": [
-    -0.085,
-    3.25,
-    0.815,
-    3.95
-   ],
-   "front": "E",
-   "clear": 1.2,
-   "h": 0.9,
-   "tbv": true
-  },
-  {
-   "id": "H4",
-   "key": "freidora_1",
-   "label": "Freid.1",
-   "cat": "fire",
-   "rect": [
-    -0.085,
-    3.95,
-    0.815,
-    4.35
-   ],
-   "front": "E",
-   "clear": 1.2,
-   "h": 0.9,
-   "tbv": true
-  },
-  {
-   "id": "H5",
-   "key": "freidora_2",
-   "label": "Freid.2",
-   "cat": "fire",
-   "rect": [
-    -0.085,
-    4.35,
-    0.815,
-    4.75
-   ],
-   "front": "E",
-   "clear": 1.2,
-   "h": 0.9,
-   "tbv": true
-  },
-  {
-   "id": "HD",
-   "key": "hood",
-   "label": "Campana 360x90",
-   "cat": "hood",
-   "rect": [
-    -0.085,
-    1.0,
-    0.815,
-    4.6
-   ],
-   "front": null,
-   "clear": 0,
-   "h": 0.9,
-   "overhead": true
-  },
-  {
-   "id": "K1",
-   "key": "mesa_fria",
-   "label": "Mesa fria",
-   "cat": "cold",
-   "rect": [
-    2.015,
-    1.2,
-    2.715,
-    3.0
+    3.525,
+    1.616,
+    4.325,
+    2.416
    ],
    "front": "W",
    "clear": 1.1,
-   "h": 0.9
+   "h": 0.9,
+   "tbv": true,
+   "plan_label": "Cocina 4Q LPG",
+   "note": "4 quemadores extragrandes; frente 80 cm TBV."
+  },
+  {
+   "id": "H3",
+   "tag": "H3",
+   "key": "plancha",
+   "label": "Plancha",
+   "cat": "fire",
+   "rect": [
+    3.525,
+    0.916,
+    4.325,
+    1.616
+   ],
+   "front": "W",
+   "clear": 1.1,
+   "h": 0.9,
+   "tbv": true,
+   "note": "Módulo 70 cm; fondo TBV."
+  },
+  {
+   "id": "H4",
+   "tag": "H4",
+   "key": "freidora_1",
+   "label": "Freidora 1",
+   "cat": "fire",
+   "rect": [
+    3.525,
+    0.516,
+    4.325,
+    0.916
+   ],
+   "front": "W",
+   "clear": 1.1,
+   "h": 0.9,
+   "tbv": true,
+   "note": "Freidora independiente; huella comercial 40×80 — DIMENSION TO VERIFY."
+  },
+  {
+   "id": "H5",
+   "tag": "H5",
+   "key": "freidora_2",
+   "label": "Freidora 2",
+   "cat": "fire",
+   "rect": [
+    3.525,
+    0.116,
+    4.325,
+    0.516
+   ],
+   "front": "W",
+   "clear": 1.1,
+   "h": 0.9,
+   "tbv": true,
+   "note": "Freidora independiente; huella comercial 40×80 — DIMENSION TO VERIFY."
+  },
+  {
+   "id": "HD",
+   "tag": "HD",
+   "key": "hood",
+   "label": "Campana línea caliente",
+   "cat": "hood",
+   "rect": [
+    3.225,
+    0.116,
+    4.325,
+    3.966
+   ],
+   "front": null,
+   "clear": 0,
+   "h": 0.6,
+   "tbv": true,
+   "overhead": true,
+   "closed_ends": true,
+   "label_side": "outside",
+   "note": "Cubre parrilla + cocina + plancha + 2 freidoras (3.80 m) con voladizo frontal 20 cm: ≈3.85 × 1.10 m. La propuesta Aceros VB 3.60 × 0.90 NO cubre esta línea. EXTRACTION / MAKE-UP AIR / FIRE SUPPRESSION TO BE ENGINEERED."
+  },
+  {
+   "id": "K1",
+   "tag": "K1",
+   "key": "mesa_1",
+   "label": "Mesa de trabajo inox",
+   "cat": "prep",
+   "rect": [
+    0.875,
+    0.116,
+    2.425,
+    0.816
+   ],
+   "front": "S",
+   "clear": 1.0,
+   "h": 0.9,
+   "tbv": false,
+   "plan_label": "Mesa inox + K2 horno",
+   "note": "Apoyo / mise en place / bandejeo / terminación junto a la línea. 155 × 70 (ajustada para dejar 1.10 m frente a freidoras)."
   },
   {
    "id": "K2",
-   "key": "pass",
-   "label": "Pase",
-   "cat": "bar",
+   "tag": "K2",
+   "key": "oven",
+   "label": "Horno (sobre mesa)",
+   "cat": "fire",
    "rect": [
-    3.65,
+    1.675,
     0.116,
-    4.3,
-    3.0
+    2.425,
+    0.816
    ],
-   "front": "W",
-   "clear": 0.9,
-   "h": 0.9
+   "front": null,
+   "clear": 0,
+   "h": 1.55,
+   "tbv": true,
+   "stack_with": "K1",
+   "no_label": true,
+   "note": "Horno de convección/combi de mesa ≈75 × 70 TBV. Extracción del horno según tipo — TO BE ENGINEERED."
   },
   {
    "id": "K3",
-   "key": "holding",
-   "label": "Holding",
-   "cat": "fire",
+   "tag": "K3",
+   "key": "handwash_k",
+   "label": "Lavamanos cocina (recomendado)",
+   "cat": "wash",
    "rect": [
-    3.55,
-    3.0,
-    4.3,
-    3.6
+    1.85,
+    4.606,
+    2.18,
+    4.986
    ],
-   "front": "W",
-   "clear": 0.9,
-   "h": 1.0,
-   "tbv": true
+   "front": "N",
+   "clear": 0.6,
+   "h": 0.9,
+   "tbv": false,
+   "note": "Recomendado por higiene junto a la línea y a la entrada desde frío (verificar requisito Ministerio de Salud)."
   },
   {
-   "id": "K4",
+   "id": "S1",
+   "tag": "S1",
+   "key": "smoker",
+   "label": "Smoker vertical (ahumador)",
+   "cat": "smoker",
+   "rect": [
+    -0.085,
+    1.0,
+    0.665,
+    2.4
+   ],
+   "front": "E",
+   "clear": 1.0,
+   "h": 1.9,
+   "tbv": true,
+   "note": "Gabinete ≈100 × 70 + firebox/servicio ≈40 → huella ≈140 × 75 TBV. Carga de combustible y cenizas por el frente; drenaje de grasa; chimenea propia. SOLID-FUEL SMOKER - LOCATION / FLUE / FIRE CODE TO BE VALIDATED."
+  },
+  {
+   "id": "S2",
+   "tag": "S2",
+   "key": "holding",
+   "label": "Holding caliente",
+   "cat": "fire",
+   "rect": [
+    -0.085,
+    2.55,
+    0.665,
+    3.15
+   ],
+   "front": "E",
+   "clear": 0.9,
+   "h": 1.0,
+   "tbv": true,
+   "note": "Gabinete de mantenimiento en caliente ≈60 × 75 TBV. Flujo smoker → holding → línea/pase."
+  },
+  {
+   "id": "S3",
+   "tag": "S3",
+   "key": "fuel_storage",
+   "label": "Leña / carbón (rack metálico)",
+   "cat": "storage",
+   "rect": [
+    -0.085,
+    3.4,
+    0.415,
+    4.4
+   ],
+   "front": "E",
+   "clear": 0.8,
+   "h": 1.2,
+   "tbv": true,
+   "plan_label": "Leña / carbón",
+   "note": "Almacén de uso diario para smoker y parrilla, separado del smoker por el holding. Distancias a combustibles TO BE VALIDATED."
+  },
+  {
+   "id": "W1",
+   "tag": "W1",
+   "key": "sink_2t",
+   "label": "Fregadero 2 tanques",
+   "cat": "wash",
+   "rect": [
+    3.31,
+    5.15,
+    4.11,
+    7.15
+   ],
+   "front": "W",
+   "clear": 1.0,
+   "h": 0.9,
+   "tbv": false,
+   "note": "≈200 × 80 con escurridores. Sobre el drenaje existente de la pila de 3 tanques (WP1)."
+  },
+  {
+   "id": "W2",
+   "tag": "W2",
    "key": "handwash",
    "label": "Lavamanos",
    "cat": "wash",
    "rect": [
-    3.92,
-    3.62,
-    4.3,
-    3.95
+    4.13,
+    7.25,
+    4.51,
+    7.58
    ],
    "front": "W",
    "clear": 0.6,
-   "h": 0.9
+   "h": 0.9,
+   "tbv": false,
+   "note": "33 × 38. Reutiliza la zona húmeda WP2."
   },
   {
-   "id": "W1",
-   "key": "sink_2t",
-   "label": "Fregadero 2T",
-   "cat": "wash",
-   "rect": [
-    3.31,
-    5.086,
-    4.11,
-    7.086
-   ],
-   "front": "W",
-   "clear": 1.0,
-   "h": 0.9
-  },
-  {
-   "id": "W2",
+   "id": "W3",
+   "tag": "W3",
    "key": "mop_sink",
-   "label": "Mop sink",
+   "label": "Pileta / mop sink",
    "cat": "wash",
    "rect": [
     3.91,
-    7.94,
+    7.936,
     4.51,
     8.436
    ],
    "front": "W",
    "clear": 0.6,
-   "h": 0.9
+   "h": 0.45,
+   "tbv": false,
+   "note": "60 × 50 en la posición exacta de la pila palo de piso existente (WP3)."
   },
   {
-   "id": "C1",
-   "key": "fridge_2d",
-   "label": "Refri 2P",
-   "cat": "cold",
+   "id": "W4",
+   "tag": "W4",
+   "key": "mesa_opt",
+   "label": "Mesa de apoyo / escurrido",
+   "cat": "wash",
    "rect": [
-    -0.085,
+    1.56,
     5.2,
-    0.615,
-    6.65
+    2.16,
+    7.07
    ],
    "front": "E",
-   "clear": 0.9,
-   "h": 2.0
+   "clear": 1.0,
+   "h": 0.9,
+   "tbv": false,
+   "note": "187 × 60 (mesa opcional del programa) contra la división existente P1: racks limpios / apoyo."
   },
   {
-   "id": "C2",
-   "key": "freezer_1d",
-   "label": "Congelador",
-   "cat": "cold",
+   "id": "W5",
+   "tag": "W5",
+   "key": "shelf_wash",
+   "label": "Estante loza limpia",
+   "cat": "storage",
    "rect": [
-    -0.085,
-    6.65,
-    0.615,
-    7.4
-   ],
-   "front": "E",
-   "clear": 0.9,
-   "h": 2.0
-  },
-  {
-   "id": "P1",
-   "key": "mesa_1",
-   "label": "Mesa 1",
-   "cat": "prep",
-   "rect": [
-    0.9,
-    7.736,
-    2.7,
+    2.1,
+    8.086,
+    3.3,
     8.436
    ],
    "front": "N",
-   "clear": 1.0,
-   "h": 0.9
-  },
-  {
-   "id": "P2",
-   "key": "mesa_2",
-   "label": "Mesa 2",
-   "cat": "prep",
-   "rect": [
-    1.3,
-    5.3,
-    2.0,
-    7.1
-   ],
-   "front": "E",
-   "clear": 0.9,
-   "h": 0.9
-  },
-  {
-   "id": "S1",
-   "key": "shelf_4",
-   "label": "Estante 4N",
-   "cat": "storage",
-   "rect": [
-    1.6,
-    8.536,
-    3.3,
-    8.886
-   ],
-   "front": "S",
    "clear": 0.8,
-   "h": 1.8
+   "h": 1.8,
+   "tbv": false,
+   "note": "120 × 35, 4 niveles."
   },
   {
-   "id": "SM",
-   "key": "smoker",
-   "label": "Smoker",
-   "cat": "smoker",
+   "id": "A1",
+   "tag": "A1",
+   "key": "fridge_2d",
+   "label": "Refrigerador 2 puertas",
+   "cat": "cold",
    "rect": [
-    3.1,
-    10.736,
+    3.81,
+    8.95,
     4.51,
+    10.4
+   ],
+   "front": "W",
+   "clear": 0.9,
+   "h": 2.0,
+   "tbv": false,
+   "note": "145 × 70 × 200."
+  },
+  {
+   "id": "A2",
+   "tag": "A2",
+   "key": "freezer_1d",
+   "label": "Congelador vertical",
+   "cat": "cold",
+   "rect": [
+    3.81,
+    10.4,
+    4.51,
+    11.15
+   ],
+   "front": "W",
+   "clear": 0.9,
+   "h": 2.0,
+   "tbv": false,
+   "plan_label": "Congelador",
+   "note": "75 × 70 × 200."
+  },
+  {
+   "id": "A3",
+   "tag": "A3",
+   "key": "mesa_fria",
+   "label": "Mesa fría refrigerada",
+   "cat": "cold",
+   "rect": [
+    0.72,
+    10.786,
+    2.52,
     11.486
    ],
    "front": "N",
    "clear": 1.0,
-   "h": 1.8,
-   "tbv": true
+   "h": 0.9,
+   "tbv": false,
+   "note": "180 × 70."
   },
   {
-   "id": "F1",
-   "key": "fuel_storage",
-   "label": "Lena/carbon",
-   "cat": "smoker",
-   "rect": [
-    3.7,
-    9.3,
-    4.51,
-    10.2
-   ],
-   "front": "W",
-   "clear": 0.8,
-   "h": 1.2
-  },
-  {
-   "id": "D1",
-   "key": "delivery_staging",
-   "label": "Delivery",
-   "cat": "delivery",
+   "id": "A4",
+   "tag": "A4",
+   "key": "mesa_2",
+   "label": "Mesa de trabajo inox (prep fría)",
+   "cat": "prep",
    "rect": [
     0.0,
-    10.0,
-    0.45,
-    11.2
-   ],
-   "front": "E",
-   "clear": 0.9,
-   "h": 1.2
-  },
-  {
-   "id": "B1",
-   "key": "barra",
-   "label": "Barra/Caja",
-   "cat": "bar",
-   "rect": [
-    5.45,
-    0.3,
-    6.1,
-    2.9
+    9.55,
+    0.7,
+    10.75
    ],
    "front": "E",
    "clear": 1.0,
-   "h": 1.05
+   "h": 0.9,
+   "tbv": false,
+   "plan_label": "Mesa inox prep",
+   "note": "120 × 70 (reducida de 180 para dejar libre la boca del pasillo limpio; ajuste permitido por el cliente)."
   },
   {
-   "id": "B2",
+   "id": "A5",
+   "tag": "A5",
+   "key": "shelf_4",
+   "label": "Estantería 4 niveles",
+   "cat": "storage",
+   "rect": [
+    2.1,
+    8.536,
+    3.8,
+    8.886
+   ],
+   "front": "S",
+   "clear": 0.8,
+   "h": 1.8,
+   "tbv": false,
+   "note": "170 × 35."
+  },
+  {
+   "id": "A6",
+   "tag": "A6",
+   "key": "shelf_dry",
+   "label": "Almacén seco (estantería)",
+   "cat": "storage",
+   "rect": [
+    -0.085,
+    5.1,
+    0.365,
+    7.9
+   ],
+   "front": "E",
+   "clear": 0.85,
+   "h": 2.0,
+   "tbv": false,
+   "note": "280 × 45 a lo largo del pasillo limpio (muro oeste)."
+  },
+  {
+   "id": "C1",
+   "tag": "C1",
+   "key": "barra",
+   "label": "Barra / caja + bebidas",
+   "cat": "bar",
+   "rect": [
+    5.4,
+    0.116,
+    6.05,
+    1.7
+   ],
+   "front": "E",
+   "clear": 0.9,
+   "h": 1.05,
+   "tbv": false,
+   "plan_label": "Barra / caja + C3 POS",
+   "note": "Barra compacta: caja, POS y apoyo de bebidas (enfriador bajo barra). Pileta de barra: extender drenaje existente WP5 ≈1 m — VERIFY."
+  },
+  {
+   "id": "C2",
+   "tag": "C2",
+   "key": "pass",
+   "label": "Pase / pickup caliente",
+   "cat": "bar",
+   "rect": [
+    5.4,
+    1.7,
+    6.05,
+    2.35
+   ],
+   "front": "E",
+   "clear": 0.9,
+   "h": 1.05,
+   "tbv": false,
+   "plan_label": "Pase",
+   "note": "Repisa de pase con lámparas de calor: se carga desde el pasillo de barra (lado cocina) y se retira desde el salón."
+  },
+  {
+   "id": "C3",
+   "tag": "C3",
    "key": "pos",
    "label": "POS",
    "cat": "bar",
    "rect": [
-    5.55,
-    2.5,
+    5.5,
+    0.95,
     5.95,
-    2.85
+    1.4
    ],
    "front": null,
    "clear": 0,
    "h": 1.1,
-   "stack_with": "B1"
+   "tbv": false,
+   "stack_with": "C1",
+   "no_label": true
+  },
+  {
+   "id": "D2",
+   "tag": "D2",
+   "key": "delivery_staging",
+   "label": "Recepción + staging / retiro delivery",
+   "cat": "delivery",
+   "rect": [
+    15.45,
+    0.4,
+    16.2,
+    1.0
+   ],
+   "front": "S",
+   "clear": 0.6,
+   "h": 1.05,
+   "tbv": false,
+   "plan_label": "Recep. + delivery",
+   "note": "Atril de recepción con repisa para pedidos listos: el repartidor retira en la entrada sin cruzar el salón. Los pedidos se empacan en el pase."
   }
  ],
  "tables": [
   {
    "id": "TN1",
+   "tag": "TN1",
    "rect": [
-    6.6,
-    0.666,
-    7.3,
-    1.366
+    8.2,
+    0.716,
+    8.9,
+    1.416
    ],
-   "seats": 2
-  },
-  {
-   "id": "TS1",
-   "rect": [
-    6.6,
-    3.736,
-    7.3,
-    4.436
-   ],
-   "seats": 2
+   "seats": 2,
+   "type": "2top",
+   "joinable_with": [
+    "TN2"
+   ]
   },
   {
    "id": "TN2",
+   "tag": "TN2",
    "rect": [
-    7.55,
-    0.666,
-    8.25,
-    1.366
+    9.1,
+    0.716,
+    9.8,
+    1.416
    ],
-   "seats": 2
-  },
-  {
-   "id": "TS2",
-   "rect": [
-    7.55,
-    3.736,
-    8.25,
-    4.436
-   ],
-   "seats": 2
+   "seats": 2,
+   "type": "2top"
   },
   {
    "id": "TN3",
+   "tag": "TN3",
    "rect": [
-    8.5,
-    0.666,
-    9.2,
-    1.366
+    10.15,
+    0.716,
+    11.35,
+    1.416
    ],
-   "seats": 2
-  },
-  {
-   "id": "TS3",
-   "rect": [
-    8.5,
-    3.736,
-    9.2,
-    4.436
-   ],
-   "seats": 2
+   "seats": 4,
+   "type": "4top"
   },
   {
    "id": "TN4",
+   "tag": "TN4",
    "rect": [
-    9.45,
-    0.666,
-    10.149999999999999,
-    1.366
+    11.7,
+    0.716,
+    12.4,
+    1.416
    ],
-   "seats": 2
-  },
-  {
-   "id": "TS4",
-   "rect": [
-    9.45,
-    3.736,
-    10.149999999999999,
-    4.436
-   ],
-   "seats": 2
+   "seats": 2,
+   "type": "2top",
+   "joinable_with": [
+    "TN5"
+   ]
   },
   {
    "id": "TN5",
+   "tag": "TN5",
    "rect": [
-    10.399999999999999,
-    0.666,
-    11.099999999999998,
-    1.366
+    12.6,
+    0.716,
+    13.3,
+    1.416
    ],
-   "seats": 2
-  },
-  {
-   "id": "TS5",
-   "rect": [
-    10.399999999999999,
-    3.736,
-    11.099999999999998,
-    4.436
-   ],
-   "seats": 2
+   "seats": 2,
+   "type": "2top"
   },
   {
    "id": "TN6",
+   "tag": "TN6",
    "rect": [
-    11.349999999999998,
-    0.666,
-    12.049999999999997,
-    1.366
+    13.65,
+    0.716,
+    14.85,
+    1.416
    ],
-   "seats": 2
+   "seats": 4,
+   "type": "4top"
+  },
+  {
+   "id": "TS1",
+   "tag": "TS1",
+   "rect": [
+    6.6,
+    3.686,
+    7.3,
+    4.386
+   ],
+   "seats": 2,
+   "type": "2top",
+   "joinable_with": [
+    "TS2"
+   ]
+  },
+  {
+   "id": "TS2",
+   "tag": "TS2",
+   "rect": [
+    7.5,
+    3.686,
+    8.2,
+    4.386
+   ],
+   "seats": 2,
+   "type": "2top"
+  },
+  {
+   "id": "TS3",
+   "tag": "TS3",
+   "rect": [
+    8.55,
+    3.686,
+    9.75,
+    4.386
+   ],
+   "seats": 4,
+   "type": "4top"
+  },
+  {
+   "id": "TS4",
+   "tag": "TS4",
+   "rect": [
+    10.1,
+    3.686,
+    10.8,
+    4.386
+   ],
+   "seats": 2,
+   "type": "2top",
+   "joinable_with": [
+    "TS5"
+   ]
+  },
+  {
+   "id": "TS5",
+   "tag": "TS5",
+   "rect": [
+    11.0,
+    3.686,
+    11.7,
+    4.386
+   ],
+   "seats": 2,
+   "type": "2top"
   },
   {
    "id": "TS6",
+   "tag": "TS6",
    "rect": [
-    11.349999999999998,
-    3.736,
-    12.049999999999997,
-    4.436
+    12.05,
+    3.686,
+    13.25,
+    4.386
    ],
-   "seats": 2
-  },
-  {
-   "id": "TN7",
-   "rect": [
-    12.299999999999997,
-    0.666,
-    12.999999999999996,
-    1.366
-   ],
-   "seats": 2
+   "seats": 4,
+   "type": "4top"
   },
   {
    "id": "TS7",
+   "tag": "TS7",
    "rect": [
-    12.299999999999997,
-    3.736,
-    12.999999999999996,
-    4.436
+    13.6,
+    3.686,
+    14.3,
+    4.386
    ],
-   "seats": 2
-  },
-  {
-   "id": "TN8",
-   "rect": [
-    13.249999999999996,
-    0.666,
-    13.949999999999996,
-    1.366
-   ],
-   "seats": 2
+   "seats": 2,
+   "type": "2top",
+   "joinable_with": [
+    "TS8"
+   ]
   },
   {
    "id": "TS8",
+   "tag": "TS8",
    "rect": [
-    13.249999999999996,
-    3.736,
-    13.949999999999996,
-    4.436
+    14.5,
+    3.686,
+    15.2,
+    4.386
    ],
-   "seats": 2
-  },
-  {
-   "id": "TN9",
-   "rect": [
-    14.199999999999996,
-    0.666,
-    14.899999999999995,
-    1.366
-   ],
-   "seats": 2
-  },
-  {
-   "id": "TS9",
-   "rect": [
-    14.199999999999996,
-    3.736,
-    14.899999999999995,
-    4.436
-   ],
-   "seats": 2
+   "seats": 2,
+   "type": "2top"
   }
  ],
  "chairs": [
   {
-   "id": "CN1",
+   "id": "TN1-c1",
+   "rect": [
+    8.325,
+    1.466,
+    8.775,
+    1.916
+   ],
+   "table": "TN1",
+   "facing": "N"
+  },
+  {
+   "id": "TN2-c1",
+   "rect": [
+    9.225,
+    1.466,
+    9.675,
+    1.916
+   ],
+   "table": "TN2",
+   "facing": "N"
+  },
+  {
+   "id": "TN3-c1",
+   "rect": [
+    10.225,
+    1.466,
+    10.675,
+    1.916
+   ],
+   "table": "TN3",
+   "facing": "N"
+  },
+  {
+   "id": "TN3-c2",
+   "rect": [
+    10.825,
+    1.466,
+    11.275,
+    1.916
+   ],
+   "table": "TN3",
+   "facing": "N"
+  },
+  {
+   "id": "TN4-c1",
+   "rect": [
+    11.825,
+    1.466,
+    12.275,
+    1.916
+   ],
+   "table": "TN4",
+   "facing": "N"
+  },
+  {
+   "id": "TN5-c1",
+   "rect": [
+    12.725,
+    1.466,
+    13.175,
+    1.916
+   ],
+   "table": "TN5",
+   "facing": "N"
+  },
+  {
+   "id": "TN6-c1",
+   "rect": [
+    13.725,
+    1.466,
+    14.175,
+    1.916
+   ],
+   "table": "TN6",
+   "facing": "N"
+  },
+  {
+   "id": "TN6-c2",
+   "rect": [
+    14.325,
+    1.466,
+    14.775,
+    1.916
+   ],
+   "table": "TN6",
+   "facing": "N"
+  },
+  {
+   "id": "TS1-c1",
    "rect": [
     6.725,
-    1.386,
+    3.186,
     7.175,
-    1.836
-   ]
+    3.636
+   ],
+   "table": "TS1",
+   "facing": "S"
   },
   {
-   "id": "CS1",
+   "id": "TS2-c1",
    "rect": [
-    6.725,
-    3.266,
-    7.175,
-    3.716
-   ]
+    7.625,
+    3.186,
+    8.075,
+    3.636
+   ],
+   "table": "TS2",
+   "facing": "S"
   },
   {
-   "id": "CN2",
-   "rect": [
-    7.675,
-    1.386,
-    8.125,
-    1.836
-   ]
-  },
-  {
-   "id": "CS2",
-   "rect": [
-    7.675,
-    3.266,
-    8.125,
-    3.716
-   ]
-  },
-  {
-   "id": "CN3",
+   "id": "TS3-c1",
    "rect": [
     8.625,
-    1.386,
+    3.186,
     9.075,
-    1.836
-   ]
+    3.636
+   ],
+   "table": "TS3",
+   "facing": "S"
   },
   {
-   "id": "CS3",
+   "id": "TS3-c2",
    "rect": [
-    8.625,
-    3.266,
-    9.075,
-    3.716
-   ]
+    9.225,
+    3.186,
+    9.675,
+    3.636
+   ],
+   "table": "TS3",
+   "facing": "S"
   },
   {
-   "id": "CN4",
+   "id": "TS4-c1",
    "rect": [
-    9.575,
-    1.386,
-    10.024999999999999,
-    1.836
-   ]
+    10.225,
+    3.186,
+    10.675,
+    3.636
+   ],
+   "table": "TS4",
+   "facing": "S"
   },
   {
-   "id": "CS4",
+   "id": "TS5-c1",
    "rect": [
-    9.575,
-    3.266,
-    10.024999999999999,
-    3.716
-   ]
+    11.125,
+    3.186,
+    11.575,
+    3.636
+   ],
+   "table": "TS5",
+   "facing": "S"
   },
   {
-   "id": "CN5",
+   "id": "TS6-c1",
    "rect": [
-    10.524999999999999,
-    1.386,
-    10.974999999999998,
-    1.836
-   ]
+    12.125,
+    3.186,
+    12.575,
+    3.636
+   ],
+   "table": "TS6",
+   "facing": "S"
   },
   {
-   "id": "CS5",
+   "id": "TS6-c2",
    "rect": [
-    10.524999999999999,
-    3.266,
-    10.974999999999998,
-    3.716
-   ]
+    12.725,
+    3.186,
+    13.175,
+    3.636
+   ],
+   "table": "TS6",
+   "facing": "S"
   },
   {
-   "id": "CN6",
+   "id": "TS7-c1",
    "rect": [
-    11.474999999999998,
-    1.386,
-    11.924999999999997,
-    1.836
-   ]
+    13.725,
+    3.186,
+    14.175,
+    3.636
+   ],
+   "table": "TS7",
+   "facing": "S"
   },
   {
-   "id": "CS6",
+   "id": "TS8-c1",
    "rect": [
-    11.474999999999998,
-    3.266,
-    11.924999999999997,
-    3.716
-   ]
-  },
-  {
-   "id": "CN7",
-   "rect": [
-    12.424999999999997,
-    1.386,
-    12.874999999999996,
-    1.836
-   ]
-  },
-  {
-   "id": "CS7",
-   "rect": [
-    12.424999999999997,
-    3.266,
-    12.874999999999996,
-    3.716
-   ]
-  },
-  {
-   "id": "CN8",
-   "rect": [
-    13.374999999999996,
-    1.386,
-    13.824999999999996,
-    1.836
-   ]
-  },
-  {
-   "id": "CS8",
-   "rect": [
-    13.374999999999996,
-    3.266,
-    13.824999999999996,
-    3.716
-   ]
-  },
-  {
-   "id": "CN9",
-   "rect": [
-    14.324999999999996,
-    1.386,
-    14.774999999999995,
-    1.836
-   ]
-  },
-  {
-   "id": "CS9",
-   "rect": [
-    14.324999999999996,
-    3.266,
-    14.774999999999995,
-    3.716
-   ]
+    14.625,
+    3.186,
+    15.075,
+    3.636
+   ],
+   "table": "TS8",
+   "facing": "S"
   }
  ],
  "banquettes": [
   {
-   "id": "BN",
+   "id": "BQ-N",
    "rect": [
-    6.5,
+    8.15,
     0.116,
-    15.3,
-    0.656
+    15.25,
+    0.666
    ],
-   "seats": 9
+   "seats": 8,
+   "back": "N"
   },
   {
-   "id": "BS",
+   "id": "BQ-S",
    "rect": [
-    6.5,
-    4.446,
-    15.3,
+    6.55,
+    4.436,
+    15.6,
     4.986
    ],
-   "seats": 9
-  }
- ],
- "routes": [
-  {
-   "id": "guest",
-   "kind": "guest",
-   "label": "Entrada->barra",
-   "pts": [
-    [
-     15.9,
-     2.55
-    ],
-    [
-     7.0,
-     2.55
-    ],
-    [
-     6.5,
-     2.0
-    ]
-   ],
-   "min_width": 1.1
-  },
-  {
-   "id": "dirty",
-   "kind": "dirty",
-   "label": "Salon->lavado",
-   "pts": [
-    [
-     7.0,
-     2.55
-    ],
-    [
-     5.0,
-     3.8
-    ],
-    [
-     4.37,
-     4.5
-    ],
-    [
-     3.9,
-     4.7
-    ],
-    [
-     2.9,
-     5.3
-    ]
-   ],
-   "min_width": 0.9
-  },
-  {
-   "id": "clean",
-   "kind": "clean",
-   "label": "Frio->linea->pase",
-   "pts": [
-    [
-     1.1,
-     6.0
-    ],
-    [
-     1.1,
-     4.9
-    ],
-    [
-     1.4,
-     3.0
-    ],
-    [
-     1.4,
-     1.6
-    ],
-    [
-     3.2,
-     1.0
-    ]
-   ],
-   "min_width": 1.0
+   "seats": 10,
+   "back": "S"
   }
  ],
  "points": {
@@ -911,22 +1278,308 @@
    2.64
   ],
   "barra_front": [
-   6.6,
-   1.8
+   6.55,
+   1.2
+  ],
+  "pass_dining": [
+   6.55,
+   2.05
   ],
   "dining_far": [
-   7.0,
+   15.0,
    2.55
   ],
   "kitchen_door": [
-   4.37,
-   4.5
+   4.4,
+   4.48
   ],
   "dish_drop": [
-   3.6,
-   5.0
+   2.75,
+   5.55
+  ],
+  "cold_storage": [
+   3.35,
+   9.3
+  ],
+  "prep": [
+   1.2,
+   9.85
+  ],
+  "line": [
+   2.95,
+   2.5
+  ],
+  "expo_pass": [
+   4.95,
+   2.02
+  ],
+  "delivery_staging": [
+   15.8,
+   1.35
+  ],
+  "smoker_front": [
+   1.15,
+   1.7
+  ],
+  "service_door": [
+   3.01,
+   11.3
+  ],
+  "fuel": [
+   0.9,
+   3.9
   ]
  },
+ "routes": [
+  {
+   "id": "R-guest",
+   "kind": "guest",
+   "label": "Entrada → barra / caja",
+   "pts": [
+    [
+     15.9,
+     2.55
+    ],
+    [
+     7.3,
+     2.55
+    ],
+    [
+     6.6,
+     1.45
+    ]
+   ],
+   "min_width": 1.1
+  },
+  {
+   "id": "R-server",
+   "kind": "server",
+   "label": "Pase → mesas (pasillo central)",
+   "pts": [
+    [
+     6.6,
+     2.05
+    ],
+    [
+     7.3,
+     2.55
+    ],
+    [
+     15.0,
+     2.55
+    ]
+   ],
+   "min_width": 1.1
+  },
+  {
+   "id": "R-expo",
+   "kind": "server",
+   "label": "Línea → puerta P-1 → pase",
+   "pts": [
+    [
+     2.8,
+     3.4
+    ],
+    [
+     2.8,
+     4.45
+    ],
+    [
+     3.9,
+     4.48
+    ],
+    [
+     5.0,
+     4.48
+    ],
+    [
+     5.0,
+     3.0
+    ],
+    [
+     4.95,
+     2.1
+    ]
+   ],
+   "min_width": 0.9
+  },
+  {
+   "id": "R-dirty",
+   "kind": "dirty",
+   "label": "Salón → puerta P-1 → lavado",
+   "pts": [
+    [
+     15.0,
+     2.62
+    ],
+    [
+     7.0,
+     2.6
+    ],
+    [
+     6.36,
+     2.8
+    ],
+    [
+     5.5,
+     4.0
+    ],
+    [
+     5.1,
+     4.48
+    ],
+    [
+     3.9,
+     4.48
+    ],
+    [
+     2.9,
+     4.8
+    ],
+    [
+     2.73,
+     5.3
+    ],
+    [
+     2.73,
+     5.9
+    ]
+   ],
+   "min_width": 0.9
+  },
+  {
+   "id": "R-clean",
+   "kind": "clean",
+   "label": "Frío → prep → pasillo limpio → línea",
+   "pts": [
+    [
+     3.3,
+     9.7
+    ],
+    [
+     1.9,
+     9.7
+    ],
+    [
+     0.95,
+     8.95
+    ],
+    [
+     0.89,
+     8.3
+    ],
+    [
+     0.89,
+     5.3
+    ],
+    [
+     0.9,
+     4.75
+    ],
+    [
+     1.3,
+     4.3
+    ],
+    [
+     2.7,
+     3.8
+    ],
+    [
+     2.9,
+     1.3
+    ]
+   ],
+   "min_width": 1.0
+  },
+  {
+   "id": "R-bbq",
+   "kind": "clean",
+   "label": "Smoker → holding → línea / pase",
+   "pts": [
+    [
+     1.15,
+     1.7
+    ],
+    [
+     1.15,
+     2.85
+    ],
+    [
+     2.6,
+     3.7
+    ],
+    [
+     2.8,
+     4.4
+    ]
+   ],
+   "min_width": 1.0
+  },
+  {
+   "id": "R-deliv",
+   "kind": "delivery",
+   "label": "Pase → staging en recepción (retiro sin cruzar salón)",
+   "pts": [
+    [
+     4.95,
+     3.0
+    ],
+    [
+     6.36,
+     2.8
+    ],
+    [
+     7.0,
+     2.5
+    ],
+    [
+     15.0,
+     2.45
+    ],
+    [
+     15.75,
+     1.55
+    ]
+   ],
+   "min_width": 0.9
+  },
+  {
+   "id": "R-fuel",
+   "kind": "fuel",
+   "label": "Leña / cenizas ↔ PS-1 (condicional, fuera de horario)",
+   "pts": [
+    [
+     3.05,
+     11.3
+    ],
+    [
+     3.1,
+     10.5
+    ],
+    [
+     2.2,
+     9.6
+    ],
+    [
+     0.95,
+     8.95
+    ],
+    [
+     0.89,
+     8.3
+    ],
+    [
+     0.89,
+     5.3
+    ],
+    [
+     0.95,
+     3.9
+    ]
+   ],
+   "min_width": 0.9
+  }
+ ],
  "checks": [
   [
    "entrance",
@@ -934,9 +1587,1222 @@
    1.1
   ],
   [
+   "pass_dining",
+   "dining_far",
+   1.1
+  ],
+  [
    "kitchen_door",
    "dish_drop",
    0.9
+  ],
+  [
+   "cold_storage",
+   "line",
+   1.0
+  ],
+  [
+   "line",
+   "kitchen_door",
+   0.9
+  ],
+  [
+   "smoker_front",
+   "kitchen_door",
+   0.9
+  ],
+  [
+   "expo_pass",
+   "kitchen_door",
+   0.9
+  ],
+  [
+   "delivery_staging",
+   "expo_pass",
+   0.9
+  ],
+  [
+   "service_door",
+   "fuel",
+   0.9
   ]
+ ],
+ "decor": [
+  {
+   "type": "slat_wall",
+   "rect": [
+    6.55,
+    4.911,
+    15.35,
+    4.986
+   ],
+   "face": "N",
+   "text": "LAVA",
+   "z": 1.0,
+   "h": 2.85,
+   "text_at": 0.55
+  },
+  {
+   "type": "sign",
+   "rect": [
+    4.4750000000000005,
+    1.3,
+    4.535,
+    3.7
+   ],
+   "face": "E",
+   "text": "LAVA",
+   "h": 2.62,
+   "size": 0.42
+  },
+  {
+   "type": "poster",
+   "rect": [
+    11.1,
+    0.116,
+    11.84,
+    0.14600000000000002
+   ],
+   "face": "S",
+   "text": "vaca",
+   "h": 1.72,
+   "size": 1.0
+  },
+  {
+   "type": "poster",
+   "rect": [
+    12.0,
+    0.116,
+    12.74,
+    0.14600000000000002
+   ],
+   "face": "S",
+   "text": "GOOD MEAT|GOOD PEOPLE",
+   "h": 1.72,
+   "size": 1.0
+  },
+  {
+   "type": "poster",
+   "rect": [
+    12.9,
+    0.116,
+    13.64,
+    0.14600000000000002
+   ],
+   "face": "S",
+   "text": "cerdo",
+   "h": 1.72,
+   "size": 1.0
+  },
+  {
+   "type": "sconce",
+   "rect": [
+    9.2,
+    0.116,
+    9.36,
+    0.416
+   ],
+   "face": "S",
+   "h": 2.2
+  },
+  {
+   "type": "sconce",
+   "rect": [
+    10.55,
+    0.116,
+    10.71,
+    0.416
+   ],
+   "face": "S",
+   "h": 2.2
+  },
+  {
+   "type": "sconce",
+   "rect": [
+    14.05,
+    0.116,
+    14.21,
+    0.416
+   ],
+   "face": "S",
+   "h": 2.2
+  },
+  {
+   "type": "pendant",
+   "rect": [
+    5.6,
+    0.45,
+    5.84,
+    0.69
+   ],
+   "h": 1.95,
+   "style": "dome"
+  },
+  {
+   "type": "pendant",
+   "rect": [
+    5.6,
+    1.2,
+    5.84,
+    1.44
+   ],
+   "h": 1.95,
+   "style": "dome"
+  },
+  {
+   "type": "pendant",
+   "rect": [
+    5.6,
+    1.9,
+    5.84,
+    2.14
+   ],
+   "h": 1.95,
+   "style": "dome"
+  },
+  {
+   "type": "firewood_niche",
+   "rect": [
+    4.325,
+    2.52,
+    4.4750000000000005,
+    3.22
+   ],
+   "face": "E",
+   "z": 0.12,
+   "h": 0.86
+  },
+  {
+   "type": "planter",
+   "rect": [
+    4.325,
+    3.3,
+    4.4750000000000005,
+    3.9
+   ],
+   "face": "E",
+   "h": 1.0
+  }
+ ],
+ "tour": [
+  {
+   "id": "entrada",
+   "title": "Entrada",
+   "pos": [
+    15.55,
+    2.64
+   ],
+   "look": [
+    4.0,
+    3.15
+   ],
+   "look_h": 1.25,
+   "text": "Desde la puerta, el pasillo central remata en la parrilla: fuego y manejo de carnes detrás del vidrio, con el letrero LAVA encima. La división se corrió 1.97 m hacia la cocina para ganar salón.",
+   "flags": []
+  },
+  {
+   "id": "salon",
+   "title": "Salón",
+   "pos": [
+    11.2,
+    2.55
+   ],
+   "look": [
+    7.0,
+    4.2
+   ],
+   "look_h": 1.2,
+   "text": "Bancas corridas contra ambos muros con mesas de 2 que se unen y mesas de 4. Pasillo central ≥1.20 m para meseros. Celosía de madera retroiluminada en el muro sur; concreto, apliques y afiches en el norte.",
+   "flags": [
+    "VERIFY ON SITE"
+   ]
+  },
+  {
+   "id": "barra",
+   "title": "Bar / POS y pase",
+   "pos": [
+    7.15,
+    1.85
+   ],
+   "look": [
+    5.7,
+    1.2
+   ],
+   "look_h": 1.05,
+   "text": "Barra compacta: caja, POS y bebidas. En su extremo sur, el pase caliente: la cocina lo carga desde el pasillo de barra y los meseros retiran desde el salón.",
+   "flags": []
+  },
+  {
+   "id": "parrilla",
+   "title": "Show kitchen · parrilla",
+   "pos": [
+    7.3,
+    3.05
+   ],
+   "look": [
+    3.9,
+    3.1
+   ],
+   "look_h": 1.3,
+   "text": "La hot line está pegada a la división: parrilla → cocina de 4 quemadores → plancha → 2 freidoras. Los cocineros trabajan de frente al salón; la parrilla queda en el eje de la entrada.",
+   "flags": [
+    "EXTRACTION / MAKE-UP AIR / FIRE SUPPRESSION TO BE ENGINEERED",
+    "DIMENSION TO VERIFY"
+   ]
+  },
+  {
+   "id": "cocina",
+   "title": "Hot line por dentro",
+   "pos": [
+    2.6,
+    4.1
+   ],
+   "look": [
+    3.6,
+    1.2
+   ],
+   "look_h": 1.0,
+   "text": "Entrando por la puerta P-1, la línea queda a la derecha bajo una sola campana. Mesa de trabajo con horno en el muro norte, junto a las freidoras. Pasillo de trabajo ≥1.10 m.",
+   "flags": [
+    "EXTRACTION / MAKE-UP AIR / FIRE SUPPRESSION TO BE ENGINEERED"
+   ]
+  },
+  {
+   "id": "bbq",
+   "title": "BBQ production",
+   "pos": [
+    2.1,
+    2.2
+   ],
+   "look": [
+    0.3,
+    1.8
+   ],
+   "look_h": 1.1,
+   "text": "Pared del fondo: smoker vertical y holding caliente, con la leña del día al lado. Flujo smoker → holding → línea / pase.",
+   "flags": [
+    "SOLID-FUEL SMOKER - LOCATION / FLUE / FIRE CODE TO BE VALIDATED",
+    "DIMENSION TO VERIFY"
+   ]
+  },
+  {
+   "id": "lavado",
+   "title": "Washing (antiguas PILAS)",
+   "pos": [
+    2.7,
+    6.9
+   ],
+   "look": [
+    3.8,
+    5.6
+   ],
+   "look_h": 1.0,
+   "text": "El lavado se queda donde Marna’s tenía las pilas: fregadero de 2 tanques, lavamanos y mop sink sobre los drenajes existentes. La loza sucia entra por P-1 y baja directo, sin tocar el frío.",
+   "flags": [
+    "VERIFY ON SITE"
+   ]
+  },
+  {
+   "id": "coldprep",
+   "title": "Cold prep (antigua PASTELERÍA)",
+   "pos": [
+    2.1,
+    9.7
+   ],
+   "look": [
+    4.1,
+    9.3
+   ],
+   "look_h": 1.1,
+   "text": "Todo el frío y la preparación fría juntos: refrigerador de 2 puertas, congelador, mesa fría, mesa de trabajo y estanterías. Se conecta con la cocina por el pasillo limpio del muro oeste.",
+   "flags": []
+  },
+  {
+   "id": "servicio",
+   "title": "Servicio y delivery",
+   "pos": [
+    2.6,
+    10.5
+   ],
+   "look": [
+    3.2,
+    11.4
+   ],
+   "look_h": 1.0,
+   "text": "Puerta de servicio PS-1 (condicional) en la ventana sur para recibir mercadería, leña y retirar pedidos. Si la administración no la aprueba, los repartidores retiran en la recepción de la entrada.",
+   "flags": [
+    "VERIFY ON SITE"
+   ]
+  }
+ ],
+ "notes": [
+  "Zonificación fijada por el cliente (corrección 2): hot line sobre la división con el salón; mesa de trabajo + horno en muro norte junto a las freidoras; smoker + holding en el muro del fondo (oeste); lavado en PILAS; cold prep en PASTELERÍA.",
+  "Nueva división en X = 4.325 (cara cocina): corrimiento 1.97 m respecto de la división de Marna’s (X = 6.298). Limitante: línea caliente de 3.80 m + puerta 0.90 en 4.87 m de fondo, y 1.10 m libres frente a las freidoras hasta la mesa de trabajo del muro norte.",
+  "Si el horno es de piso (≈80–90 cm) en lugar de horno de mesa, no cabe junto a la mesa en el muro norte sin invadir el frente de las freidoras: la división tendría que quedar en X ≈ 5.1 (corrimiento ≈1.2 m) o el horno ir al muro oeste.",
+  "Campana: la línea completa mide 3.80 m y la parrilla tiene 0.90 m de fondo; la campana 3.60 × 0.90 propuesta no la cubre. Se dibuja ≈3.85 × 1.10 como referencia; dimensiones, CFM, aire de reposición, filtros, separación de combustible sólido y supresión: TO BE ENGINEERED.",
+  "Freidoras junto a la plancha (no junto a llama abierta): cumple la separación típica de 40 cm respecto de parrilla y quemadores; confirmar con ingeniería.",
+  "Parrilla contra la división: base incombustible con cámara de aire y vidrio con resistencia térmica/cortafuego — especificación TO BE ENGINEERED.",
+  "Pase: la puerta P-1 es la única conexión cocina/salón (la línea ocupa el resto de la división). Los platos salen por P-1 al pase caliente del extremo sur de la barra (≈2 m).",
+  "Smoker: chimenea independiente (no conectar al ducto existente), carga de leña y retiro de cenizas por el frente; leña y cenizas entran/salen por PS-1 (si se aprueba) o por la entrada principal fuera de horario."
+ ],
+ "dims": [
+  {
+   "a": [
+    -0.085,
+    -0.564
+   ],
+   "b": [
+    4.325,
+    0.0
+   ],
+   "off": -0.486,
+   "label": "4.41 cocina",
+   "sheets": [
+    "A101",
+    "A102"
+   ]
+  },
+  {
+   "a": [
+    4.325,
+    0.0
+   ],
+   "b": [
+    4.475,
+    0.0
+   ],
+   "off": -1.05,
+   "label": null,
+   "sheets": [
+    "A101",
+    "A102"
+   ]
+  },
+  {
+   "a": [
+    4.475,
+    0.0
+   ],
+   "b": [
+    16.285,
+    0.3
+   ],
+   "off": -1.05,
+   "label": "11.81 salón + barra",
+   "sheets": [
+    "A101",
+    "A102"
+   ]
+  },
+  {
+   "a": [
+    -0.085,
+    -0.564
+   ],
+   "b": [
+    16.285,
+    0.3
+   ],
+   "off": -0.886,
+   "label": "16.37 interior",
+   "sheets": [
+    "A101"
+   ]
+  },
+  {
+   "a": [
+    16.285,
+    0.116
+   ],
+   "b": [
+    16.285,
+    1.643
+   ],
+   "off": 0.665,
+   "label": null,
+   "sheets": [
+    "A101",
+    "A102"
+   ]
+  },
+  {
+   "a": [
+    16.285,
+    1.643
+   ],
+   "b": [
+    16.285,
+    3.643
+   ],
+   "off": 0.665,
+   "label": "2.00 entrada",
+   "sheets": [
+    "A101",
+    "A102"
+   ]
+  },
+  {
+   "a": [
+    16.285,
+    3.643
+   ],
+   "b": [
+    16.285,
+    4.986
+   ],
+   "off": 0.665,
+   "label": null,
+   "sheets": [
+    "A101",
+    "A102"
+   ]
+  },
+  {
+   "a": [
+    16.285,
+    0.116
+   ],
+   "b": [
+    16.285,
+    4.986
+   ],
+   "off": 1.035,
+   "label": "4.87 interior",
+   "sheets": [
+    "A101",
+    "A102"
+   ]
+  },
+  {
+   "a": [
+    3.525,
+    0.116
+   ],
+   "b": [
+    3.525,
+    0.516
+   ],
+   "off": -0.675,
+   "label": "0.40",
+   "sheets": [
+    "A101"
+   ]
+  },
+  {
+   "a": [
+    3.525,
+    0.516
+   ],
+   "b": [
+    3.525,
+    0.916
+   ],
+   "off": -0.675,
+   "label": "0.40",
+   "sheets": [
+    "A101"
+   ]
+  },
+  {
+   "a": [
+    3.525,
+    0.916
+   ],
+   "b": [
+    3.525,
+    1.616
+   ],
+   "off": -0.675,
+   "label": "0.70",
+   "sheets": [
+    "A101"
+   ]
+  },
+  {
+   "a": [
+    3.525,
+    1.616
+   ],
+   "b": [
+    3.525,
+    2.416
+   ],
+   "off": -0.675,
+   "label": "0.80",
+   "sheets": [
+    "A101"
+   ]
+  },
+  {
+   "a": [
+    3.425,
+    2.416
+   ],
+   "b": [
+    3.425,
+    3.916
+   ],
+   "off": -0.575,
+   "label": "1.50",
+   "sheets": [
+    "A101"
+   ]
+  },
+  {
+   "a": [
+    3.425,
+    4.03
+   ],
+   "b": [
+    3.425,
+    4.93
+   ],
+   "off": -0.575,
+   "label": "0.90",
+   "sheets": [
+    "A101"
+   ]
+  },
+  {
+   "a": [
+    -0.085,
+    1.0
+   ],
+   "b": [
+    -0.085,
+    2.4
+   ],
+   "off": -0.865,
+   "label": "1.40 smoker",
+   "sheets": [
+    "A101"
+   ]
+  },
+  {
+   "a": [
+    -0.085,
+    2.55
+   ],
+   "b": [
+    -0.085,
+    3.15
+   ],
+   "off": -0.865,
+   "label": "0.60",
+   "sheets": [
+    "A101"
+   ]
+  },
+  {
+   "a": [
+    -0.085,
+    3.4
+   ],
+   "b": [
+    -0.085,
+    4.4
+   ],
+   "off": -0.865,
+   "label": "1.00 leña",
+   "sheets": [
+    "A101"
+   ]
+  },
+  {
+   "a": [
+    -0.085,
+    5.1
+   ],
+   "b": [
+    -0.085,
+    7.9
+   ],
+   "off": -0.665,
+   "label": "2.80 almacén seco",
+   "sheets": [
+    "A101"
+   ]
+  },
+  {
+   "a": [
+    0.0,
+    9.55
+   ],
+   "b": [
+    0.0,
+    10.75
+   ],
+   "off": -0.75,
+   "label": "1.20 mesa",
+   "sheets": [
+    "A101"
+   ]
+  },
+  {
+   "a": [
+    -0.085,
+    4.986
+   ],
+   "b": [
+    0.0,
+    11.486
+   ],
+   "off": -1.115,
+   "label": "6.50 ala servicio",
+   "sheets": [
+    "A101",
+    "A102"
+   ],
+   "lpos": 0.3
+  },
+  {
+   "a": [
+    0.0,
+    11.616
+   ],
+   "b": [
+    2.56,
+    11.616
+   ],
+   "off": 0.464,
+   "label": null,
+   "sheets": [
+    "A101",
+    "A102"
+   ]
+  },
+  {
+   "a": [
+    2.56,
+    11.616
+   ],
+   "b": [
+    3.46,
+    11.616
+   ],
+   "off": 0.464,
+   "label": null,
+   "sheets": [
+    "A101",
+    "A102"
+   ]
+  },
+  {
+   "a": [
+    3.46,
+    11.616
+   ],
+   "b": [
+    4.51,
+    11.616
+   ],
+   "off": 0.464,
+   "label": null,
+   "sheets": [
+    "A101",
+    "A102"
+   ]
+  },
+  {
+   "a": [
+    0.0,
+    11.616
+   ],
+   "b": [
+    4.51,
+    11.636
+   ],
+   "off": 0.804,
+   "label": "4.51 ancho ala",
+   "sheets": [
+    "A101",
+    "A102"
+   ]
+  },
+  {
+   "a": [
+    2.425,
+    0.4
+   ],
+   "b": [
+    3.525,
+    0.4
+   ],
+   "off": 0.0,
+   "label": "1.10",
+   "sheets": [
+    "A101"
+   ]
+  },
+  {
+   "a": [
+    0.665,
+    1.25
+   ],
+   "b": [
+    3.525,
+    1.25
+   ],
+   "off": 0.0,
+   "label": "2.86 libre",
+   "sheets": [
+    "A101"
+   ]
+  },
+  {
+   "a": [
+    2.16,
+    6.2
+   ],
+   "b": [
+    3.31,
+    6.2
+   ],
+   "off": 0.0,
+   "label": "1.15",
+   "sheets": [
+    "A101"
+   ]
+  },
+  {
+   "a": [
+    0.365,
+    6.7
+   ],
+   "b": [
+    1.46,
+    6.7
+   ],
+   "off": 0.0,
+   "label": "1.10",
+   "sheets": [
+    "A101"
+   ]
+  },
+  {
+   "a": [
+    0.7,
+    10.05
+   ],
+   "b": [
+    3.81,
+    10.05
+   ],
+   "off": 0.0,
+   "label": null,
+   "sheets": [
+    "A101"
+   ]
+  },
+  {
+   "a": [
+    3.1,
+    8.886
+   ],
+   "b": [
+    3.1,
+    10.786
+   ],
+   "off": 0.0,
+   "label": null,
+   "sheets": [
+    "A101"
+   ]
+  },
+  {
+   "a": [
+    12.2,
+    1.916
+   ],
+   "b": [
+    12.2,
+    3.186
+   ],
+   "off": 0.0,
+   "label": "1.27 pasillo principal",
+   "sheets": [
+    "A101"
+   ]
+  },
+  {
+   "a": [
+    4.475,
+    0.95
+   ],
+   "b": [
+    5.4,
+    0.95
+   ],
+   "off": 0.0,
+   "label": "0.93",
+   "sheets": [
+    "A101"
+   ]
+  },
+  {
+   "a": [
+    9.8,
+    0.716
+   ],
+   "b": [
+    10.15,
+    0.716
+   ],
+   "off": 0.0,
+   "label": null,
+   "sheets": [
+    "A101"
+   ]
+  }
+ ],
+ "dims_demo": [
+  {
+   "a": [
+    4.325,
+    0.0
+   ],
+   "b": [
+    6.298,
+    0.0
+   ],
+   "off": -0.72,
+   "label": "1.97 corrimiento",
+   "sheets": [
+    "A102"
+   ],
+   "color": "#d62828"
+  },
+  {
+   "a": [
+    -0.085,
+    -0.564
+   ],
+   "b": [
+    6.298,
+    0.0
+   ],
+   "off": -0.886,
+   "label": "6.38 cocina Marna’s",
+   "sheets": [
+    "A102"
+   ],
+   "color": "#6b6b66"
+  },
+  {
+   "a": [
+    6.398,
+    0.0
+   ],
+   "b": [
+    16.285,
+    0.3
+   ],
+   "off": -1.45,
+   "label": "9.89 salón Marna’s",
+   "sheets": [
+    "A102"
+   ],
+   "color": "#6b6b66"
+  },
+  {
+   "a": [
+    2.249,
+    5.086
+   ],
+   "b": [
+    4.11,
+    5.086
+   ],
+   "off": 0.464,
+   "label": "1.86 paso a lavado",
+   "sheets": [
+    "A102"
+   ]
+  }
+ ],
+ "sheet_notes": [
+  "!Test-fit conceptual: validar con arquitecto e ingenierías.",
+  "Geometría base: vectores del PDF Marna’s (1:50). Cotas ±2 cm.",
+  "Hot line fija sobre la división con el salón (cliente).",
+  "BBQ production (smoker + holding) en el muro del fondo.",
+  "Lavado en PILAS existentes; cold prep en ex-PASTELERÍA.",
+  "* / punto rojo = DIMENSION TO VERIFY (equipo sin ficha).",
+  "Altura libre de cielo y ductos existentes: VERIFY ON SITE.",
+  "Campana, aire de reposición, supresión y gas: TO BE ENGINEERED.",
+  "Egreso, sentido de puertas y ocupación: validar Bomberos/NFPA 101."
+ ],
+ "structure_notes": [
+  "Se mantienen columnas A1, B1, C1, A2, escalera, ductos y perímetro.",
+  "Solo se demuelen divisiones livianas de 10 cm (IP-KB, IP-P0b).",
+  "IP-KB no tiene trama de mampostería ni columnas: liviana.",
+  "IP-P0a, IP-P1, IP-P2 e IP-P3 se conservan (separan limpio/sucio).",
+  "La nueva división aterriza sobre el muro existente EW-E1.",
+  "!Confirmar en sitio que ninguna división aloja instalaciones.",
+  "PS-1 solo con aprobación: abrir vano en ventana sur."
+ ],
+ "flow_notes": [
+  "Limpio: cold prep → pasillo oeste → línea → P-1 → pase.",
+  "Sucio: salón → P-1 → gira al sur → fregadero (≈1.5 m).",
+  "La ruta sucia no pasa por el pasillo limpio ni por cold prep.",
+  "Smoker → holding → línea / pase por el frente del muro oeste.",
+  "!P-1 es la única conexión cocina/salón: platos y loza comparten puerta."
+ ],
+ "keynote_box": {
+  "A101": [
+   8.75,
+   5.75,
+   17.25,
+   12.35
+  ],
+  "A102": [
+   8.75,
+   5.75,
+   17.25,
+   12.35
+  ]
+ },
+ "keynotes": [
+  {
+   "anchor": [
+    3.07,
+    3.62
+   ],
+   "sheets": [
+    "A101"
+   ],
+   "color": "#b35900",
+   "text": [
+    "EXTRACTION / MAKE-UP AIR / FIRE SUPPRESSION TO BE ENGINEERED",
+    "Campana ≈3.85 × 1.10 sobre toda la hot line (3.80 m).",
+    "La campana 3.60 × 0.90 propuesta no cubre la línea."
+   ]
+  },
+  {
+   "anchor": [
+    0.95,
+    1.65
+   ],
+   "sheets": [
+    "A101"
+   ],
+   "color": "#6e2508",
+   "text": [
+    "SOLID-FUEL SMOKER - LOCATION / FLUE / FIRE CODE TO BE VALIDATED",
+    "Chimenea propia; leña, cenizas y drenaje de grasa por el frente."
+   ]
+  },
+  {
+   "anchor": [
+    4.755000000000001,
+    3.55
+   ],
+   "sheets": [
+    "A101"
+   ],
+   "color": "#111111",
+   "text": [
+    "NEW PROPOSED WALL · división cocina/salón en X = 4.33",
+    "Muro bajo sólido h 1.00 + vidrio (spec. térmica TO BE ENGINEERED).",
+    "Corrimiento 1.97 m respecto de la división de Marna’s."
+   ]
+  },
+  {
+   "anchor": [
+    5.05,
+    2.75
+   ],
+   "sheets": [
+    "A101"
+   ],
+   "color": "#553688",
+   "text": [
+    "PASE: línea → P-1 (0.90) → pase caliente al sur de la barra (≈2 m)",
+    "P-1 es la única conexión cocina/salón: vaivén con visor."
+   ]
+  },
+  {
+   "anchor": [
+    1.65,
+    0.98
+   ],
+   "sheets": [
+    "A101"
+   ],
+   "color": "#8f4500",
+   "text": [
+    "Mesa inox 155 × 70 + horno de mesa (muro norte, junto a freidoras)",
+    "Horno de piso: exige división en X ≈ 5.1 — DIMENSION TO VERIFY."
+   ]
+  },
+  {
+   "anchor": [
+    2.75,
+    5.45
+   ],
+   "sheets": [
+    "A101"
+   ],
+   "color": "#17737a",
+   "text": [
+    "WASHING en la ubicación existente de PILAS — VERIFY ON SITE",
+    "Fregadero 2T, lavamanos y mop sink sobre drenajes existentes."
+   ]
+  },
+  {
+   "anchor": [
+    2.3,
+    10.4
+   ],
+   "sheets": [
+    "A101"
+   ],
+   "color": "#1a55b0",
+   "text": [
+    "COLD PREP concentrado en la antigua PASTELERÍA",
+    "Refri 2P · congelador · mesa fría · mesa · estanterías · almacén seco."
+   ]
+  },
+  {
+   "anchor": [
+    3.01,
+    11.3
+   ],
+   "sheets": [
+    "A101",
+    "A102"
+   ],
+   "color": "#b00020",
+   "text": [
+    "PS-1 PUERTA DE SERVICIO CONDICIONAL — VERIFY ON SITE",
+    "Reemplaza parte de la ventana sur: aprobación de la administración."
+   ]
+  },
+  {
+   "anchor": [
+    15.8,
+    1.35
+   ],
+   "sheets": [
+    "A101"
+   ],
+   "color": "#6d5f08",
+   "text": [
+    "DELIVERY: retiro en la recepción de la entrada",
+    "El repartidor no cruza el salón; pedidos empacados en el pase."
+   ]
+  },
+  {
+   "anchor": [
+    0.45,
+    0.45
+   ],
+   "sheets": [
+    "A101",
+    "A102"
+   ],
+   "color": "#555555",
+   "text": [
+    "Ductos en envolvente de columna A1 — VERIFY ON SITE",
+    "Altura libre de cielo (3.00 supuesta) — VERIFY ON SITE."
+   ]
+  },
+  {
+   "anchor": [
+    6.348,
+    2.2
+   ],
+   "sheets": [
+    "A102"
+   ],
+   "color": "#d62828",
+   "text": [
+    "WALL TO DEMOLISH · IP-KB división liviana de Marna’s (X = 6.30)",
+    "10 cm, sin trama de mampostería ni columnas → liviana."
+   ]
+  },
+  {
+   "anchor": [
+    3.58,
+    5.036
+   ],
+   "sheets": [
+    "A102"
+   ],
+   "color": "#d62828",
+   "text": [
+    "WALL TO DEMOLISH · IP-P0b, tramo cocina/pilas",
+    "Abre el paso directo puerta P-1 → lavado."
+   ]
+  },
+  {
+   "anchor": [
+    1.51,
+    8.71
+   ],
+   "sheets": [
+    "A102"
+   ],
+   "color": "#d62828",
+   "text": [
+    "WALL TO DEMOLISH (parcial) · remate de IP-P2, 0.35 m",
+    "Libera la boca del pasillo limpio hacia cold prep."
+   ]
+  },
+  {
+   "anchor": [
+    4.755000000000001,
+    1.2
+   ],
+   "sheets": [
+    "A102"
+   ],
+   "color": "#111111",
+   "text": [
+    "NEW PROPOSED WALL · NW-1 muro bajo h 1.00 + vidrio",
+    "Aterriza sobre el muro existente EW-E1; vidrio TO BE ENGINEERED."
+   ]
+  },
+  {
+   "anchor": [
+    3.6,
+    3.62
+   ],
+   "sheets": [
+    "A102"
+   ],
+   "color": "#111111",
+   "text": [
+    "NEW PROPOSED WALL · NW-2 panel térmico incombustible",
+    "Entre parrilla y puerta P-1, de piso a campana."
+   ]
+  },
+  {
+   "anchor": [
+    5.0,
+    4.05
+   ],
+   "sheets": [
+    "A102"
+   ],
+   "color": "#111111",
+   "text": [
+    "P-1 · puerta de vaivén 0.90 con visor (nuevo vano)"
+   ]
+  },
+  {
+   "anchor": [
+    1.51,
+    6.3
+   ],
+   "sheets": [
+    "A102"
+   ],
+   "color": "#5c5c58",
+   "text": [
+    "EXISTING WALL · se mantienen perímetro, columnas, escalera y ductos",
+    "y las divisiones IP-P0a, IP-P1, IP-P2, IP-P3 (separan limpio / sucio).",
+    "Confirmar en sitio que no alojan instalaciones — VERIFY ON SITE."
+   ]
+  }
  ]
 }

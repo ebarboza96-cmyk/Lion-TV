@@ -25,7 +25,15 @@ function counterUnit(B, f, z0, h, { doors = 0, top = MAT.stainless, body = MAT.s
     if (doors) doorSeams(B, f, z0 + 0.14, h - 0.05, doors);
   }
 }
+/* true when the item's back sits against the glazed show-kitchen partition (keep the view through the glass open) */
+function backsOnGlass(M, f) {
+  const P = M.partition;
+  if (!P || P.type !== 'glass_partition') return false;
+  const b = f.P(f.w / 2, -0.06), r = rgrow(P.rect, 0.04);
+  return b[0] >= r[0] && b[0] <= r[2] && b[1] >= r[1] && b[1] <= r[3];
+}
 function backsplash(B, M, e, f, zTop) {
+  if (backsOnGlass(M, f)) return;
   const n = f.n, back = f.P(f.w / 2, -0.005);
   const t = castRay(M, back[0], back[1], -n[0], -n[1], 1).t;
   if (t > 0.15) return;
@@ -42,7 +50,8 @@ const EQ = {
     B.box(MAT.blackSteel, f.R(0, 0, f.w, f.d), zt, zt + 0.05);                     // tray
     B.box(MAT.blackSteel, f.R(0, 0, 0.03, f.d), zt, h + 0.35);                     // side walls
     B.box(MAT.blackSteel, f.R(f.w - 0.03, 0, f.w, f.d), zt, h + 0.35);
-    B.box(MAT.blackSteel, f.R(0, 0, f.w, 0.03), zt, h + 0.62);                     // back wall
+    // back wall: low when the parrilla backs onto the glazed partition, so the fire reads from the dining room
+    B.box(MAT.blackSteel, f.R(0, 0, f.w, 0.03), zt, backsOnGlass(MODEL, f) ? h + 0.14 : h + 0.62);
     B.box(MAT.blackSteel, f.R(0, f.d - 0.03, f.w, f.d), zt, h - 0.02);             // front lip
     B.box(MAT.stainless, f.R(0, f.d - 0.035, f.w, f.d + 0.01), h - 0.02, h);
     // embers

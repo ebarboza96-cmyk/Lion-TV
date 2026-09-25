@@ -2,6 +2,7 @@
 # Regenerate every deliverable from data/existing.json + data/layout.json.
 set -euo pipefail
 cd "$(dirname "$0")/.."
+python3 tools/make_layout.py
 python3 tools/validate.py data/layout.json --json data/validation.json
 python3 tools/plan_svg.py data/layout.json --validation data/validation.json
 NODE_PATH="$(npm root -g)" node tools/export_sheets.js plan
