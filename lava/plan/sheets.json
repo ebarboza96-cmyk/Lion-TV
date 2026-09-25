@@ -16,5 +16,23 @@
   "file": "lava_A103_flujos.svg",
   "title": "Flujos y circulaciones",
   "order": 103
+ },
+ {
+  "id": "A104",
+  "file": "lava_A104_seguridad.svg",
+  "title": "Seguridad humana y protección contra incendios",
+  "order": 104
+ },
+ {
+  "id": "A105",
+  "file": "lava_A105_accesibilidad.svg",
+  "title": "Accesibilidad (Ley 7600)",
+  "order": 105
+ },
+ {
+  "id": "A106",
+  "file": "lava_A106_acabados.svg",
+  "title": "Acabados y puertas",
+  "order": 106
  }
 ]

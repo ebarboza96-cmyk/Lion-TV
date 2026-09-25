@@ -1,0 +1,651 @@
+{
+ "summary": {
+  "longest_path": {
+   "id": "E1",
+   "from": "COLD PREP · punto más remoto (zona A)",
+   "length": 21.75,
+   "limit": 22.86
+  },
+  "all_egress_paths_ok": true,
+  "issues": [
+   "PM-1: Disparo manual supresión HD-1 — En ruta de egreso, h 1.07–1.22 m (NFPA 96 §10.5.1); 3–6 m de la campana = criterio IFC de referencia (verificar) (medido 1.45 m; 0.31 m fuera de la ruta de egreso de cocina)."
+  ],
+  "longest_path_at_0.30m_clearance": {
+   "path": "E1",
+   "clearance_m": 0.3,
+   "length": 21.93,
+   "limit": 22.86,
+   "ok": true,
+   "from_pt": [
+    3.49,
+    11.141
+   ]
+  }
+ },
+ "sheet": "A-104",
+ "status": "ANTEPROYECTO / PRELIMINAR — a validar por el profesional responsable (CFIA) y Bomberos",
+ "layout_version": "3.0",
+ "method": {
+  "occupant_load": "Área de zona (validation.json, m²) ÷ factor (layout.life_safety.load_factors); redondeo hacia arriba por zona.",
+  "egress": "Camino más corto sobre grilla de 5 cm (16 vecinos) en el espacio libre = premisas − lavageo.blocking_obstacles (muros, columnas, equipos, mesas, sillas en posición ocupada, bancas) erosionado 0.25 m (radio corporal); suavizado por visibilidad y medido hasta el plano de la puerta de salida. Desde asientos: tramo recto hasta el pasillo cruzando solo sillas/bancas. Contraste: geodésica exacta (grafo de visibilidad) del recorrido más largo ≈ 0.5 % menor (el método queda del lado conservador); con 0.30 m de las esquinas (NFPA 101 7.6) ver summary.",
+  "limits_source": "NFPA 101 (edición a verificar, adoptada por RNPCI 2023): camino común 23 m y recorrido 46 m (mercantil <50 personas, sin rociadores); capacidad 5 mm/persona."
+ },
+ "occupant_load": {
+  "rows": [
+   {
+    "zone": "D",
+    "name": "DINING",
+    "use": "Salón con mesas y sillas (NFPA 101 Tabla 7.3.1.2)",
+    "area_m2": 51.58,
+    "factor_m2_per_person": 1.4,
+    "basis": "neto",
+    "raw": 36.84,
+    "occupants": 37
+   },
+   {
+    "zone": "C",
+    "name": "BAR / POS",
+    "use": "Barra/caja/pase: área de trabajo, solo servicio (sin taburetes ni clientes de pie)",
+    "area_m2": 5.78,
+    "factor_m2_per_person": 9.3,
+    "basis": "bruto",
+    "raw": 0.62,
+    "occupants": 1
+   },
+   {
+    "zone": "B",
+    "name": "HOT LINE / SHOW KITCHEN",
+    "use": "Cocina, lavado, almacén (NFPA 101 Tabla 7.3.1.2)",
+    "area_m2": 12.59,
+    "factor_m2_per_person": 9.3,
+    "basis": "bruto",
+    "raw": 1.35,
+    "occupants": 2
+   },
+   {
+    "zone": "E",
+    "name": "BBQ PRODUCTION",
+    "use": "Cocina, lavado, almacén (NFPA 101 Tabla 7.3.1.2)",
+    "area_m2": 8.18,
+    "factor_m2_per_person": 9.3,
+    "basis": "bruto",
+    "raw": 0.88,
+    "occupants": 1
+   },
+   {
+    "zone": "W",
+    "name": "WASHING",
+    "use": "Cocina, lavado, almacén (NFPA 101 Tabla 7.3.1.2)",
+    "area_m2": 9.59,
+    "factor_m2_per_person": 9.3,
+    "basis": "bruto",
+    "raw": 1.03,
+    "occupants": 2
+   },
+   {
+    "zone": "A",
+    "name": "COLD PREP",
+    "use": "Cocina, lavado, almacén (NFPA 101 Tabla 7.3.1.2)",
+    "area_m2": 18.87,
+    "factor_m2_per_person": 9.3,
+    "basis": "bruto",
+    "raw": 2.03,
+    "occupants": 3
+   }
+  ],
+  "total_rounded_per_zone": 46,
+  "total_rounded_per_use": 43,
+  "total_unrounded": 42.75,
+  "declared_capacity": 49,
+  "nfpa101_assembly_threshold": 50,
+  "classification_by_calc": "mercantil <50",
+  "declared_ok_vs_calc": true,
+  "below_threshold_calc": true,
+  "below_threshold_declared": true,
+  "rounding": "hacia arriba por zona (criterio conservador del paquete)",
+  "scenario_bar_as_staff_area": null
+ },
+ "egress_paths": [
+  {
+   "id": "E1",
+   "from": "COLD PREP · punto más remoto (zona A)",
+   "from_pt": [
+    3.54,
+    11.191
+   ],
+   "exit": "SAL-1",
+   "length": 21.75,
+   "limit": 22.86,
+   "ok": true,
+   "length_m": 21.75,
+   "limit_common_path_m": 22.86,
+   "limit_travel_m": 45.72,
+   "ok_common_path": true,
+   "ok_travel": true,
+   "margin_m": 1.11,
+   "length_with_ps1_conditional_m": 0.55,
+   "polyline": [
+    [
+     3.54,
+     11.191
+    ],
+    [
+     1.34,
+     8.941
+    ],
+    [
+     1.19,
+     8.491
+    ],
+    [
+     1.19,
+     7.891
+    ],
+    [
+     1.44,
+     7.691
+    ],
+    [
+     2.34,
+     7.291
+    ],
+    [
+     3.04,
+     5.041
+    ],
+    [
+     3.89,
+     4.541
+    ],
+    [
+     6.09,
+     3.391
+    ],
+    [
+     6.64,
+     2.891
+    ],
+    [
+     16.3,
+     2.891
+    ]
+   ]
+  },
+  {
+   "id": "E2",
+   "from": "WASHING · punto más remoto (zona W)",
+   "from_pt": [
+    1.84,
+    8.141
+   ],
+   "exit": "SAL-1",
+   "length": 17.23,
+   "limit": 22.86,
+   "ok": true,
+   "length_m": 17.23,
+   "limit_common_path_m": 22.86,
+   "limit_travel_m": 45.72,
+   "ok_common_path": true,
+   "ok_travel": true,
+   "margin_m": 5.63,
+   "length_with_ps1_conditional_m": 5.18,
+   "polyline": [
+    [
+     1.84,
+     8.141
+    ],
+    [
+     1.89,
+     7.891
+    ],
+    [
+     2.59,
+     6.841
+    ],
+    [
+     3.09,
+     4.991
+    ],
+    [
+     6.14,
+     3.341
+    ],
+    [
+     6.54,
+     2.941
+    ],
+    [
+     16.3,
+     2.891
+    ]
+   ]
+  },
+  {
+   "id": "E3",
+   "from": "Frente del smoker S1 (operador)",
+   "from_pt": [
+    0.9650000000000001,
+    1.7
+   ],
+   "exit": "SAL-1",
+   "length": 16.81,
+   "limit": 22.86,
+   "ok": true,
+   "length_m": 16.81,
+   "limit_common_path_m": 22.86,
+   "limit_travel_m": 45.72,
+   "ok_common_path": true,
+   "ok_travel": true,
+   "margin_m": 6.05,
+   "length_with_ps1_conditional_m": 10.4,
+   "polyline": [
+    [
+     0.965,
+     1.7
+    ],
+    [
+     3.29,
+     4.191
+    ],
+    [
+     4.49,
+     4.241
+    ],
+    [
+     6.64,
+     2.891
+    ],
+    [
+     16.3,
+     2.891
+    ]
+   ]
+  },
+  {
+   "id": "E4",
+   "from": "Línea caliente · operador más remoto (H1–H5)",
+   "from_pt": [
+    2.69,
+    0.391
+   ],
+   "exit": "SAL-1",
+   "length": 17.31,
+   "limit": 22.86,
+   "ok": true,
+   "length_m": 17.31,
+   "limit_common_path_m": 22.86,
+   "limit_travel_m": 45.72,
+   "ok_common_path": true,
+   "ok_travel": true,
+   "margin_m": 5.55,
+   "length_with_ps1_conditional_m": 11.94,
+   "polyline": [
+    [
+     2.69,
+     0.391
+    ],
+    [
+     3.14,
+     4.041
+    ],
+    [
+     3.34,
+     4.241
+    ],
+    [
+     4.54,
+     4.241
+    ],
+    [
+     6.69,
+     2.891
+    ],
+    [
+     16.3,
+     2.891
+    ]
+   ]
+  },
+  {
+   "id": "E5",
+   "from": "Salón · asiento más lejano (BQ-S#1)",
+   "from_pt": [
+    6.946,
+    4.711
+   ],
+   "exit": "SAL-1",
+   "length": 11.91,
+   "limit": 22.86,
+   "ok": true,
+   "length_m": 11.91,
+   "limit_common_path_m": 22.86,
+   "limit_travel_m": 45.72,
+   "ok_common_path": true,
+   "ok_travel": true,
+   "margin_m": 10.95,
+   "length_with_ps1_conditional_m": 11.91,
+   "polyline": [
+    [
+     6.946,
+     4.711
+    ],
+    [
+     6.29,
+     4.191
+    ],
+    [
+     6.29,
+     3.591
+    ],
+    [
+     6.44,
+     3.041
+    ],
+    [
+     6.69,
+     2.891
+    ],
+    [
+     16.3,
+     2.891
+    ]
+   ]
+  },
+  {
+   "id": "E6",
+   "from": "Barra / caja · puesto más remoto (zona C)",
+   "from_pt": [
+    5.14,
+    0.391
+   ],
+   "exit": "SAL-1",
+   "length": 13.26,
+   "limit": 22.86,
+   "ok": true,
+   "length_m": 13.26,
+   "limit_common_path_m": 22.86,
+   "limit_travel_m": 45.72,
+   "ok_common_path": true,
+   "ok_travel": true,
+   "margin_m": 9.6,
+   "length_with_ps1_conditional_m": 13.26,
+   "polyline": [
+    [
+     5.14,
+     0.391
+    ],
+    [
+     5.14,
+     2.391
+    ],
+    [
+     5.39,
+     2.641
+    ],
+    [
+     16.3,
+     2.641
+    ]
+   ]
+  },
+  {
+   "id": "E7",
+   "from": "Recepción D2 (atril)",
+   "from_pt": [
+    15.825,
+    1.3
+   ],
+   "exit": "SAL-1",
+   "length": 0.83,
+   "limit": 22.86,
+   "ok": true,
+   "length_m": 0.83,
+   "limit_common_path_m": 22.86,
+   "limit_travel_m": 45.72,
+   "ok_common_path": true,
+   "ok_travel": true,
+   "margin_m": 22.03,
+   "length_with_ps1_conditional_m": 0.83,
+   "polyline": [
+    [
+     15.825,
+     1.3
+    ],
+    [
+     16.14,
+     1.891
+    ],
+    [
+     16.3,
+     1.931
+    ]
+   ]
+  },
+  {
+   "id": "E8",
+   "from": "BBQ PRODUCTION · punto más remoto (zona E)",
+   "from_pt": [
+    0.99,
+    1.091
+   ],
+   "exit": "SAL-1",
+   "length": 17.26,
+   "limit": 22.86,
+   "ok": true,
+   "length_m": 17.26,
+   "limit_common_path_m": 22.86,
+   "limit_travel_m": 45.72,
+   "ok_common_path": true,
+   "ok_travel": true,
+   "margin_m": 5.6,
+   "length_with_ps1_conditional_m": 11.01,
+   "polyline": [
+    [
+     0.99,
+     1.091
+    ],
+    [
+     3.29,
+     4.191
+    ],
+    [
+     4.49,
+     4.241
+    ],
+    [
+     6.64,
+     2.891
+    ],
+    [
+     16.3,
+     2.891
+    ]
+   ]
+  },
+  {
+   "id": "E0",
+   "from": "Punto más remoto del local",
+   "from_pt": [
+    3.54,
+    11.191
+   ],
+   "exit": "SAL-1",
+   "length": 21.75,
+   "limit": 22.86,
+   "ok": true,
+   "length_m": 21.75,
+   "limit_common_path_m": 22.86,
+   "limit_travel_m": 45.72,
+   "ok_common_path": true,
+   "ok_travel": true,
+   "margin_m": 1.11,
+   "length_with_ps1_conditional_m": 0.55,
+   "polyline": [
+    [
+     3.54,
+     11.191
+    ],
+    [
+     1.34,
+     8.941
+    ],
+    [
+     1.19,
+     8.491
+    ],
+    [
+     1.19,
+     7.891
+    ],
+    [
+     1.44,
+     7.691
+    ],
+    [
+     2.34,
+     7.291
+    ],
+    [
+     3.04,
+     5.041
+    ],
+    [
+     3.89,
+     4.541
+    ],
+    [
+     6.09,
+     3.391
+    ],
+    [
+     6.64,
+     2.891
+    ],
+    [
+     16.3,
+     2.891
+    ]
+   ]
+  }
+ ],
+ "exits": [
+  {
+   "id": "SAL-1",
+   "opening": "D-ENT",
+   "width_m": 2.0,
+   "leaf_m": 0.97,
+   "capacity_persons_5mm": 400,
+   "required_width_mm": 245.0,
+   "required_width_calc_mm": 230.0,
+   "counted": true,
+   "ok": true,
+   "note": "Salida principal al pasillo abierto del centro comercial. Hojas hoy hacia adentro (permitido con <50 personas). Recomendado invertir el giro hacia afuera sin invadir el pasillo común — VERIFY con la administración."
+  },
+  {
+   "id": "SAL-2",
+   "opening": "PS-1",
+   "width_m": 0.9,
+   "leaf_m": 0.9,
+   "capacity_persons_5mm": 180,
+   "required_width_mm": 245.0,
+   "required_width_calc_mm": 230.0,
+   "counted": false,
+   "ok": true,
+   "note": "Segunda salida del personal SOLO si se aprueba PS-1 (condicional). No se cuenta para el cálculo."
+  }
+ ],
+ "device_checks": [
+  {
+   "id": "K-H4",
+   "hazard": "H4 Freidora 1",
+   "device": "EX-A1",
+   "criterion": "Extintor clase K a ≤ 9.15 m de recorrido (NFPA 10 §6.6 / NFPA 96)",
+   "length": 5.61,
+   "limit": 9.15,
+   "ok": true,
+   "kind": "K"
+  },
+  {
+   "id": "K-H5",
+   "hazard": "H5 Freidora 2",
+   "device": "EX-A1",
+   "criterion": "Extintor clase K a ≤ 9.15 m de recorrido (NFPA 10 §6.6 / NFPA 96)",
+   "length": 6.16,
+   "limit": 9.15,
+   "ok": true,
+   "kind": "K"
+  },
+  {
+   "id": "SF-H1",
+   "hazard": "H1 Parrilla argentina",
+   "device": "EX-A1",
+   "criterion": "2-A (agua) o K 6 L a ≤ 6 m de recorrido de equipo/almacén de combustible sólido (NFPA 96, verificar)",
+   "length": 3.6,
+   "limit": 6.0,
+   "ok": true,
+   "kind": "SF"
+  },
+  {
+   "id": "SF-S1",
+   "hazard": "S1 Smoker vertical (ahumador)",
+   "device": "EX-A1",
+   "criterion": "2-A (agua) o K 6 L a ≤ 6 m de recorrido de equipo/almacén de combustible sólido (NFPA 96, verificar)",
+   "length": 4.47,
+   "limit": 6.0,
+   "ok": true,
+   "kind": "SF"
+  },
+  {
+   "id": "SF-S3",
+   "hazard": "S3 Leña / carbón",
+   "device": "EX-A1",
+   "criterion": "2-A (agua) o K 6 L a ≤ 6 m de recorrido de equipo/almacén de combustible sólido (NFPA 96, verificar)",
+   "length": 2.83,
+   "limit": 6.0,
+   "ok": true,
+   "kind": "SF"
+  },
+  {
+   "id": "B-H2",
+   "hazard": "H2 Cocina 4Q gas (gas)",
+   "device": "EX-B1",
+   "criterion": "Clase B: 10-B a ≤ 9.15 m de recorrido (NFPA 10 §6.3.1)",
+   "length": 2.02,
+   "limit": 9.15,
+   "ok": true,
+   "kind": "B"
+  },
+  {
+   "id": "B-H5",
+   "hazard": "H5 Freidora 2 (gas)",
+   "device": "EX-B1",
+   "criterion": "Clase B: 10-B a ≤ 9.15 m de recorrido (NFPA 10 §6.3.1)",
+   "length": 3.86,
+   "limit": 9.15,
+   "ok": true,
+   "kind": "B"
+  },
+  {
+   "id": "A-max",
+   "hazard": "Local completo (riesgo ordinario)",
+   "device": "EX-B1, EX-A2, EX-A3",
+   "criterion": "Clase A: recorrido ≤ 22.9 m al extintor 2-A más cercano (NFPA 10 Tabla 6.2.1.1)",
+   "length": 8.74,
+   "limit": 22.9,
+   "ok": true,
+   "kind": "A"
+  },
+  {
+   "id": "PM-1",
+   "hazard": "Disparo manual supresión HD-1",
+   "device": "PM-1",
+   "criterion": "En ruta de egreso, h 1.07–1.22 m (NFPA 96 §10.5.1); 3–6 m de la campana = criterio IFC de referencia (verificar)",
+   "length": 1.45,
+   "limit": 6.0,
+   "ok": false,
+   "walk_from_line": 7.92,
+   "dist_to_egress_path": 0.31,
+   "kind": "PM"
+  }
+ ]
+}
