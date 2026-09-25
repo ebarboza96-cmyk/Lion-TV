@@ -79,12 +79,15 @@ def main():
 
     # ---------------- Markdown
     L = []
-    L.append('# LAVA · Contemporary Fire & BBQ — Informe de test-fit')
+    L.append('# LAVA · Contemporary Fire & BBQ — Informe del anteproyecto (test-fit v3)')
     L.append('')
     L.append(content.get('intro', ''))
     L.append('')
-    L.append('Láminas: [`plan/LAVA_test-fit_planos_A2.pdf`](../plan/LAVA_test-fit_planos_A2.pdf) '
-             '(A-101 planta propuesta · A-102 demolición/construcción · A-103 flujos). '
+    idx_path = os.path.join(ROOT, 'plan', 'sheets.json')
+    idx = json.load(open(idx_path)) if os.path.exists(idx_path) else []
+    listing = ' · '.join(f"{d['id'][0]}-{d['id'][1:]} {d['title'].lower()}" for d in idx) or 'A-101 · A-102 · A-103'
+    L.append(f'Láminas A2: [`plan/LAVA_test-fit_planos_A2.pdf`](../plan/LAVA_test-fit_planos_A2.pdf) ({listing}). '
+             'Documentos para permisos: [`docs/permisos/`](permisos/). Archivos DXF para AutoCAD: `plan/*.dxf`. '
              'Recorrido 3D: [`app/index.html`](../app/index.html).')
     L.append('')
     L.append('## 1. Resumen en cifras')

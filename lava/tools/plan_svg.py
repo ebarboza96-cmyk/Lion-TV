@@ -809,6 +809,10 @@ def build(lay_path, val_path, outdir):
     s.layer_existing()
     s.layer_demolish()
     s.layer_new()
+    for it in lay.get('remove_items', []):   # existing equipment to remove (e.g. Marna's hood): red dashed outline
+        s.add(rect_el(it['rect'], 'none', COL['demolish'], 0.35, dash='2 1'))
+        x0, y0, x1, y1 = it['rect']
+        s.add(text(sx((x0 + x1) / 2), sy(y1) - 1.0, it.get('label', ''), 1.8, weight='700', fill=COL['demolish']))
     s.dims_for('dims', 'A102')
     s.dims_for('dims_demo', 'A102')
     s.keynotes('A102')

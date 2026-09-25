@@ -50,7 +50,7 @@
    "h": 3.0,
    "base_h": 1.0,
    "short": "Muro bajo h 1.00 + vidrio",
-   "note": "NEW PARTITION WALL → PROPOSED. Base sólida incombustible h≈1.00 m + vidrio hacia el salón. Especificación térmica/cortafuego del vidrio y del muro detrás de la parrilla TO BE ENGINEERED."
+   "note": "NEW PARTITION WALL → PROPOSED. Base sólida incombustible h≈1.00 m + vidrio hacia el salón. Base maciza (concreto o bloque) en todo el tramo de la línea. Tramo de la parrilla, de h 1.00 hasta el borde de la campana 2: vidrio vitrocerámico (≥680 °C) o pantalla inox con cámara ventilada de 25 mm; resto vidrio templado/laminado de seguridad. Especificación térmica/cortafuego TO BE ENGINEERED."
   },
   {
    "id": "NW-2",
@@ -72,13 +72,38 @@
    "type": "double_acting_door",
    "rect": [
     4.325,
-    4.03,
+    3.966,
     4.4750000000000005,
-    4.93
+    4.986
    ],
-   "width": 0.9,
+   "width": 1.02,
    "label": "P-1",
-   "note": "Puerta de cocina de vaivén 0.90 con visor. Entrada de loza sucia y salida de platos al pase."
+   "note": "Puerta de cocina de vaivén: vano 1.02, hoja ≈0.96 con visor, paso libre ≥0.90 (Ley 7600 art. 140). Única conexión cocina/salón: entrada de loza sucia y salida de platos; circulación por la derecha. Siempre libre (ruta de evacuación del personal)."
+  },
+  {
+   "id": "P-2",
+   "type": "door",
+   "rect": [
+    1.46,
+    7.076,
+    1.56,
+    7.986
+   ],
+   "width": 0.91,
+   "label": "P-2",
+   "hinge": [
+    1.56,
+    7.986
+   ],
+   "closed_to": [
+    1.56,
+    7.076
+   ],
+   "swing_to": [
+    2.47,
+    7.986
+   ],
+   "note": "Puerta de cierre automático en el vano existente pasillo limpio → lavado (separa limpio/sucio y conserva la ruta de evacuación del ala)."
   },
   {
    "id": "PS-1",
@@ -104,7 +129,7 @@
     12.516
    ],
    "conditional": true,
-   "note": "PUERTA DE SERVICIO CONDICIONAL: sustituye parte de la ventana sur existente (hacia pasillo del edificio). Requiere aprobación de la administración y revisión estructural — VERIFY ON SITE."
+   "note": "PUERTA DE SERVICIO CONDICIONAL: sustituye parte de la ventana sur existente (hacia pasillo del edificio). Requiere aprobación de la administración y revisión estructural. Si el pasillo sur es parte de la salida de la escalera del edificio, puede exigirse puerta cortafuego autocerrante — VERIFY ON SITE."
   }
  ],
  "zones": [
@@ -311,10 +336,10 @@
     ]
    ],
    "label_at": [
-    6.52,
+    6.6,
     1.25
    ],
-   "label_size": 3.6,
+   "label_size": 3.4,
    "label_at_flows": [
     6.5,
     0.6
@@ -387,9 +412,9 @@
    "label": "Cocina 4 quemadores (gas de red)",
    "cat": "fire",
    "rect": [
-    3.525,
+    3.375,
     1.616,
-    4.325,
+    4.175,
     2.416
    ],
    "front": "W",
@@ -406,9 +431,9 @@
    "label": "Plancha",
    "cat": "fire",
    "rect": [
-    3.525,
+    3.375,
     0.916,
-    4.325,
+    4.175,
     1.616
    ],
    "front": "W",
@@ -424,9 +449,9 @@
    "label": "Freidora 1",
    "cat": "fire",
    "rect": [
-    3.525,
+    3.375,
     0.516,
-    4.325,
+    4.175,
     0.916
    ],
    "front": "W",
@@ -442,9 +467,9 @@
    "label": "Freidora 2",
    "cat": "fire",
    "rect": [
-    3.525,
+    3.375,
     0.116,
-    4.325,
+    4.175,
     0.516
    ],
    "front": "W",
@@ -460,7 +485,7 @@
    "label": "Campana 1 · línea a gas",
    "cat": "hood",
    "rect": [
-    3.325,
+    3.175,
     0.116,
     4.325,
     2.416
@@ -474,7 +499,7 @@
    "label_side": "outside",
    "system": "grease",
    "plan_label": "Campana 1 · gas",
-   "note": "Freidoras + plancha + cocina 4Q (2.30 m): ≈2.30 × 1.00 m, con supresión de químico húmedo UL 300 / NFPA 17A y corte de gas enclavado. Aprovecha la zona del collarín del ducto existente de Marna’s (VERIFY ON SITE). EXTRACTION / MAKE-UP AIR / FIRE SUPPRESSION TO BE ENGINEERED."
+   "note": "Freidoras + plancha + cocina 4Q (2.30 m): ≈2.30 × 1.15 m (voladizo frontal 0.20), supresión de químico húmedo UL 300 / NFPA 17A y corte de gas enclavado. Collarín nuevo dentro de la campana con transición al ducto existente de Marna’s si la inspección lo aprueba (VERIFY ON SITE). Panel divisorio con la campana 2 en Y 2.42. EXTRACTION / MAKE-UP AIR / FIRE SUPPRESSION TO BE ENGINEERED."
   },
   {
    "id": "HD-2",
@@ -497,7 +522,7 @@
    "label_side": "outside",
    "system": "solid_fuel",
    "plan_label": "Campana 2 · sólido",
-   "note": "Solo la parrilla (NFPA 96 cap. 14): campana, ducto, ventilador y descarga INDEPENDIENTES de la campana 1, arrestachispas antes de los filtros, filtros ≥1.07 m sobre la superficie de brasas (TBV). ≈1.55 × 1.10 m. EXTRACTION / MAKE-UP AIR / FIRE SUPPRESSION TO BE ENGINEERED."
+   "note": "Solo la parrilla (NFPA 96 cap. 14): campana, ducto, ventilador y descarga INDEPENDIENTES de la campana 1, arrestachispas antes de los filtros, filtros ≥1.22 m sobre la superficie de cocción en su posición más alta (NFPA 96 cap. 14, TBV), supresión listada para combustible sólido. ≈1.55 × 1.10 m. Ducto vertical propio a cubierta en cerramiento RF 1 h. EXTRACTION / MAKE-UP AIR / FIRE SUPPRESSION TO BE ENGINEERED."
   },
   {
    "id": "K1",
@@ -508,7 +533,7 @@
    "rect": [
     0.875,
     0.116,
-    2.425,
+    2.275,
     0.816
    ],
    "front": "S",
@@ -516,7 +541,7 @@
    "h": 0.9,
    "tbv": false,
    "plan_label": "Mesa inox + K2 horno",
-   "note": "Apoyo / mise en place / bandejeo / terminación junto a la línea. 155 × 70 (ajustada para dejar 1.10 m frente a freidoras)."
+   "note": "Apoyo / mise en place / bandejeo / terminación junto a la línea. 140 × 70 (ajustada para dejar 1.10 m frente a freidoras)."
   },
   {
    "id": "K2",
@@ -525,9 +550,9 @@
    "label": "Horno (sobre mesa)",
    "cat": "fire",
    "rect": [
-    1.675,
+    1.525,
     0.116,
-    2.425,
+    2.275,
     0.816
    ],
    "front": null,
@@ -681,28 +706,47 @@
    "clear": 1.0,
    "h": 0.9,
    "tbv": false,
-   "plan_label": "Mesa escurrido + basureros",
+   "plan_label": "Mesa escurrido (limpio)",
    "note": "187 × 60 (mesa opcional del programa) contra la división existente P1: racks limpios / apoyo."
   },
   {
    "id": "W6",
    "tag": "W6",
    "key": "waste_bins",
-   "label": "Basureros con tapa (bajo mesa)",
+   "label": "Basureros con tapa (bajo escurridor sucio)",
    "cat": "wash",
    "rect": [
-    1.61,
-    5.3,
-    2.11,
-    6.3
+    3.36,
+    5.2,
+    4.06,
+    6.0
    ],
    "front": null,
    "clear": 0,
    "h": 0.7,
    "tbv": false,
-   "stack_with": "W4",
+   "stack_with": "W1",
    "no_label": true,
-   "note": "2 contenedores con tapa y pedal (orgánicos / valorizables) bajo la mesa W4. Retiro diario al cuarto de basura del centro comercial, fuera de horario."
+   "note": "3 contenedores con tapa y pedal (orgánicos / valorizables / ordinarios) bajo el escurridor norte de W1, donde entra la loza sucia. Retiro diario al cuarto de basura del centro comercial, fuera de horario (VERIFY con la administración)."
+  },
+  {
+   "id": "W7",
+   "tag": "W7",
+   "key": "chem_cabinet",
+   "label": "Gabinete de químicos",
+   "cat": "storage",
+   "rect": [
+    4.21,
+    7.6,
+    4.51,
+    7.93
+   ],
+   "front": "W",
+   "clear": 0.6,
+   "h": 1.8,
+   "tbv": false,
+   "plan_label": "Químicos",
+   "note": "Gabinete cerrado y rotulado para productos de limpieza, lejos de alimentos y loza limpia."
   },
   {
    "id": "GT-1",
@@ -750,9 +794,9 @@
    "cat": "cold",
    "rect": [
     3.81,
-    8.95,
+    9.286,
     4.51,
-    10.4
+    10.736
    ],
    "front": "W",
    "clear": 0.9,
@@ -768,9 +812,9 @@
    "cat": "cold",
    "rect": [
     3.81,
-    10.4,
+    10.736,
     4.51,
-    11.15
+    11.486
    ],
    "front": "W",
    "clear": 0.9,
@@ -786,9 +830,9 @@
    "label": "Mesa fría refrigerada",
    "cat": "cold",
    "rect": [
-    0.72,
+    0.7,
     10.786,
-    2.52,
+    2.5,
     11.486
    ],
    "front": "N",
@@ -798,6 +842,44 @@
    "note": "180 × 70."
   },
   {
+   "id": "A7",
+   "tag": "A7",
+   "key": "mesa_esquina",
+   "label": "Esquinero inox (mesada en L)",
+   "cat": "prep",
+   "rect": [
+    0.0,
+    10.786,
+    0.7,
+    11.486
+   ],
+   "front": null,
+   "clear": 0,
+   "h": 0.9,
+   "tbv": false,
+   "plan_label": "Esquinero",
+   "note": "Cierra la esquina entre A4 y A3 con mesada continua en L (sin rendijas difíciles de limpiar)."
+  },
+  {
+   "id": "A8",
+   "tag": "A8",
+   "key": "handwash_cold",
+   "label": "Lavamanos prep fría",
+   "cat": "wash",
+   "rect": [
+    1.65,
+    8.536,
+    1.98,
+    8.916
+   ],
+   "front": "S",
+   "clear": 0.6,
+   "h": 0.9,
+   "tbv": false,
+   "plan_label": "Lavamanos",
+   "note": "Lavamanos exclusivo de la zona fría, con jabón y toallas desechables."
+  },
+  {
    "id": "A4",
    "tag": "A4",
    "key": "mesa_2",
@@ -805,9 +887,9 @@
    "cat": "prep",
    "rect": [
     0.0,
-    9.55,
+    9.586,
     0.7,
-    10.75
+    10.786
    ],
    "front": "E",
    "clear": 1.0,
@@ -844,32 +926,13 @@
     -0.085,
     5.1,
     0.365,
-    7.1
+    7.9
    ],
    "front": "E",
    "clear": 0.85,
    "h": 2.0,
    "tbv": false,
-   "note": "200 × 45 a lo largo del pasillo limpio (muro oeste). Estantes a ≥15 cm del piso."
-  },
-  {
-   "id": "L1",
-   "tag": "L1",
-   "key": "lockers",
-   "label": "Casilleros del personal",
-   "cat": "misc",
-   "rect": [
-    -0.085,
-    7.2,
-    0.365,
-    7.9
-   ],
-   "front": "E",
-   "clear": 0.85,
-   "h": 1.8,
-   "tbv": false,
-   "plan_label": "Casilleros",
-   "note": "Mueble cerrado de 8 casilleros (70 × 45 × 180), separado del almacén seco; el personal usa los servicios sanitarios comunes del centro comercial. Aceptación de Salud: VERIFY."
+   "note": "280 × 45 a lo largo del pasillo limpio (muro oeste). Estantes a ≥15 cm del piso."
   },
   {
    "id": "C1",
@@ -878,9 +941,9 @@
    "label": "Barra de bebidas",
    "cat": "bar",
    "rect": [
-    5.4,
+    5.43,
     0.116,
-    6.05,
+    6.08,
     0.8
    ],
    "front": "E",
@@ -888,7 +951,45 @@
    "h": 1.05,
    "tbv": false,
    "plan_label": "Barra bebidas",
-   "note": "Barra compacta de bebidas con enfriador bajo barra, pileta de barra con lavamanos (extender drenaje existente WP5 ≈1 m — VERIFY)."
+   "note": "Barra compacta de bebidas con enfriador bajo barra y pileta de barra (extender drenaje existente WP5 ≈1 m — VERIFY)."
+  },
+  {
+   "id": "C5",
+   "tag": "C5",
+   "key": "handwash_bar",
+   "label": "Lavamanos de barra",
+   "cat": "wash",
+   "rect": [
+    4.475,
+    0.116,
+    4.855,
+    0.446
+   ],
+   "front": "E",
+   "clear": 0.5,
+   "h": 0.9,
+   "tbv": false,
+   "plan_label": "Lavamanos",
+   "note": "Lavamanos exclusivo del personal de barra, al fondo del pasillo de barra (tramo sin salida)."
+  },
+  {
+   "id": "L1",
+   "tag": "L1",
+   "key": "lockers",
+   "label": "Casilleros del personal",
+   "cat": "misc",
+   "rect": [
+    5.5,
+    4.536,
+    6.5,
+    4.986
+   ],
+   "front": "N",
+   "clear": 0.9,
+   "h": 1.8,
+   "tbv": false,
+   "plan_label": "Casilleros personal",
+   "note": "Mueble cerrado de 10 casilleros (100 × 45 × 180) fuera de las áreas de alimentos, junto a P-1. El personal usa los servicios sanitarios comunes del centro comercial (autorización escrita: VERIFY)."
   },
   {
    "id": "C4",
@@ -897,9 +998,9 @@
    "label": "Caja accesible (h 0.80)",
    "cat": "bar",
    "rect": [
-    5.4,
+    5.43,
     0.8,
-    6.05,
+    6.08,
     1.7
    ],
    "front": "E",
@@ -916,9 +1017,9 @@
    "label": "Pase / pickup caliente",
    "cat": "bar",
    "rect": [
-    5.4,
+    5.43,
     1.7,
-    6.05,
+    6.08,
     2.35
    ],
    "front": "E",
@@ -935,9 +1036,9 @@
    "label": "POS",
    "cat": "bar",
    "rect": [
-    5.5,
+    5.53,
     1.0,
-    5.95,
+    5.98,
     1.45
    ],
    "front": null,
@@ -987,9 +1088,9 @@
    "id": "TN2",
    "tag": "TN2",
    "rect": [
-    9.1,
+    9.21,
     0.716,
-    9.8,
+    9.91,
     1.416
    ],
    "seats": 2,
@@ -999,9 +1100,9 @@
    "id": "TN3",
    "tag": "TN3",
    "rect": [
-    10.15,
+    10.26,
     0.716,
-    11.35,
+    11.46,
     1.416
    ],
    "seats": 4,
@@ -1011,9 +1112,9 @@
    "id": "TN4",
    "tag": "TN4",
    "rect": [
-    11.7,
+    11.81,
     0.716,
-    12.4,
+    12.51,
     1.416
    ],
    "seats": 2,
@@ -1026,9 +1127,9 @@
    "id": "TN5",
    "tag": "TN5",
    "rect": [
-    12.6,
+    12.82,
     0.716,
-    13.3,
+    13.52,
     1.416
    ],
    "seats": 2,
@@ -1038,9 +1139,9 @@
    "id": "TN6",
    "tag": "TN6",
    "rect": [
-    13.65,
+    13.87,
     0.716,
-    14.85,
+    15.07,
     1.416
    ],
    "seats": 4,
@@ -1052,9 +1153,9 @@
    "id": "TS1",
    "tag": "TS1",
    "rect": [
-    6.6,
+    6.55,
     3.686,
-    7.3,
+    7.25,
     4.386
    ],
    "seats": 2,
@@ -1067,9 +1168,9 @@
    "id": "TS2",
    "tag": "TS2",
    "rect": [
-    7.5,
+    7.56,
     3.686,
-    8.2,
+    8.26,
     4.386
    ],
    "seats": 2,
@@ -1079,9 +1180,9 @@
    "id": "TS3",
    "tag": "TS3",
    "rect": [
-    8.55,
+    8.58,
     3.686,
-    9.75,
+    9.78,
     4.386
    ],
    "seats": 4,
@@ -1106,9 +1207,9 @@
    "id": "TS5",
    "tag": "TS5",
    "rect": [
-    11.0,
+    11.11,
     3.686,
-    11.7,
+    11.81,
     4.386
    ],
    "seats": 2,
@@ -1118,9 +1219,9 @@
    "id": "TS6",
    "tag": "TS6",
    "rect": [
-    12.05,
+    12.13,
     3.686,
-    13.25,
+    13.33,
     4.386
    ],
    "seats": 4,
@@ -1130,9 +1231,9 @@
    "id": "TS7",
    "tag": "TS7",
    "rect": [
-    13.6,
+    13.65,
     3.686,
-    14.3,
+    14.35,
     4.386
    ],
    "seats": 2,
@@ -1145,9 +1246,9 @@
    "id": "TS8",
    "tag": "TS8",
    "rect": [
-    14.5,
+    14.66,
     3.686,
-    15.2,
+    15.36,
     4.386
    ],
    "seats": 2,
@@ -1171,9 +1272,9 @@
   {
    "id": "TN2-c1",
    "rect": [
-    9.225,
+    9.335,
     1.466,
-    9.675,
+    9.785,
     1.916
    ],
    "table": "TN2",
@@ -1182,9 +1283,9 @@
   {
    "id": "TN3-c1",
    "rect": [
-    10.225,
+    10.335,
     1.466,
-    10.675,
+    10.785,
     1.916
    ],
    "table": "TN3",
@@ -1193,9 +1294,9 @@
   {
    "id": "TN3-c2",
    "rect": [
-    10.825,
+    10.935,
     1.466,
-    11.275,
+    11.385,
     1.916
    ],
    "table": "TN3",
@@ -1204,9 +1305,9 @@
   {
    "id": "TN4-c1",
    "rect": [
-    11.825,
+    11.935,
     1.466,
-    12.275,
+    12.385,
     1.916
    ],
    "table": "TN4",
@@ -1215,9 +1316,9 @@
   {
    "id": "TN5-c1",
    "rect": [
-    12.725,
+    12.945,
     1.466,
-    13.175,
+    13.395,
     1.916
    ],
    "table": "TN5",
@@ -1226,9 +1327,9 @@
   {
    "id": "TN6-c1",
    "rect": [
-    13.725,
+    13.945,
     1.466,
-    14.175,
+    14.395,
     1.916
    ],
    "table": "TN6",
@@ -1237,9 +1338,9 @@
   {
    "id": "TN6-c2",
    "rect": [
-    14.325,
+    14.545,
     1.466,
-    14.775,
+    14.995,
     1.916
    ],
    "table": "TN6",
@@ -1248,9 +1349,9 @@
   {
    "id": "TS1-c1",
    "rect": [
-    6.725,
+    6.675,
     3.186,
-    7.175,
+    7.125,
     3.636
    ],
    "table": "TS1",
@@ -1259,9 +1360,9 @@
   {
    "id": "TS2-c1",
    "rect": [
-    7.625,
+    7.685,
     3.186,
-    8.075,
+    8.135,
     3.636
    ],
    "table": "TS2",
@@ -1270,9 +1371,9 @@
   {
    "id": "TS3-c1",
    "rect": [
-    8.625,
+    8.655,
     3.186,
-    9.075,
+    9.105,
     3.636
    ],
    "table": "TS3",
@@ -1281,9 +1382,9 @@
   {
    "id": "TS3-c2",
    "rect": [
-    9.225,
+    9.255,
     3.186,
-    9.675,
+    9.705,
     3.636
    ],
    "table": "TS3",
@@ -1303,9 +1404,9 @@
   {
    "id": "TS5-c1",
    "rect": [
-    11.125,
+    11.235,
     3.186,
-    11.575,
+    11.685,
     3.636
    ],
    "table": "TS5",
@@ -1314,9 +1415,9 @@
   {
    "id": "TS6-c1",
    "rect": [
-    12.125,
+    12.205,
     3.186,
-    12.575,
+    12.655,
     3.636
    ],
    "table": "TS6",
@@ -1325,9 +1426,9 @@
   {
    "id": "TS6-c2",
    "rect": [
-    12.725,
+    12.805,
     3.186,
-    13.175,
+    13.255,
     3.636
    ],
    "table": "TS6",
@@ -1336,9 +1437,9 @@
   {
    "id": "TS7-c1",
    "rect": [
-    13.725,
+    13.775,
     3.186,
-    14.175,
+    14.225,
     3.636
    ],
    "table": "TS7",
@@ -1347,9 +1448,9 @@
   {
    "id": "TS8-c1",
    "rect": [
-    14.625,
+    14.785,
     3.186,
-    15.075,
+    15.235,
     3.636
    ],
    "table": "TS8",
@@ -1362,22 +1463,26 @@
    "rect": [
     8.15,
     0.116,
-    15.25,
+    15.12,
     0.666
    ],
    "seats": 8,
-   "back": "N"
+   "back": "N",
+   "individual": true,
+   "note": "8 asientos individuales fijos con divisores (≥0.70 m c/u): la carga de ocupantes se cuenta por asiento, no por longitud."
   },
   {
    "id": "BQ-S",
    "rect": [
-    6.55,
+    6.5,
     4.436,
-    15.6,
+    15.41,
     4.986
    ],
    "seats": 10,
-   "back": "S"
+   "back": "S",
+   "individual": true,
+   "note": "10 asientos individuales fijos con divisores (≥0.70 m c/u): la carga de ocupantes se cuenta por asiento, no por longitud."
   }
  ],
  "points": {
@@ -1529,16 +1634,16 @@
      2.8
     ],
     [
-     5.5,
-     4.0
+     5.2,
+     3.7
     ],
     [
-     5.1,
-     4.48
+     4.95,
+     4.4
     ],
     [
      3.9,
-     4.48
+     4.45
     ],
     [
      2.9,
@@ -1566,11 +1671,15 @@
     ],
     [
      1.9,
-     9.7
+     9.75
     ],
     [
-     0.95,
-     8.95
+     1.17,
+     9.25
+    ],
+    [
+     0.89,
+     8.6
     ],
     [
      0.89,
@@ -1585,8 +1694,8 @@
      4.75
     ],
     [
-     1.3,
-     4.3
+     1.25,
+     4.2
     ],
     [
      2.7,
@@ -1638,11 +1747,15 @@
     ],
     [
      7.0,
-     2.5
+     2.55
     ],
     [
      15.0,
-     2.45
+     2.55
+    ],
+    [
+     15.45,
+     2.35
     ],
     [
      15.75,
@@ -1666,11 +1779,15 @@
     ],
     [
      2.2,
-     9.6
+     9.75
     ],
     [
-     0.95,
-     8.95
+     1.17,
+     9.25
+    ],
+    [
+     0.89,
+     8.6
     ],
     [
      0.89,
@@ -1878,18 +1995,9 @@
    ],
    "face": "E",
    "z": 0.12,
-   "h": 0.86
-  },
-  {
-   "type": "planter",
-   "rect": [
-    4.325,
-    3.3,
-    4.4750000000000005,
-    3.9
-   ],
-   "face": "E",
-   "h": 1.0
+   "h": 0.86,
+   "material": "incombustible",
+   "note": "Relieve decorativo de leños cerámicos / acero (incombustible), sin hueco: la base detrás de la parrilla queda maciza. Sin leña real ni jardinera."
   }
  ],
  "tour": [
@@ -2183,14 +2291,14 @@
   },
   {
    "a": [
-    3.525,
+    3.375,
     0.116
    ],
    "b": [
-    3.525,
+    3.375,
     0.516
    ],
-   "off": -0.675,
+   "off": -0.525,
    "label": "0.40",
    "sheets": [
     "A101"
@@ -2198,14 +2306,14 @@
   },
   {
    "a": [
-    3.525,
+    3.375,
     0.516
    ],
    "b": [
-    3.525,
+    3.375,
     0.916
    ],
-   "off": -0.675,
+   "off": -0.525,
    "label": "0.40",
    "sheets": [
     "A101"
@@ -2213,14 +2321,14 @@
   },
   {
    "a": [
-    3.525,
+    3.375,
     0.916
    ],
    "b": [
-    3.525,
+    3.375,
     1.616
    ],
-   "off": -0.675,
+   "off": -0.525,
    "label": "0.70",
    "sheets": [
     "A101"
@@ -2228,14 +2336,14 @@
   },
   {
    "a": [
-    3.525,
+    3.375,
     1.616
    ],
    "b": [
-    3.525,
+    3.375,
     2.416
    ],
-   "off": -0.675,
+   "off": -0.525,
    "label": "0.80",
    "sheets": [
     "A101"
@@ -2259,14 +2367,14 @@
   {
    "a": [
     3.425,
-    4.03
+    3.966
    ],
    "b": [
     3.425,
-    4.93
+    4.986
    ],
    "off": -0.575,
-   "label": "0.90",
+   "label": "1.02",
    "sheets": [
     "A101"
    ]
@@ -2429,11 +2537,11 @@
   },
   {
    "a": [
-    2.425,
+    2.275,
     0.4
    ],
    "b": [
-    3.525,
+    3.375,
     0.4
    ],
    "off": 0.0,
@@ -2448,11 +2556,11 @@
     1.25
    ],
    "b": [
-    3.525,
+    3.375,
     1.25
    ],
    "off": 0.0,
-   "label": "2.86 libre",
+   "label": "2.71 libre",
    "sheets": [
     "A101"
    ]
@@ -2519,11 +2627,11 @@
   },
   {
    "a": [
-    12.2,
+    12.3,
     1.916
    ],
    "b": [
-    12.2,
+    12.3,
     3.186
    ],
    "off": 0.0,
@@ -2538,22 +2646,37 @@
     0.95
    ],
    "b": [
-    5.4,
+    5.43,
     0.95
    ],
    "off": 0.0,
-   "label": "0.93",
+   "label": null,
    "sheets": [
     "A101"
    ]
   },
   {
    "a": [
-    9.8,
+    8.9,
     0.716
    ],
    "b": [
-    10.15,
+    9.21,
+    0.716
+   ],
+   "off": 0.0,
+   "label": null,
+   "sheets": [
+    "A101"
+   ]
+  },
+  {
+   "a": [
+    9.91,
+    0.716
+   ],
+   "b": [
+    10.26,
     0.716
    ],
    "off": 0.0,
@@ -2629,43 +2752,67 @@
   }
  ],
  "sheet_notes": [
-  "!Test-fit conceptual: validar con arquitecto e ingenierías.",
+  "!Anteproyecto: revisar, verificar en sitio y firmar por profesional CFIA.",
   "Geometría base: vectores del PDF Marna’s (1:50). Cotas ±2 cm.",
   "Hot line fija sobre la división con el salón (cliente).",
   "BBQ production (smoker + holding) en el muro del fondo.",
   "Lavado en PILAS existentes; cold prep en ex-PASTELERÍA.",
   "* / punto rojo = DIMENSION TO VERIFY (equipo sin ficha).",
   "Altura libre de cielo y ductos existentes: VERIFY ON SITE.",
-  "Extracción (2 sistemas + chimenea smoker), aire de reposición, supresión y gas: TO BE ENGINEERED.Egreso, sentido de puertas y ocupación: validar Bomberos/NFPA 101."
+  "Extracción: 2 sistemas + chimenea smoker — TO BE ENGINEERED.",
+  "Capacidad máxima 49 personas (ver A-104). Barra: solo servicio.",
+  "Baños: comunes del centro comercial (autorización: VERIFY)."
  ],
  "structure_notes": [
   "Se mantienen columnas A1, B1, C1, A2, escalera, ductos y perímetro.",
   "Solo se demuelen divisiones livianas de 10 cm (IP-KB, IP-P0b).",
   "IP-KB no tiene trama de mampostería ni columnas: liviana.",
   "IP-P0a, IP-P1, IP-P2 e IP-P3 se conservan (separan limpio/sucio).",
+  "P-2: puerta de cierre automático en el vano pasillo → lavado.",
   "La nueva división aterriza sobre el muro existente EW-E1.",
+  "Campana existente de Marna’s: se retira.",
   "!Confirmar en sitio que ninguna división aloja instalaciones.",
   "PS-1 solo con aprobación: abrir vano en ventana sur."
  ],
  "flow_notes": [
   "Limpio: cold prep → pasillo oeste → línea → P-1 → pase.",
   "Sucio: salón → P-1 → gira al sur → fregadero (≈1.5 m).",
-  "La ruta sucia no pasa por el pasillo limpio ni por cold prep.",
+  "P-2 (cierre automático) separa el pasillo limpio del lavado.",
   "Smoker → holding → línea / pase por el frente del muro oeste.",
-  "!P-1 es la única conexión cocina/salón: platos y loza comparten puerta."
+  "!P-1 es la única conexión cocina/salón: platos y loza comparten",
+  "!puerta (vano 1.02, circulación por la derecha)."
+ ],
+ "remove_items": [
+  {
+   "id": "HOOD-EX",
+   "rect": [
+    2.397,
+    0.116,
+    6.197,
+    1.219
+   ],
+   "label": "Campana existente Marna’s 3.80 × 1.10 — A RETIRAR"
+  }
  ],
  "life_safety": {
   "capacity_declared": 49,
-  "capacity_note": "Capacidad máxima declarada y rotulada: 49 personas (clientes + personal). Mantiene la ocupación mercantil / <50 de NFPA 101: una salida, puerta sin exigencia de giro hacia afuera ni antipánico. VERIFY con Bomberos (RNPCI).",
+  "capacity_note": "Capacidad máxima declarada y rotulada: 49 personas (clientes + personal). Condición de diseño: ocupación de menos de 50 personas (NFPA 101 mercantil / <50): una salida, puerta sin exigencia de giro hacia afuera ni antipánico. VERIFY con Bomberos (RNPCI).",
   "load_factors": [
    {
     "zones": [
-     "D",
-     "C"
+     "D"
     ],
     "factor": 1.4,
     "basis": "neto",
-    "use": "Salón y barra con mesas y sillas (NFPA 101 Tabla 7.3.1.2)"
+    "use": "Salón con mesas y sillas (NFPA 101 Tabla 7.3.1.2)"
+   },
+   {
+    "zones": [
+     "C"
+    ],
+    "factor": 9.3,
+    "basis": "bruto",
+    "use": "Barra/caja/pase: área de trabajo, solo servicio (sin taburetes ni clientes de pie)"
    },
    {
     "zones": [
@@ -2679,6 +2826,13 @@
     "use": "Cocina, lavado, almacén (NFPA 101 Tabla 7.3.1.2)"
    }
   ],
+  "limits": {
+   "common_path_m": 22.86,
+   "travel_m": 45.72,
+   "door_clear_min_m": 0.81,
+   "egress_mm_per_person": 5.0,
+   "note": "Límites NFPA 101 para <50 personas sin rociadores: camino común 22.86 m (75 ft), recorrido 45.72 m (150 ft). Verificar edición."
+  },
   "exits": [
    {
     "id": "SAL-1",
@@ -2703,6 +2857,8 @@
     "note": "Segunda salida del personal SOLO si se aprueba PS-1 (condicional). No se cuenta para el cálculo."
    }
   ],
+  "egress_route_note": "Ruta del ala: cold prep → boca del pasillo → P-2 (cierre automático) → lavado (franja libre ≥0.915 m entre W4 y W1, sin racks ni carritos) → paso de 1.86 m → P-1 → salón → SAL-1.",
+  "waiting_area": "Sin zona de espera interior: el vestíbulo y el barrido de D-ENT son área de egreso libre. Cola y retiro de delivery afuera.",
   "exit_signs": [
    {
     "id": "RS-1",
@@ -2753,6 +2909,16 @@
     "text": "SALIDA ↑",
     "dir": "N",
     "note": "Boca del pasillo limpio desde cold prep"
+   },
+   {
+    "id": "RS-6",
+    "at": [
+     2.7,
+     7.4
+    ],
+    "text": "SALIDA ↑",
+    "dir": "N",
+    "note": "Lavado, sobre la franja de evacuación hacia P-1"
    }
   ],
   "emergency_lights": [
@@ -2806,12 +2972,21 @@
    },
    {
     "id": "EX-A1",
-    "type": "ABC 2-A:10-B:C",
+    "type": "Clase K 6 L (combustible sólido)",
     "at": [
      -0.04,
      4.7
     ],
-    "note": "Smoker y parrilla (combustible sólido) a ≤6 m"
+    "note": "Smoker y parrilla a ≤6 m (NFPA 96 cap. 14: 2-A de agua pulverizada o químico húmedo K 6 L). Si un hogar supera 0.14 m³: manguera fija de agua."
+   },
+   {
+    "id": "EX-B1",
+    "type": "ABC 2-A:10-B:C",
+    "at": [
+     2.45,
+     0.13
+    ],
+    "note": "Cocina caliente: equipos a gas (10-B a ≤9.15 m de las freidoras)"
    },
    {
     "id": "EX-A2",
@@ -2834,11 +3009,15 @@
   ],
   "pull_station": {
    "at": [
-    7.4,
-    0.13
+    4.525,
+    3.85
    ],
    "h": "1.07–1.22 m",
-   "note": "Accionamiento manual del sistema de supresión de la campana 1: en ruta de egreso, 3–6 m de la campana (VERIFY edición NFPA 96 / 17A)."
+   "ids": [
+    "PM-1",
+    "PM-2"
+   ],
+   "note": "Pulsadores manuales de supresión de la campana 1 (PM-1) y de la campana 2 (PM-2), con tapa, en la cara salón de NW-1 junto al marco norte de P-1: sobre la ruta de salida del personal, ≈3 m de la parrilla (distancia exigida según edición NFPA 96 / 17A: VERIFY)."
   },
   "smoke_detectors": [
    [
@@ -2862,8 +3041,10 @@
     2.55
    ]
   ],
-  "detector_note": "Detección e integración a la alarma del centro comercial si existe (VERIFY). En cocina caliente: detector térmico, no de humo.",
-  "restrooms": "Servicios sanitarios: comunes del centro comercial (H/M + accesible). Distancia de recorrido ≤36 m y autorización escrita de la administración: VERIFY."
+  "detector_note": "Detección e integración a la alarma del centro comercial si existe (VERIFY). En cocina caliente: detector térmico, no de humo. Monitoreo de CO recomendado por los dos aparatos de combustible sólido.",
+  "sprinklers": "NFPA 101 no exige rociadores con <50 personas. Si el centro comercial tiene red o alarma, integrarse según NFPA 13/72 — VERIFY con la administración.",
+  "fuel_storage_note": "Leña/carbón: solo la provisión de un día, en gabinete metálico cerrado (S3), nada encima, ≥0.915 m de aparatos de combustible sólido. Cenizas: retiro diario en contenedor metálico con tapa, fuera de horario, a un punto exterior acordado con la administración.",
+  "restrooms": "Servicios sanitarios: comunes del centro comercial (H/M + accesible) para clientes y personal. Capacidad según CIHSE Tabla 5.3, horario, distancia de recorrido y autorización escrita de la administración: VERIFY."
  },
  "mep": {
   "gas": {
@@ -2875,11 +3056,11 @@
    "entry_note": "Punto de acometida tentativo en el muro norte — VERIFY ON SITE con la administración",
    "main_valve": [
     3.0,
-    0.25
+    -0.15
    ],
    "solenoid": [
-    3.4,
-    0.25
+    2.9,
+    0.2
    ],
    "consumers": [
     "H2",
@@ -2887,7 +3068,7 @@
     "H4",
     "H5"
    ],
-   "note": "Válvula de corte manual accesible antes de entrar al local + válvula solenoide enclavada con la supresión de la campana 1 (rearme manual). Detector de fugas según tipo de gas (GLP: a ≤0.30 m del piso). Mangueras ≤1.5 m."
+   "note": "Llave de corte principal FUERA del local, en la acometida, rotulada. Válvula solenoide/mecánica enclavada con la supresión de la campana 1 (rearme manual) en el muro norte, fuera de la proyección de la campana. Manifold en el espacio técnico de 0.15 m detrás de la línea, válvula de servicio por equipo, conectores listados ≤1.5 m con cable de restricción. Detector según tipo de gas (GLP a ≤0.30 m del piso)."
   },
   "exhaust": [
    {
@@ -2895,10 +3076,20 @@
     "serves": "HD-1",
     "kind": "grasa (gas)",
     "collar": [
-     4.3,
+     3.95,
      0.67
     ],
-    "riser": "Ruta del ducto existente de Marna’s (collarín X 4.10–4.50, Y 0.47–0.87) — VERIFY ON SITE",
+    "route": [
+     [
+      3.95,
+      0.67
+     ],
+     [
+      4.3,
+      0.67
+     ]
+    ],
+    "riser": "Collarín nuevo en HD-1 con transición al riser existente de Marna’s (X 4.10–4.50, Y 0.47–0.87) solo si la inspección lo aprueba; si no, ducto nuevo acero 16 MSG soldado en cerramiento RF — VERIFY ON SITE",
     "fan": "Ventilador en cubierta — VERIFY"
    },
    {
@@ -2913,19 +3104,11 @@
      [
       3.8,
       3.2
-     ],
-     [
-      3.0,
-      3.2
-     ],
-     [
-      0.4,
-      0.4
      ]
     ],
-    "riser": "Celdas de ducto S-PIL junto a la columna A1 — VERIFY ON SITE",
+    "riser": "Ducto vertical propio sobre la parrilla hasta cubierta, en cerramiento RF 1 h nuevo (penetración de losa: revisión estructural + aprobación del condominio)",
     "fan": "Ventilador propio en cubierta",
-    "note": "Arrestachispas antes de filtros; limpieza mensual."
+    "note": "Arrestachispas antes de filtros; limpieza mensual. S-PIL no sirve (celda ≈0.11 m)."
    },
    {
     "id": "EXT-3",
@@ -2939,14 +3122,10 @@
      [
       0.29,
       1.7
-     ],
-     [
-      0.29,
-      0.6
      ]
     ],
-    "riser": "S-PIL o chimenea propia listada (NFPA 211) — VERIFY",
-    "note": "Remate según INVU / NFPA 96 (altura sobre edificios vecinos: VERIFY)."
+    "riser": "Chimenea listada vertical (NFPA 211) sobre el smoker hasta cubierta, con arrestachispas — VERIFY. Alternativa: smoker eléctrico o de pellet listado.",
+    "note": "Remate según NFPA 96 7.8 / INVU (altura sobre edificios vecinos y distancia a tomas de aire: VERIFY)."
    }
   ],
   "makeup_air": {
@@ -2961,7 +3140,7 @@
      3.0
     ]
    ],
-   "note": "Aire de reposición ≈80–90 % del caudal extraído, entregado sin perturbar la captura de las campanas — TO BE ENGINEERED."
+   "note": "Aire de reposición ≈80–90 % del caudal extraído, entregado sin perturbar la captura de las campanas; suministro positivo para combustible sólido — TO BE ENGINEERED."
   },
   "panel": {
    "id": "TE-1",
@@ -2979,6 +3158,11 @@
    "WP2",
    "WP3",
    "WP5"
+  ],
+  "engineering_notes": [
+   "Anclaje sísmico (Código Sísmico de CR) de campanas, ductos, gas y equipos altos (A1, A2, S1).",
+   "Ventilación / aire acondicionado del salón y de la cocina: el local solo tiene fachada al este — TO BE ENGINEERED.",
+   "Aire de combustión y monitoreo de CO para la parrilla y el smoker."
   ]
  },
  "keynote_box": {
@@ -3050,7 +3234,7 @@
    ],
    "color": "#553688",
    "text": [
-    "PASE: línea → P-1 (0.90) → pase caliente al sur de la barra (≈2 m)",
+    "PASE: línea → P-1 (paso libre ≥0.90) → pase caliente al sur de la barra (≈2 m)",
     "P-1 es la única conexión cocina/salón: vaivén con visor."
    ]
   },
@@ -3064,7 +3248,7 @@
    ],
    "color": "#8f4500",
    "text": [
-    "Mesa inox 155 × 70 + horno de mesa (muro norte, junto a freidoras)",
+    "Mesa inox 140 × 70 + horno de mesa (muro norte, junto a freidoras)",
     "Horno de piso: exige división en X ≈ 5.1 — DIMENSION TO VERIFY."
    ]
   },
@@ -3220,7 +3404,36 @@
    ],
    "color": "#111111",
    "text": [
-    "P-1 · puerta de vaivén 0.90 con visor (nuevo vano)"
+    "P-1 · puerta de vaivén, vano 1.02, paso libre ≥0.90, con visor (nuevo vano)",
+    "P-2 · puerta de cierre automático en el vano existente pasillo limpio → lavado"
+   ]
+  },
+  {
+   "anchor": [
+    3.0,
+    0.67
+   ],
+   "sheets": [
+    "A102"
+   ],
+   "color": "#d62828",
+   "text": [
+    "Campana existente de Marna’s 3.80 × 1.10 A RETIRAR",
+    "Sellar collarines y ductos no reutilizados; inspeccionar el riser si se reutiliza (EXT-1)."
+   ]
+  },
+  {
+   "anchor": [
+    2.65,
+    5.036
+   ],
+   "sheets": [
+    "A102"
+   ],
+   "color": "#d62828",
+   "text": [
+    "Ventana de platos existente (D-DISH-old): retirar antepecho o mostrador si existe",
+    "para dejar el paso libre de 1.86 m hacia lavado — VERIFY ON SITE."
    ]
   },
   {

@@ -9,7 +9,7 @@
     "label": "Entrada → barra / caja",
     "min_width": 1.28,
     "at": [
-     14.75,
+     14.95,
      2.55
     ],
     "required": 1.1,
@@ -33,7 +33,7 @@
     "id": "R-expo",
     "kind": "server",
     "label": "Línea → puerta P-1 → pase",
-    "min_width": 0.9,
+    "min_width": 0.98,
     "at": [
      4.97,
      2.45
@@ -46,26 +46,26 @@
     "id": "R-dirty",
     "kind": "dirty",
     "label": "Salón → puerta P-1 → lavado",
-    "min_width": 0.92,
+    "min_width": 0.95,
     "at": [
-     4.43,
-     4.48
+     6.56,
+     2.74
     ],
     "required": 0.9,
-    "length": 14.15,
+    "length": 14.12,
     "ok": true
    },
    {
     "id": "R-clean",
     "kind": "clean",
     "label": "Frío → prep → pasillo limpio → línea",
-    "min_width": 1.0,
+    "min_width": 1.04,
     "at": [
-     1.72,
-     4.15
+     2.86,
+     1.85
     ],
     "required": 1.0,
-    "length": 11.41,
+    "length": 11.51,
     "ok": true
    },
    {
@@ -85,13 +85,13 @@
     "id": "R-deliv",
     "kind": "delivery",
     "label": "Pase → staging en recepción (retiro sin cruzar salón)",
-    "min_width": 0.98,
+    "min_width": 0.97,
     "at": [
      6.14,
      2.83
     ],
     "required": 0.9,
-    "length": 11.3,
+    "length": 11.46,
     "ok": true
    },
    {
@@ -104,7 +104,7 @@
      4.35
     ],
     "required": 0.9,
-    "length": 8.54,
+    "length": 8.53,
     "ok": true
    }
   ],
@@ -126,7 +126,7 @@
    {
     "from": "kitchen_door",
     "to": "dish_drop",
-    "bottleneck": 0.92,
+    "bottleneck": 1.04,
     "required": 0.9,
     "ok": true
    },
@@ -140,28 +140,28 @@
    {
     "from": "line",
     "to": "kitchen_door",
-    "bottleneck": 0.92,
+    "bottleneck": 1.04,
     "required": 0.9,
     "ok": true
    },
    {
     "from": "smoker_front",
     "to": "kitchen_door",
-    "bottleneck": 0.92,
+    "bottleneck": 1.04,
     "required": 0.9,
     "ok": true
    },
    {
     "from": "expo_pass",
     "to": "kitchen_door",
-    "bottleneck": 0.96,
+    "bottleneck": 1.0,
     "required": 0.9,
     "ok": true
    },
    {
     "from": "delivery_staging",
     "to": "expo_pass",
-    "bottleneck": 0.96,
+    "bottleneck": 1.0,
     "required": 0.9,
     "ok": true
    },
