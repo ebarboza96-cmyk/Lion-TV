@@ -26,9 +26,10 @@ PARR_D = 0.90         # depth of parrilla (TBV)
 
 L = {
     'meta': {
-        'name': 'LAVA test-fit v2 · zonificación operativa del cliente',
-        'strategy': 'Hot line sobre la división con el salón; BBQ (smoker + holding) al fondo; lavado en PILAS; cold prep en PASTELERÍA',
-        'version': '2.0',
+        'name': 'LAVA anteproyecto v3 · zonificación del cliente + ajustes normativos',
+        'strategy': 'Hot line sobre la división con el salón; BBQ (smoker + holding) al fondo; lavado en PILAS; cold prep en PASTELERÍA; '
+                    'extracción independiente para combustible sólido; gas de la red del centro comercial',
+        'version': '3.0',
         'date': '2026-09-25',
     },
     'demolish': [
@@ -75,20 +76,25 @@ L['demolish'].append({'id': 'EW-S2', 'rect': [3.365, 11.486, 3.46, 11.616], 'con
 FL = P0 - LINE_D
 eq('H1', 'parrilla', 'Parrilla argentina', 'fire', [P0 - PARR_D, 2.416, P0, 3.916], 'W', 1.20, 0.90, True,
    note='Carbón/leña. 150 cm; fondo y brasero TBV. Pieza visual principal: de frente al salón tras el vidrio.')
-eq('H2', 'cocina_4q', 'Cocina LPG 4 quemadores', 'fire', [FL, 1.616, P0, 2.416], 'W', 1.10, 0.90, True, plan_label='Cocina 4Q LPG',
-   note='4 quemadores extragrandes; frente 80 cm TBV.')
+eq('H2', 'cocina_4q', 'Cocina 4 quemadores (gas de red)', 'fire', [FL, 1.616, P0, 2.416], 'W', 1.10, 0.90, True, plan_label='Cocina 4Q gas',
+   note='4 quemadores extragrandes, gas de la red del centro comercial (sin cilindros en el local); frente 80 cm TBV.')
 eq('H3', 'plancha', 'Plancha', 'fire', [FL, 0.916, P0, 1.616], 'W', 1.10, 0.90, True, note='Módulo 70 cm; fondo TBV.')
 eq('H4', 'freidora_1', 'Freidora 1', 'fire', [FL, 0.516, P0, 0.916], 'W', 1.10, 0.90, True,
    note='Freidora independiente; huella comercial 40×80 — DIMENSION TO VERIFY.')
 eq('H5', 'freidora_2', 'Freidora 2', 'fire', [FL, YN, P0, 0.516], 'W', 1.10, 0.90, True,
    note='Freidora independiente; huella comercial 40×80 — DIMENSION TO VERIFY.')
-eq('HD', 'hood', 'Campana línea caliente', 'hood', [P0 - 1.10, YN, P0, 3.966], None, 0, 0.6, True, overhead=True, closed_ends=True, label_side='outside',
-   note='Cubre parrilla + cocina + plancha + 2 freidoras (3.80 m) con voladizo frontal 20 cm: ≈3.85 × 1.10 m. '
-        'La propuesta Aceros VB 3.60 × 0.90 NO cubre esta línea. EXTRACTION / MAKE-UP AIR / FIRE SUPPRESSION TO BE ENGINEERED.')
+eq('HD-1', 'hood', 'Campana 1 · línea a gas', 'hood', [P0 - 1.00, YN, P0, 2.416], None, 0, 0.6, True, overhead=True, closed_ends=True,
+   label_side='outside', system='grease', plan_label='Campana 1 · gas',
+   note='Freidoras + plancha + cocina 4Q (2.30 m): ≈2.30 × 1.00 m, con supresión de químico húmedo UL 300 / NFPA 17A y corte de gas enclavado. '
+        'Aprovecha la zona del collarín del ducto existente de Marna’s (VERIFY ON SITE). EXTRACTION / MAKE-UP AIR / FIRE SUPPRESSION TO BE ENGINEERED.')
+eq('HD-2', 'hood', 'Campana 2 · parrilla (combustible sólido)', 'hood', [P0 - 1.10, 2.416, P0, 3.966], None, 0, 0.6, True, overhead=True, closed_ends=True,
+   label_side='outside', system='solid_fuel', plan_label='Campana 2 · sólido',
+   note='Solo la parrilla (NFPA 96 cap. 14): campana, ducto, ventilador y descarga INDEPENDIENTES de la campana 1, arrestachispas antes de los filtros, '
+        'filtros ≥1.07 m sobre la superficie de brasas (TBV). ≈1.55 × 1.10 m. EXTRACTION / MAKE-UP AIR / FIRE SUPPRESSION TO BE ENGINEERED.')
 eq('K1', 'mesa_1', 'Mesa de trabajo inox', 'prep', [0.875, YN, 2.425, 0.816], 'S', 1.00, 0.90, False, plan_label='Mesa inox + K2 horno',
    note='Apoyo / mise en place / bandejeo / terminación junto a la línea. 155 × 70 (ajustada para dejar 1.10 m frente a freidoras).')
 eq('K2', 'oven', 'Horno (sobre mesa)', 'fire', [1.675, YN, 2.425, 0.816], None, 0, 1.55, True, stack_with='K1', no_label=True,
-   note='Horno de convección/combi de mesa ≈75 × 70 TBV. Extracción del horno según tipo — TO BE ENGINEERED.')
+   note='Horno eléctrico de convección de mesa ≈75 × 70 TBV, con campana de recirculación integrada listada UL 710B (ventless) porque queda fuera de las campanas — TO BE ENGINEERED.')
 eq('K3', 'handwash_k', 'Lavamanos cocina (recomendado)', 'wash', [1.85, 4.606, 2.18, 4.986], 'N', 0.60, 0.90, False,
    note='Recomendado por higiene junto a la línea y a la entrada desde frío (verificar requisito Ministerio de Salud).')
 
@@ -108,8 +114,12 @@ eq('W2', 'handwash', 'Lavamanos', 'wash', [4.13, 7.25, 4.51, 7.58], 'W', 0.60, 0
    note='33 × 38. Reutiliza la zona húmeda WP2.')
 eq('W3', 'mop_sink', 'Pileta / mop sink', 'wash', [3.91, 7.936, 4.51, 8.436], 'W', 0.60, 0.45, False,
    note='60 × 50 en la posición exacta de la pila palo de piso existente (WP3).')
-eq('W4', 'mesa_opt', 'Mesa de apoyo / escurrido', 'wash', [1.56, 5.20, 2.16, 7.07], 'E', 1.00, 0.90, False,
+eq('W4', 'mesa_opt', 'Mesa de apoyo / escurrido', 'wash', [1.56, 5.20, 2.16, 7.07], 'E', 1.00, 0.90, False, plan_label='Mesa escurrido + basureros',
    note='187 × 60 (mesa opcional del programa) contra la división existente P1: racks limpios / apoyo.')
+eq('W6', 'waste_bins', 'Basureros con tapa (bajo mesa)', 'wash', [1.61, 5.30, 2.11, 6.30], None, 0, 0.70, False, stack_with='W4', no_label=True,
+   note='2 contenedores con tapa y pedal (orgánicos / valorizables) bajo la mesa W4. Retiro diario al cuarto de basura del centro comercial, fuera de horario.')
+eq('GT-1', 'grease_trap', 'Trampa de grasa (bajo fregadero)', 'wash', [3.36, 6.35, 4.06, 7.05], None, 0, 0.40, True, stack_with='W1', no_label=True,
+   note='Interceptor de grasa accesible para limpieza antes de conectar al drenaje existente; tamaño según CIHSE — TO BE ENGINEERED.')
 eq('W5', 'shelf_wash', 'Estante loza limpia', 'storage', [2.10, 8.086, 3.30, 8.436], 'N', 0.80, 1.80, False,
    note='120 × 35, 4 niveles.')
 
@@ -120,14 +130,19 @@ eq('A3', 'mesa_fria', 'Mesa fría refrigerada', 'cold', [0.72, 10.786, 2.52, 11.
 eq('A4', 'mesa_2', 'Mesa de trabajo inox (prep fría)', 'prep', [0.0, 9.55, 0.70, 10.75], 'E', 1.00, 0.90, False, plan_label='Mesa inox prep',
    note='120 × 70 (reducida de 180 para dejar libre la boca del pasillo limpio; ajuste permitido por el cliente).')
 eq('A5', 'shelf_4', 'Estantería 4 niveles', 'storage', [2.10, 8.536, 3.80, 8.886], 'S', 0.80, 1.80, False, note='170 × 35.')
-eq('A6', 'shelf_dry', 'Almacén seco (estantería)', 'storage', [-0.085, 5.10, 0.365, 7.90], 'E', 0.85, 2.00, False,
-   note='280 × 45 a lo largo del pasillo limpio (muro oeste).')
+eq('A6', 'shelf_dry', 'Almacén seco (estantería)', 'storage', [-0.085, 5.10, 0.365, 7.10], 'E', 0.85, 2.00, False,
+   note='200 × 45 a lo largo del pasillo limpio (muro oeste). Estantes a ≥15 cm del piso.')
+eq('L1', 'lockers', 'Casilleros del personal', 'misc', [-0.085, 7.20, 0.365, 7.90], 'E', 0.85, 1.80, False, plan_label='Casilleros',
+   note='Mueble cerrado de 8 casilleros (70 × 45 × 180), separado del almacén seco; el personal usa los servicios sanitarios comunes del centro comercial. '
+        'Aceptación de Salud: VERIFY.')
 # ---------------------------------------------------------------- C · BAR / POS
-eq('C1', 'barra', 'Barra / caja + bebidas', 'bar', [5.40, YN, 6.05, 1.70], 'E', 0.90, 1.05, False, plan_label='Barra / caja + C3 POS',
-   note='Barra compacta: caja, POS y apoyo de bebidas (enfriador bajo barra). Pileta de barra: extender drenaje existente WP5 ≈1 m — VERIFY.')
+eq('C1', 'barra', 'Barra de bebidas', 'bar', [5.40, YN, 6.05, 0.80], 'E', 0.90, 1.05, False, plan_label='Barra bebidas',
+   note='Barra compacta de bebidas con enfriador bajo barra, pileta de barra con lavamanos (extender drenaje existente WP5 ≈1 m — VERIFY).')
+eq('C4', 'caja', 'Caja accesible (h 0.80)', 'bar', [5.40, 0.80, 6.05, 1.70], 'E', 0.90, 0.80, False, plan_label='Caja h 0.80 + C3 POS',
+   note='Tramo de mostrador a 0.80 m de altura, 0.90 m de largo, con espacio libre inferior (Ley 7600, Reglamento art. 148).')
 eq('C2', 'pass', 'Pase / pickup caliente', 'bar', [5.40, 1.70, 6.05, 2.35], 'E', 0.90, 1.05, False, plan_label='Pase',
    note='Repisa de pase con lámparas de calor: se carga desde el pasillo de barra (lado cocina) y se retira desde el salón.')
-eq('C3', 'pos', 'POS', 'bar', [5.50, 0.95, 5.95, 1.40], None, 0, 1.10, False, stack_with='C1', no_label=True)
+eq('C3', 'pos', 'POS', 'bar', [5.50, 1.00, 5.95, 1.45], None, 0, 0.90, False, stack_with='C4', no_label=True)
 eq('D2', 'delivery_staging', 'Recepción + staging / retiro delivery', 'delivery', [15.45, 0.40, 16.20, 1.00], 'S', 0.60, 1.05, False, plan_label='Recep. + delivery',
    note='Atril de recepción con repisa para pedidos listos: el repartidor retira en la entrada sin cruzar el salón. Los pedidos se empacan en el pase.')
 
@@ -180,6 +195,12 @@ S_PATTERN = [0.70, 0.70, 1.20, 0.70, 0.70, 1.20, 0.70, 0.70, 1.20]
 xs_end, ss = row('TS', 6.60, 15.30, ROW_S, S_PATTERN)
 BQ.append({'id': 'BQ-S', 'rect': [6.55, YS - 0.55, round(xs_end + 0.05, 3), YS], 'seats': ss, 'back': 'S'})
 
+# accessible tables (Ley 7600): wheelchair takes the aisle-side chair position
+for t in T:
+    if t['id'] in ('TN6', 'TS8'):
+        t['accessible'] = True
+        t['note'] = 'Mesa accesible: h 0.76–0.80, espacio libre inferior ≥0.70 m, aproximación 0.80 × 1.20 desde el pasillo (se retira la silla del pasillo).'
+
 # ---------------------------------------------------------------- zones
 L['zones'] = [
     {'id': 'B', 'name': 'Cocina caliente / show kitchen', 'short': 'HOT LINE / SHOW KITCHEN', 'color': '#f07c14',
@@ -223,6 +244,66 @@ L['checks'] = [
     ['expo_pass', 'kitchen_door', 0.90], ['delivery_staging', 'expo_pass', 0.90], ['service_door', 'fuel', 0.90],
 ]
 
+# ---------------------------------------------------------------- life safety (Bomberos) + MEP anchors (single source for all sheets)
+L['life_safety'] = {
+    'capacity_declared': 49,
+    'capacity_note': 'Capacidad máxima declarada y rotulada: 49 personas (clientes + personal). Mantiene la ocupación mercantil / <50 de NFPA 101: '
+                     'una salida, puerta sin exigencia de giro hacia afuera ni antipánico. VERIFY con Bomberos (RNPCI).',
+    'load_factors': [
+        {'zones': ['D', 'C'], 'factor': 1.4, 'basis': 'neto', 'use': 'Salón y barra con mesas y sillas (NFPA 101 Tabla 7.3.1.2)'},
+        {'zones': ['B', 'E', 'W', 'A'], 'factor': 9.3, 'basis': 'bruto', 'use': 'Cocina, lavado, almacén (NFPA 101 Tabla 7.3.1.2)'},
+    ],
+    'exits': [
+        {'id': 'SAL-1', 'opening': 'D-ENT', 'at': [16.30, 2.643], 'width': 2.00, 'leaf': 0.97,
+         'note': 'Salida principal al pasillo abierto del centro comercial. Hojas hoy hacia adentro (permitido con <50 personas). '
+                 'Recomendado invertir el giro hacia afuera sin invadir el pasillo común — VERIFY con la administración.'},
+        {'id': 'SAL-2', 'opening': 'PS-1', 'at': [3.01, 11.55], 'width': 0.90, 'conditional': True,
+         'note': 'Segunda salida del personal SOLO si se aprueba PS-1 (condicional). No se cuenta para el cálculo.'},
+    ],
+    'exit_signs': [
+        {'id': 'RS-1', 'at': [16.15, 2.643], 'text': 'SALIDA', 'dir': 'E', 'note': 'Sobre la puerta principal, iluminado'},
+        {'id': 'RS-2', 'at': [6.20, 2.55], 'text': 'SALIDA →', 'dir': 'E', 'note': 'Direccional colgante en el salón (visible desde P-1 y la barra)'},
+        {'id': 'RS-3', 'at': [4.20, 4.48], 'text': 'SALIDA →', 'dir': 'E', 'note': 'Cara de cocina de la puerta P-1'},
+        {'id': 'RS-4', 'at': [0.90, 5.15], 'text': 'SALIDA ↑', 'dir': 'N', 'note': 'Pasillo limpio del ala, hacia la cocina'},
+        {'id': 'RS-5', 'at': [1.00, 8.95], 'text': 'SALIDA ↑', 'dir': 'N', 'note': 'Boca del pasillo limpio desde cold prep'},
+    ],
+    'emergency_lights': [[2.40, 2.40], [0.90, 4.40], [0.90, 7.00], [2.70, 6.60], [2.20, 10.00], [5.00, 3.60], [8.60, 2.55], [12.40, 2.55], [15.60, 2.55]],
+    'emergency_note': 'Iluminación de emergencia en todo el recorrido: autonomía ≥1.5 h, ≥10.8 lux promedio y ≥1.1 lux mínimo iniciales (NFPA 101 7.9).',
+    'extinguishers': [
+        {'id': 'EX-K', 'type': 'Clase K 6 L', 'at': [1.60, 4.95], 'note': 'Freidoras a ≤9.15 m; rótulo: accionar primero el sistema fijo'},
+        {'id': 'EX-A1', 'type': 'ABC 2-A:10-B:C', 'at': [-0.04, 4.70], 'note': 'Smoker y parrilla (combustible sólido) a ≤6 m'},
+        {'id': 'EX-A2', 'type': 'ABC 2-A:10-B:C', 'at': [15.80, 4.95], 'note': 'Salón, junto a la salida'},
+        {'id': 'EX-A3', 'type': 'ABC 2-A:10-B:C', 'at': [0.35, 8.50], 'note': 'Ala de servicio (lavado / cold prep)'},
+    ],
+    'pull_station': {'at': [7.40, 0.13], 'h': '1.07–1.22 m',
+                     'note': 'Accionamiento manual del sistema de supresión de la campana 1: en ruta de egreso, 3–6 m de la campana (VERIFY edición NFPA 96 / 17A).'},
+    'smoke_detectors': [[2.40, 1.20], [0.60, 6.20], [2.40, 9.80], [8.50, 2.55], [12.40, 2.55]],
+    'detector_note': 'Detección e integración a la alarma del centro comercial si existe (VERIFY). En cocina caliente: detector térmico, no de humo.',
+    'restrooms': 'Servicios sanitarios: comunes del centro comercial (H/M + accesible). Distancia de recorrido ≤36 m y autorización escrita de la administración: VERIFY.',
+}
+L['mep'] = {
+    'gas': {'source': 'Red de gas del centro comercial (tipo de gas y presión: VERIFY)', 'entry': [3.00, 0.00],
+            'entry_note': 'Punto de acometida tentativo en el muro norte — VERIFY ON SITE con la administración',
+            'main_valve': [3.00, 0.25], 'solenoid': [3.40, 0.25], 'consumers': ['H2', 'H3', 'H4', 'H5'],
+            'note': 'Válvula de corte manual accesible antes de entrar al local + válvula solenoide enclavada con la supresión de la campana 1 (rearme manual). '
+                    'Detector de fugas según tipo de gas (GLP: a ≤0.30 m del piso). Mangueras ≤1.5 m.'},
+    'exhaust': [
+        {'id': 'EXT-1', 'serves': 'HD-1', 'kind': 'grasa (gas)', 'collar': [4.30, 0.67],
+         'riser': 'Ruta del ducto existente de Marna’s (collarín X 4.10–4.50, Y 0.47–0.87) — VERIFY ON SITE', 'fan': 'Ventilador en cubierta — VERIFY'},
+        {'id': 'EXT-2', 'serves': 'HD-2', 'kind': 'combustible sólido', 'collar': [3.80, 3.20],
+         'route': [[3.80, 3.20], [3.00, 3.20], [0.40, 0.40]], 'riser': 'Celdas de ducto S-PIL junto a la columna A1 — VERIFY ON SITE',
+         'fan': 'Ventilador propio en cubierta', 'note': 'Arrestachispas antes de filtros; limpieza mensual.'},
+        {'id': 'EXT-3', 'serves': 'S1', 'kind': 'chimenea smoker', 'collar': [0.29, 1.70], 'route': [[0.29, 1.70], [0.29, 0.60]],
+         'riser': 'S-PIL o chimenea propia listada (NFPA 211) — VERIFY', 'note': 'Remate según INVU / NFPA 96 (altura sobre edificios vecinos: VERIFY).'},
+    ],
+    'makeup_air': {'id': 'AR-1', 'diffusers': [[2.40, 1.60], [2.40, 3.00]],
+                   'note': 'Aire de reposición ≈80–90 % del caudal extraído, entregado sin perturbar la captura de las campanas — TO BE ENGINEERED.'},
+    'panel': {'id': 'TE-1', 'rect': [6.25, 0.116, 6.85, 0.26],
+              'note': 'Tablero eléctrico del local (ubicación propuesta, frente libre 0.90 m) — acometida existente: VERIFY ON SITE.'},
+    'grease_trap': 'GT-1',
+    'drain_existing': ['WP1', 'WP2', 'WP3', 'WP5'],
+}
+
 # ---------------------------------------------------------------- 3D decor + tour (walkthrough app)
 L['decor'] = [
     {'type': 'slat_wall', 'rect': [6.55, YS - 0.075, 15.35, YS], 'face': 'N', 'text': 'LAVA', 'z': 1.0, 'h': 2.85, 'text_at': 0.55},
@@ -253,7 +334,7 @@ L['tour'] = [
      'text': 'La hot line está pegada a la división: parrilla → cocina de 4 quemadores → plancha → 2 freidoras. Los cocineros trabajan de frente al salón; la parrilla queda en el eje de la entrada.',
      'flags': ['EXTRACTION / MAKE-UP AIR / FIRE SUPPRESSION TO BE ENGINEERED', 'DIMENSION TO VERIFY']},
     {'id': 'cocina', 'title': 'Hot line por dentro', 'pos': [2.6, 4.1], 'look': [3.6, 1.2], 'look_h': 1.0,
-     'text': 'Entrando por la puerta P-1, la línea queda a la derecha bajo una sola campana. Mesa de trabajo con horno en el muro norte, junto a las freidoras. Pasillo de trabajo ≥1.10 m.',
+     'text': 'Entrando por la puerta P-1, la línea queda a la derecha. La parrilla tiene su propia campana y ducto (combustible sólido); freidoras, plancha y cocina van bajo la campana 1 con supresión. Mesa de trabajo con horno en el muro norte. Pasillo de trabajo ≥1.10 m.',
      'flags': ['EXTRACTION / MAKE-UP AIR / FIRE SUPPRESSION TO BE ENGINEERED']},
     {'id': 'bbq', 'title': 'BBQ production', 'pos': [2.1, 2.2], 'look': [0.3, 1.8], 'look_h': 1.1,
      'text': 'Pared del fondo: smoker vertical y holding caliente, con la leña del día al lado. Flujo smoker → holding → línea / pase.',
@@ -336,8 +417,8 @@ L['keynote_box'] = {'A101': [8.75, 5.75, 17.25, 12.35], 'A102': [8.75, 5.75, 17.
 L['keynotes'] = [
     {'anchor': [3.07, 3.62], 'sheets': ['A101'], 'color': '#b35900',
      'text': ['EXTRACTION / MAKE-UP AIR / FIRE SUPPRESSION TO BE ENGINEERED',
-              'Campana ≈3.85 × 1.10 sobre toda la hot line (3.80 m).',
-              'La campana 3.60 × 0.90 propuesta no cubre la línea.']},
+              'Dos sistemas independientes: campana 1 (gas, supresión UL 300)',
+              'y campana 2 solo parrilla (combustible sólido, NFPA 96 cap. 14).']},
     {'anchor': [0.95, 1.65], 'sheets': ['A101'], 'color': '#6e2508',
      'text': ['SOLID-FUEL SMOKER - LOCATION / FLUE / FIRE CODE TO BE VALIDATED',
               'Chimenea propia; leña, cenizas y drenaje de grasa por el frente.']},
@@ -399,7 +480,7 @@ L['sheet_notes'] = [
     'Lavado en PILAS existentes; cold prep en ex-PASTELERÍA.',
     '* / punto rojo = DIMENSION TO VERIFY (equipo sin ficha).',
     'Altura libre de cielo y ductos existentes: VERIFY ON SITE.',
-    'Campana, aire de reposición, supresión y gas: TO BE ENGINEERED.',
+    'Extracción (2 sistemas + chimenea smoker), aire de reposición, supresión y gas: TO BE ENGINEERED.'
     'Egreso, sentido de puertas y ocupación: validar Bomberos/NFPA 101.',
 ]
 L['structure_notes'] = [
@@ -422,7 +503,7 @@ L['notes'] = [
     'Zonificación fijada por el cliente (corrección 2): hot line sobre la división con el salón; mesa de trabajo + horno en muro norte junto a las freidoras; smoker + holding en el muro del fondo (oeste); lavado en PILAS; cold prep en PASTELERÍA.',
     'Nueva división en X = 4.325 (cara cocina): corrimiento 1.97 m respecto de la división de Marna’s (X = 6.298). Limitante: línea caliente de 3.80 m + puerta 0.90 en 4.87 m de fondo, y 1.10 m libres frente a las freidoras hasta la mesa de trabajo del muro norte.',
     'Si el horno es de piso (≈80–90 cm) en lugar de horno de mesa, no cabe junto a la mesa en el muro norte sin invadir el frente de las freidoras: la división tendría que quedar en X ≈ 5.1 (corrimiento ≈1.2 m) o el horno ir al muro oeste.',
-    'Campana: la línea completa mide 3.80 m y la parrilla tiene 0.90 m de fondo; la campana 3.60 × 0.90 propuesta no la cubre. Se dibuja ≈3.85 × 1.10 como referencia; dimensiones, CFM, aire de reposición, filtros, separación de combustible sólido y supresión: TO BE ENGINEERED.',
+    'Extracción: NFPA 96 cap. 14 exige que la parrilla de carbón/leña tenga campana, ducto, ventilador y descarga independientes. Se dibujan 2 campanas contiguas: campana 1 ≈2.30 × 1.00 sobre freidoras, plancha y cocina (con supresión UL 300 y corte de gas) y campana 2 ≈1.55 × 1.10 solo sobre la parrilla (arrestachispas). El smoker lleva chimenea propia. La campana única 3.60 × 0.90 cotizada ya no aplica. Dimensiones, caudales, aire de reposición y supresión: TO BE ENGINEERED.',
     'Freidoras junto a la plancha (no junto a llama abierta): cumple la separación típica de 40 cm respecto de parrilla y quemadores; confirmar con ingeniería.',
     'Parrilla contra la división: base incombustible con cámara de aire y vidrio con resistencia térmica/cortafuego — especificación TO BE ENGINEERED.',
     'Pase: la puerta P-1 es la única conexión cocina/salón (la línea ocupa el resto de la división). Los platos salen por P-1 al pase caliente del extremo sur de la barra (≈2 m).',

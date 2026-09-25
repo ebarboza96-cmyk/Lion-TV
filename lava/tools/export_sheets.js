@@ -6,7 +6,9 @@ const { chromium } = require('playwright');
 
 (async () => {
   const dir = path.resolve(process.argv[2] || path.join(__dirname, '..', 'plan'));
-  const sheets = ['lava_A101_planta.svg', 'lava_A102_demolicion.svg', 'lava_A103_flujos.svg'].filter(f => fs.existsSync(path.join(dir, f)));
+  const idx = path.join(dir, 'sheets.json');
+  const sheets = (fs.existsSync(idx) ? JSON.parse(fs.readFileSync(idx, 'utf8')).map(s => s.file)
+    : ['lava_A101_planta.svg', 'lava_A102_demolicion.svg', 'lava_A103_flujos.svg']).filter(f => fs.existsSync(path.join(dir, f)));
   // Fonts are cached in tools/fonts (Google Fonts, OFL) and inlined, so the export works offline / behind a proxy.
   const fontDir = path.join(__dirname, 'fonts');
   const fontCss = fs.existsSync(path.join(fontDir, 'fonts.css'))

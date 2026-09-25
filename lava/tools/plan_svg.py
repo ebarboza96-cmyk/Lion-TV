@@ -493,8 +493,12 @@ class Sheet:
         if not faint:
             for t in lay.get('tables', []):
                 x0, y0, x1, y1 = t['rect']
-                g.append(mtext(sx((x0 + x1) / 2), sy((y0 + y1) / 2), [t.get('tag', t['id']), f"{t['seats']}p · {(x1-x0)*100:.0f}×{(y1-y0)*100:.0f}"],
-                               1.45, weight='700', fill='#1f5f25', weights=['800', '600']))
+                tag = t.get('tag', t['id']) + (' · ACCESIBLE' if t.get('accessible') else '')
+                g.append(mtext(sx((x0 + x1) / 2), sy((y0 + y1) / 2), [tag, f"{t['seats']}p · {(x1-x0)*100:.0f}×{(y1-y0)*100:.0f}"],
+                               1.45, weight='700', fill='#0b4f8a' if t.get('accessible') else '#1f5f25', weights=['800', '600']))
+                if t.get('accessible'):
+                    g.append(f'<rect x="{f(sx(x0) - 0.4)}" y="{f(sy(y0) - 0.4)}" width="{f((x1-x0)*S + 0.8)}" height="{f((y1-y0)*S + 0.8)}" '
+                             f'fill="none" stroke="#0b4f8a" stroke-width="0.35" stroke-dasharray="1 0.6" rx="0.8"/>')
         g.append('</g>')
         self.add(''.join(g))
 
@@ -531,7 +535,7 @@ class Sheet:
         self.add(''.join(g))
 
     # ------------------------------------------------------------------ sheet furniture
-    def frame_and_titleblock(self, title, subtitle, number):
+    def frame_and_titleblock(self, title, subtitle, number, scalebar=True, north=True, scale_note='Escala 1:50 en A2 · cotas en metros'):
         W, H = SHEET_W, SHEET_H
         g = [f'<rect x="5" y="5" width="{W-10}" height="{H-10}" fill="none" stroke="#111" stroke-width="0.6"/>',
              f'<line x1="436" y1="5" x2="436" y2="{H-5}" stroke="#111" stroke-width="0.35"/>']
@@ -542,13 +546,27 @@ class Sheet:
         g.append(text(442, tb_y + 23.5, 'Local ex-Marna\'s · Terrazas Lindora, Santa Ana', 2.2, anchor='start', fill='#ece5d8'))
         g.append(text(442, tb_y + 30.5, title, 3.1, anchor='start', weight='700', fill='#ffffff'))
         g.append(text(442, tb_y + 35.5, subtitle, 1.95, anchor='start', fill='#cfc6b8'))
-        g.append(text(442, tb_y + 42, 'TEST-FIT CONCEPTUAL · NO ES PLANO CONSTRUCTIVO', 2.1, anchor='start', weight='700', fill='#ff7a1a'))
-        g.append(text(442, tb_y + 47, 'Base: vectores del PDF Marna\'s Rev8 Opción 1 (1:50). Validar con arquitecto e ingenierías.', 1.6, anchor='start', fill='#b9b0a2'))
+        g.append(text(442, tb_y + 42, 'ANTEPROYECTO · PARA REVISIÓN Y FIRMA DE PROFESIONAL', 2.1, anchor='start', weight='700', fill='#ff7a1a'))
+        g.append(text(442, tb_y + 47, 'Base: vectores del PDF Marna\'s Rev8 Opción 1 (1:50). VERIFY ON SITE antes de construir.', 1.6, anchor='start', fill='#b9b0a2'))
         ver = self.lay.get('meta', {}).get('version', '')
-        g.append(text(442, tb_y + 51.5, f"Escala 1:50 en A2 · cotas en metros · v{ver} · {datetime.date(2026, 9, 25).isoformat()}", 1.7, anchor='start', fill='#b9b0a2', family=MONO))
+        g.append(text(442, tb_y + 51.5, f"{scale_note} · v{ver} · {self.lay.get('meta', {}).get('date', '')}", 1.7, anchor='start', fill='#b9b0a2', family=MONO))
+        # professional-responsibility box (to be completed by the CFIA professional who adopts the drawings)
+        py0 = tb_y - 31
+        g.append(f'<rect x="436" y="{py0}" width="{W-441}" height="29" fill="#ffffff" stroke="#141210" stroke-width="0.35"/>')
+        g.append(text(439, py0 + 4.2, 'PROFESIONAL RESPONSABLE (CFIA)', 2.1, anchor='start', weight='800', extra='letter-spacing="0.3"'))
+        fields = [('Nombre', 'Carné CFIA'), ('Firma digital / sello', 'Contrato de consultoría'), ('Propietario / desarrollador', 'N.º proyecto APC')]
+        for i, (a, b) in enumerate(fields):
+            yy = py0 + 10 + i * 6.4
+            g.append(text(439, yy, a, 1.6, anchor='start', fill='#666'))
+            g.append(text(439 + (W - 441) / 2, yy, b, 1.6, anchor='start', fill='#666'))
+            g.append(f'<line x1="439" y1="{yy + 3.2}" x2="{436 + (W - 441) / 2 - 3}" y2="{yy + 3.2}" stroke="#bbb" stroke-width="0.2"/>')
+            g.append(f'<line x1="{439 + (W - 441) / 2}" y1="{yy + 3.2}" x2="{W - 8}" y2="{yy + 3.2}" stroke="#bbb" stroke-width="0.2"/>')
         g.append(f'<rect x="{W-40}" y="{tb_y + 22}" width="30" height="30" fill="none" stroke="#ece5d8" stroke-width="0.35"/>')
         g.append(text(W - 25, tb_y + 30, 'LÁMINA', 1.8, fill='#b9b0a2'))
         g.append(text(W - 25, tb_y + 42, number, 7.0, weight='800', fill='#ffffff'))
+        if not scalebar:
+            self.add(''.join(g))
+            return
         x0, y0 = sx(8.75), sy(12.55)
         seg = ['<g id="scalebar">']
         for i in range(5):
@@ -559,10 +577,11 @@ class Sheet:
         seg.append('</g>')
         g.extend(seg)
         nx, ny = sx(15.05), sy(12.62)
-        g.append(f'<g id="north"><circle cx="{f(nx)}" cy="{f(ny)}" r="4.2" fill="none" stroke="#333" stroke-width="0.3"/>'
+        if north:
+            g.append(f'<g id="north"><circle cx="{f(nx)}" cy="{f(ny)}" r="4.2" fill="none" stroke="#333" stroke-width="0.3"/>'
                  f'<path d="M{f(nx)},{f(ny-3.5)} L{f(nx+1.7)},{f(ny+2.1)} L{f(nx)},{f(ny+1.0)} L{f(nx-1.7)},{f(ny+2.1)} z" fill="#333"/>'
                  + text(nx + 6, ny - 0.6, 'Orientación del PDF', 1.6, anchor='start', fill='#555')
-                 + text(nx + 6, ny + 1.6, 'original (no geográfica)', 1.6, anchor='start', fill='#555') + '</g>')
+                     + text(nx + 6, ny + 1.6, 'original (no geográfica)', 1.6, anchor='start', fill='#555') + '</g>')
         self.add(''.join(g))
 
     def side_panel(self, blocks, x=441.0, y=13.0):
@@ -846,12 +865,36 @@ def build(lay_path, val_path, outdir):
     out['A103'] = s.render()
 
     names = {'A101': 'lava_A101_planta.svg', 'A102': 'lava_A102_demolicion.svg', 'A103': 'lava_A103_flujos.svg'}
+    titles = {'A101': 'Planta arquitectónica propuesta', 'A102': 'Existente / demolición / nuevo', 'A103': 'Flujos y circulaciones'}
+    index = [{'id': k, 'file': names[k], 'title': titles[k], 'order': 101 + i} for i, k in enumerate(('A101', 'A102', 'A103'))]
+    # extra sheets: every module in tools/sheets/ exposing sheets(ex, lay, val) -> [{id, file, title, order, svg}]
+    import importlib
+    import pkgutil
+    sheets_dir = os.path.join(os.path.dirname(__file__), 'sheets')
+    if os.path.isdir(sheets_dir):
+        sys.path.insert(0, os.path.dirname(__file__))
+        for mod in sorted(m.name for m in pkgutil.iter_modules([sheets_dir])):
+            if mod.startswith('_'):
+                continue
+            try:
+                for sh in importlib.import_module(f'sheets.{mod}').sheets(ex, lay, val):
+                    out[sh['id']] = sh['svg']
+                    names[sh['id']] = sh['file']
+                    index.append({k: sh[k] for k in ('id', 'file', 'title', 'order')})
+            except Exception as err:  # a broken module must not kill the core sheets
+                import traceback
+                traceback.print_exc()
+                print(f'WARNING: sheets.{mod} failed: {err}')
+    index.sort(key=lambda d: d['order'])
     for k, v in out.items():
         with open(os.path.join(outdir, names[k]), 'w') as fh:
             fh.write(v)
+    import json as _json
+    with open(os.path.join(outdir, 'sheets.json'), 'w') as fh:
+        _json.dump(index, fh, indent=1, ensure_ascii=False)
     with open(os.path.join(outdir, 'lava_plan.svg'), 'w') as fh:
         fh.write(out['A101'])
-    return [os.path.join(outdir, n) for n in names.values()]
+    return [os.path.join(outdir, d['file']) for d in index]
 
 
 if __name__ == '__main__':

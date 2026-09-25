@@ -1,0 +1,20 @@
+[
+ {
+  "id": "A101",
+  "file": "lava_A101_planta.svg",
+  "title": "Planta arquitectónica propuesta",
+  "order": 101
+ },
+ {
+  "id": "A102",
+  "file": "lava_A102_demolicion.svg",
+  "title": "Existente / demolición / nuevo",
+  "order": 102
+ },
+ {
+  "id": "A103",
+  "file": "lava_A103_flujos.svg",
+  "title": "Flujos y circulaciones",
+  "order": 103
+ }
+]
